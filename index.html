@@ -109,15 +109,13 @@
       border-top-color:white;border-radius:50%;animation:spin .8s linear infinite;
       vertical-align:middle;margin-right:8px;
     }
-
     .status-badge{
-      display:inline-block;padding:2px 6px;border-radius:20px;font-size:11px;font-weight:bold;margin-left:6px;
+      font-size:12px;padding:2px 8px;border-radius:20px;margin-left:8px;
+      background:rgba(255,255,255,.2);
     }
-    .status-non_verified{background:rgba(255,255,255,.1);color:#aaa}
-    .status-pending{background:rgba(255,200,0,.2);color:#ffcc00}
-    .status-verified{background:rgba(0,255,0,.2);color:#0f0}
-    .status-rejected{background:rgba(255,0,0,.2);color:#f66}
-
+    .status-badge.verified{background:#2ecc71;color:#fff}
+    .status-badge.pending{background:#f1c40f;color:#000}
+    .status-badge.rejected{background:#e74c3c;color:#fff}
     @keyframes spin{to{transform:rotate(360deg)}}
     @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   </style>
@@ -127,23 +125,23 @@
 
     <!-- Menu hamburger (visible pour tous) -->
     <div id="adminMenu" class="admin-menu">
-      <button class="small-btn" onclick="showAccountInfo()">👤 Infos compte</button>
-      <button class="small-btn" onclick="showReferral()">🔗 Parrainage</button>
-      <button class="small-btn" onclick="showDepositHistory()">📥 Historique dépôts</button>
-      <button class="small-btn" onclick="showWithdrawHistory()">📤 Historique retraits</button>
-      <button class="small-btn" onclick="showSection('verifyCompte')">✅ Vérifier compte</button>
+      <button class="small-btn" onclick="showAccountInfo()">Infos compte</button>
+      <button class="small-btn" onclick="showReferral()">Parrainage</button>
+      <button class="small-btn" onclick="showDepositHistory()">Deposit history</button>
+      <button class="small-btn" onclick="showWithdrawHistory()">Withdraw history</button>
+      <button class="small-btn" onclick="showVerifyAccount()">Vérifier compte</button>
 
-      <div id="adminOnlyMenu" style="display:none; border-top:1px solid rgba(255,255,255,.18); padding-top:6px; margin-top:4px;">
-        <button class="small-btn" onclick="showAdminCredit()">💰 Créditer Coins/Ar</button>
-        <button class="small-btn" onclick="showAdminDeduct()">📉 Déduire Coins/Ar</button>
-        <button class="small-btn" onclick="showAdminBan()">🚫 Ban / Unban / Suspendre</button>
-        <button class="small-btn" onclick="showAdminUsers()">📋 Liste utilisateurs</button>
-        <button class="small-btn" onclick="showAdminVerifications()">🔍 Vérifications comptes</button>
-        <button class="small-btn" onclick="showAdminDeposits()">💵 Approve Deposit</button>
-        <button class="small-btn" onclick="showAdminWithdraws()">💸 Approve Withdraw</button>
+      <div id="adminOnlyMenu" style="display:none; border-top:1px solid rgba(255,255,255,.18); padding-top:6px;">
+        <button class="small-btn" onclick="showAdminCredit()">Créditer Coins/Ar</button>
+        <button class="small-btn" onclick="showAdminDeduct()">Déduire Coins/Ar</button>
+        <button class="small-btn" onclick="showAdminBan()">Ban / Unban / Suspendre</button>
+        <button class="small-btn" onclick="showAdminUsers()">Liste utilisateurs</button>
+        <button class="small-btn" onclick="showAdminDeposits()">Approve Deposit</button>
+        <button class="small-btn" onclick="showAdminWithdraws()">Approve Withdraw</button>
+        <button class="small-btn" onclick="showAdminVerifyAccounts()">Verify Accounts</button>
       </div>
 
-      <button class="small-btn" onclick="logoutUser()" style="background:rgba(255,80,80,.2);">🚪 Déconnexion</button>
+      <button class="small-btn" onclick="logoutUser()">Déconnexion</button>
     </div>
 
     <!-- Auth Page -->
@@ -154,8 +152,8 @@
       </div>
 
       <div class="tabs">
-        <button id="loginTab" class="active" onclick="showLogin()">Se connecter</button>
-        <button id="registerTab" class="inactive" onclick="showRegister()">Créer un compte</button>
+        <button id="loginTab" class="active" onclick="showLogin()">Sign in</button>
+        <button id="registerTab" class="inactive" onclick="showRegister()">Sign up</button>
       </div>
 
       <div id="loginForm" class="form active">
@@ -167,7 +165,7 @@
           <label>Mot de passe</label>
           <input type="password" id="loginPassword" placeholder="********" />
         </div>
-        <button class="submit-btn" onclick="loginUser()">Connexion</button>
+        <button class="submit-btn" onclick="loginUser()">Login</button>
       </div>
 
       <div id="registerForm" class="form">
@@ -177,17 +175,17 @@
         </div>
         <div class="field">
           <label>Mot de passe</label>
-          <input type="password" id="registerPassword" placeholder="6 caractères min" />
+          <input type="password" id="registerPassword" placeholder="Créer un mot de passe" />
         </div>
         <div class="field">
           <label>Code de parrainage (optionnel)</label>
           <input type="text" id="registerRef" placeholder="ID du parrain" />
         </div>
-        <button class="submit-btn" onclick="registerUser()">S'inscrire</button>
+        <button class="submit-btn" onclick="registerUser()">Register</button>
       </div>
 
       <div id="authMessage" class="message"></div>
-      <div class="small-text">Rejoins la communauté 🔥</div>
+      <div class="small-text">Crée ton compte gratuitement, puis connecte-toi.</div>
     </div>
 
     <!-- Dashboard Page -->
@@ -197,7 +195,7 @@
           <div><strong>Balance:</strong> <span id="balanceCoins">0</span> Coins • <span id="balanceAr">0</span> Ar</div>
           <div id="userEmailLabel" style="font-size:12px; opacity:0.9;"></div>
         </div>
-        <div id="hamburgerWrap" style="display:block;">
+        <div id="hamburgerWrap">
           <div class="hamburger" onclick="toggleAdminMenu()">
             <span></span><span></span><span></span>
           </div>
@@ -205,7 +203,7 @@
       </div>
 
       <div class="card">
-        <h2>⚡ Actions</h2>
+        <h2>Actions</h2>
         <div class="feature-grid">
           <button id="btnAddAccount" class="feature-btn" onclick="showSection('addAccount')">Add Account</button>
           <button id="btnWork" class="feature-btn" onclick="showSection('work')">Work Tasks</button>
@@ -216,7 +214,6 @@
           <button class="feature-btn" onclick="showSection('deposit')">Deposit</button>
           <button class="feature-btn" onclick="showSection('withdraw')">Withdraw</button>
           <button class="feature-btn" onclick="showSection('swap')">SWAP</button>
-          <button id="btnVerifyCompte" class="feature-btn" onclick="showSection('verifyCompte')">✅ Verify compte</button>
         </div>
       </div>
 
@@ -270,44 +267,23 @@
           <div id="ordersMsg" class="message"></div>
         </div>
 
-        <!-- Referral (via menu) -->
+        <!-- Referral -->
         <div id="sectionReferral" class="card" style="display:none;">
-          <h2>🔗 Parrainage</h2>
-          <p style="font-size:12px;opacity:0.9;">Partage ton lien, reçois <b>100 Ar</b> pour chaque filleul qui réussit 5 follows.</p>
-          <div class="field">
-            <label>Nombre de filleuls</label>
-            <input type="text" id="referralCount" readonly value="0" />
-          </div>
+          <h2>Parrainage</h2>
+          <p style="font-size:12px;opacity:0.9;">Partagez ce lien, recevez 100 Ar pour chaque filleul qui réussit 5 follows.</p>
           <div class="field">
             <label>Lien de parrainage</label>
-            <input type="text" id="referralLink" readonly onclick="this.select();document.execCommand('copy')" />
+            <input type="text" id="referralLink" readonly onclick="this.select();document.execCommand('copy')" style="cursor:pointer;" />
           </div>
           <button class="small-btn" onclick="copyReferral()">📋 Copier le lien</button>
           <div id="referralMsg" class="message"></div>
-        </div>
-
-        <!-- Verify compte (utilisateur) -->
-        <div id="sectionVerifyCompte" class="card" style="display:none;">
-          <h2>✅ Vérification de compte</h2>
-          <p style="font-size:12px;opacity:0.9; margin-bottom:8px;">
-            Les comptes vérifiés reçoivent beaucoup plus de tâches !<br/>
-            👤 Ajoute une photo de profil Malagasy, au moins 50 amis/followers.<br/>
-            🎁 <b>10 Ar</b> seront crédités après validation.
-          </p>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
-            <button class="small-btn" onclick="verifyPage=0; loadMyAccountsForVerify()">🔄 Refresh</button>
-            <button class="small-btn" onclick="if(verifyPage>0){verifyPage--;loadMyAccountsForVerify()}">◀</button>
-            <button class="small-btn" onclick="verifyPage++;loadMyAccountsForVerify()">▶</button>
-            <span style="font-size:12px;">Page: <span id="verifyPageLabel">0</span></span>
-          </div>
-          <div id="verifyAccountsList" class="accounts-list"></div>
-          <div id="verifyMessage" class="message"></div>
+          <div id="referralCount" style="margin-top:8px;font-size:13px;">Nombre de filleuls : <span id="refCount">0</span></div>
         </div>
 
         <!-- GET FOLLOWER -->
         <div id="sectionGetFollower" class="card" style="display:none;">
           <h2>GET FOLLOWER</h2>
-          <p style="font-size:12px;opacity:0.9;">1 coin / follower. Min 20 coins requis.</p>
+          <p style="font-size:12px;opacity:0.9;">1 coin / follower. Minimum 20 coins requis.</p>
           <div class="field">
             <label>Lien de profil Facebook</label>
             <input type="text" id="gfProfileLink" placeholder="https://www.facebook.com/nom..." oninput="liveTransformFollow(this.value)" />
@@ -324,7 +300,7 @@
         <!-- GET LIKE -->
         <div id="sectionGetLike" class="card" style="display:none;">
           <h2>GET LIKE</h2>
-          <p style="font-size:12px;opacity:0.9;">0.5 coin / like. Min 20 coins requis.</p>
+          <p style="font-size:12px;opacity:0.9;">0.5 coin / like. Minimum 20 coins requis.</p>
           <div class="field">
             <label>Lien du post/reel</label>
             <input type="text" id="glLink" placeholder="https://www.facebook.com/..." />
@@ -352,7 +328,7 @@
         <!-- GET COMMENT -->
         <div id="sectionGetComment" class="card" style="display:none;">
           <h2>GET COMMENT</h2>
-          <p style="font-size:12px;opacity:0.9;">2 coins / commentaire (max 1). Min 20 coins requis.</p>
+          <p style="font-size:12px;opacity:0.9;">2 coins / commentaire (max 1). Minimum 20 coins requis.</p>
           <div class="field">
             <label>Lien du post</label>
             <input type="text" id="gcLink" placeholder="https://www.facebook.com/..." />
@@ -415,7 +391,25 @@
           <div id="swapMessage" class="message"></div>
         </div>
 
-        <!-- Admin sections -->
+        <!-- Vérifier compte (user) -->
+        <div id="sectionVerifyAccount" class="card" style="display:none;">
+          <h2>Vérifier compte</h2>
+          <p style="font-size:12px;opacity:0.9;">
+            Les comptes vérifiés reçoivent beaucoup plus de tâches.<br/>
+            Pour être vérifié : ajoutez une photo de profil Malagasy, ajoutez au moins 50 amis ou followers.<br/>
+            Vous recevrez 10 Ar après vérification approuvée.
+          </p>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <button class="small-btn" onclick="verifyPage=0; loadVerifyAccounts()">Refresh</button>
+            <button class="small-btn" onclick="if(verifyPage>0){verifyPage--;loadVerifyAccounts()}">Prev</button>
+            <button class="small-btn" onclick="verifyPage++;loadVerifyAccounts()">Next</button>
+            <span style="font-size:12px;">Page: <span id="verifyPageLabel">0</span></span>
+          </div>
+          <div id="verifyAccountsList" class="tasks-log"></div>
+          <div id="verifyMsg" class="message"></div>
+        </div>
+
+        <!-- Admin Credit -->
         <div id="sectionAdminCredit" class="card" style="display:none;">
           <h2>Admin: Créditer Coins/Ar</h2>
           <div class="field"><label>Email</label><input type="email" id="admEmail" /></div>
@@ -424,6 +418,8 @@
           <button class="submit-btn" onclick="adminCredit()">Créditer</button>
           <div id="admMessage" class="message"></div>
         </div>
+
+        <!-- Admin Deduct -->
         <div id="sectionAdminDeduct" class="card" style="display:none;">
           <h2>Admin: Déduire Coins/Ar</h2>
           <div class="field"><label>Email</label><input type="email" id="deductEmail" /></div>
@@ -432,13 +428,17 @@
           <button class="submit-btn" onclick="adminDeduct()">Déduire</button>
           <div id="deductMessage" class="message"></div>
         </div>
+
+        <!-- Admin Ban -->
         <div id="sectionAdminBan" class="card" style="display:none;">
           <h2>Admin: Ban / Unban / Suspendre 10h</h2>
-          <div class="field"><label>Email</label><input type="email" id="banEmail" /></div>
+          <div class="field"><label>Email de l'utilisateur</label><input type="email" id="banEmail" /></div>
           <div class="field"><label>Action</label><select id="banAction"><option value="ban">Ban</option><option value="unban">Unban</option><option value="suspend">Suspendre 10h</option></select></div>
           <button class="submit-btn" onclick="adminBan()">Appliquer</button>
           <div id="banMessage" class="message"></div>
         </div>
+
+        <!-- Admin Users -->
         <div id="sectionAdminUsers" class="card" style="display:none;">
           <h2>Admin: Liste utilisateurs</h2>
           <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
@@ -448,38 +448,13 @@
           <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
             <button class="small-btn" onclick="if(usersPage>0){usersPage--;loadAdminUsers()}">Prev</button>
             <button class="small-btn" onclick="usersPage++;loadAdminUsers()">Next</button>
-            <span>Page: <span id="usersPageLabel">0</span></span>
+            <span style="font-size:12px;">Page: <span id="usersPageLabel">0</span></span>
           </div>
           <div id="adminUsersList" class="tasks-log"></div>
           <div id="adminUsersMsg" class="message"></div>
         </div>
-        <div id="sectionAdminVerifications" class="card" style="display:none;">
-          <h2>Admin: Vérifications comptes</h2>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
-            <button class="small-btn" onclick="adminVerifPage=0;loadAdminVerifications()">🔄</button>
-            <button class="small-btn" onclick="if(adminVerifPage>0){adminVerifPage--;loadAdminVerifications()}">◀</button>
-            <button class="small-btn" onclick="adminVerifPage++;loadAdminVerifications()">▶</button>
-            <span>Page: <span id="adminVerifPageLabel">0</span></span>
-          </div>
-          <div id="adminVerificationsList" class="tasks-log"></div>
-          <div id="adminVerifMsg" class="message"></div>
-        </div>
 
-        <!-- Historiques (accessibles depuis le menu) -->
-        <div id="sectionDepositHistory" class="card" style="display:none;">
-          <h2>Historique dépôts</h2>
-          <button class="small-btn" onclick="loadDepositHistory()">Refresh</button>
-          <div id="depositHistoryList" class="tasks-log"></div>
-          <div id="depositHistoryMsg" class="message"></div>
-        </div>
-        <div id="sectionWithdrawHistory" class="card" style="display:none;">
-          <h2>Historique retraits</h2>
-          <button class="small-btn" onclick="loadWithdrawHistory()">Refresh</button>
-          <div id="withdrawHistoryList" class="tasks-log"></div>
-          <div id="withdrawHistoryMsg" class="message"></div>
-        </div>
-
-        <!-- Admin deposits / withdraws -->
+        <!-- Admin Deposits -->
         <div id="sectionAdminDeposits" class="card" style="display:none;">
           <h2>Admin: Deposits pending</h2>
           <div style="display:flex;gap:8px;align-items:center;">
@@ -491,6 +466,8 @@
           <div id="adminDepositsList" class="tasks-log"></div>
           <div id="adminDepositsMsg" class="message"></div>
         </div>
+
+        <!-- Admin Withdraws -->
         <div id="sectionAdminWithdraws" class="card" style="display:none;">
           <h2>Admin: Withdraws pending</h2>
           <div style="display:flex;gap:8px;align-items:center;">
@@ -503,26 +480,52 @@
           <div id="adminWithdrawsMsg" class="message"></div>
         </div>
 
+        <!-- Admin Verify Accounts -->
+        <div id="sectionAdminVerifyAccounts" class="card" style="display:none;">
+          <h2>Admin: Verify Accounts</h2>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <button class="small-btn" onclick="adminVerifyPage=0; loadAdminVerifyAccounts()">Refresh</button>
+            <button class="small-btn" onclick="if(adminVerifyPage>0){adminVerifyPage--;loadAdminVerifyAccounts()}">Prev</button>
+            <button class="small-btn" onclick="adminVerifyPage++;loadAdminVerifyAccounts()">Next</button>
+            <span style="font-size:12px;">Page: <span id="adminVerifyPageLabel">0</span></span>
+          </div>
+          <div id="adminVerifyList" class="tasks-log"></div>
+          <div id="adminVerifyMsg" class="message"></div>
+        </div>
+
+        <!-- Deposit history / withdraw history (affichés via menu) -->
+        <div id="sectionDepositHistory" class="card" style="display:none;">
+          <h2>Deposit history</h2>
+          <button class="small-btn" onclick="loadDepositHistory()">Refresh</button>
+          <div id="depositHistoryList" class="tasks-log"></div>
+          <div id="depositHistoryMsg" class="message"></div>
+        </div>
+        <div id="sectionWithdrawHistory" class="card" style="display:none;">
+          <h2>Withdraw history</h2>
+          <button class="small-btn" onclick="loadWithdrawHistory()">Refresh</button>
+          <div id="withdrawHistoryList" class="tasks-log"></div>
+          <div id="withdrawHistoryMsg" class="message"></div>
+        </div>
+
       </div>
       <div id="dashboardMessage" class="message"></div>
     </div>
   </div>
 
 <script>
-  const API_URL = "https://hormone-copied-amended-derek.trycloudflare.com"; // À remplacer
+  const API_URL = "https://ton-url-cloudflared.trycloudflare.com"; // À remplacer
 
   let auth = JSON.parse(localStorage.getItem("auth") || "null");
   let me = null;
   let selectedAccountId = null;
   let currentTask = null;
-  let ordersPage = 0, adminDepPage = 0, adminWdPage = 0, usersPage = 0, verifyPage = 0, adminVerifPage = 0;
+  let ordersPage = 0, adminDepPage = 0, adminWdPage = 0, usersPage = 0;
+  let verifyPage = 0, adminVerifyPage = 0;
 
   function setMessage(id, text, type = "") {
     const el = document.getElementById(id);
-    if (el) {
-      el.className = "message " + type;
-      el.innerHTML = text;
-    }
+    el.className = "message " + type;
+    el.innerHTML = text;
   }
 
   function showLogin() {
@@ -557,8 +560,11 @@
   }
 
   function toggleAdminUI() {
-    const adminOnly = document.getElementById("adminOnlyMenu");
-    if (adminOnly) adminOnly.style.display = (auth && auth.is_admin) ? "block" : "none";
+    const wrap = document.getElementById("hamburgerWrap");
+    // Menu hamburger visible pour tout le monde
+    wrap.style.display = "block";
+    // Admin-only items
+    document.getElementById("adminOnlyMenu").style.display = (auth && auth.is_admin) ? "block" : "none";
   }
 
   function toggleAdminMenu() {
@@ -571,47 +577,56 @@
 
   function showSection(name) {
     hideAdminMenu();
-    const sections = [
-      "AddAccount","Work","OrderStatus","Referral","VerifyCompte",
+    const allSections = [
+      "AddAccount","Work","OrderStatus","DepositHistory","WithdrawHistory","Referral",
+      "AdminDeposits","AdminWithdraws","AdminCredit","AdminDeduct","AdminBan","AdminUsers",
       "GetFollower","GetLike","GetComment","Deposit","Withdraw","Swap",
-      "AdminCredit","AdminDeduct","AdminBan","AdminUsers","AdminVerifications",
-      "DepositHistory","WithdrawHistory","AdminDeposits","AdminWithdraws"
+      "VerifyAccount","AdminVerifyAccounts"
     ];
-    sections.forEach(s => {
+    allSections.forEach(s => {
       const el = document.getElementById("section" + s);
-      if (el) el.style.display = ("section" + name) === ("section" + s) ? "block" : "none";
+      if (el) el.style.display = ("section" + name.charAt(0).toUpperCase() + name.slice(1)) === ("section" + s) ? "block" : "none";
     });
 
     if (name === "work") loadAccountsForWork();
     if (name === "orderStatus") loadOrders();
-    if (name === "referral") loadReferralInfo();
-    if (name === "verifyCompte") { verifyPage = 0; loadMyAccountsForVerify(); }
+    if (name === "depositHistory") loadDepositHistory();
+    if (name === "withdrawHistory") loadWithdrawHistory();
+    if (name === "adminDeposits") loadAdminDeposits();
+    if (name === "adminWithdraws") loadAdminWithdraws();
+    if (name === "referral") { updateReferralLink(); loadReferralCount(); }
     if (name === "deposit") {
       document.getElementById("depositStep1").style.display = "block";
       document.getElementById("depositStep2").style.display = "none";
       updateDepositEstimate();
     }
-    if (name === "depositHistory") loadDepositHistory();
-    if (name === "withdrawHistory") loadWithdrawHistory();
-    if (name === "adminDeposits") loadAdminDeposits();
-    if (name === "adminWithdraws") loadAdminWithdraws();
     if (name === "adminUsers") loadAdminUsers();
-    if (name === "adminVerifications") loadAdminVerifications();
+    if (name === "verifyAccount") loadVerifyAccounts();
+    if (name === "adminVerifyAccounts") loadAdminVerifyAccounts();
   }
 
-  function showAccountInfo() { hideAdminMenu(); if (me) setMessage("dashboardMessage", `👤 ${me.email}<br>💰 ${me.balance_coins} Coins / ${Math.floor(me.balance_ar)} Ar`, "success"); }
-  function showReferral() { showSection("referral"); }
-  function showDepositHistory() { showSection("depositHistory"); }
-  function showWithdrawHistory() { showSection("withdrawHistory"); }
-  function showAdminCredit() { showSection("adminCredit"); }
-  function showAdminDeduct() { showSection("adminDeduct"); }
-  function showAdminBan() { showSection("adminBan"); }
-  function showAdminUsers() { showSection("adminUsers"); }
-  function showAdminVerifications() { showSection("adminVerifications"); }
-  function showAdminDeposits() { showSection("adminDeposits"); }
-  function showAdminWithdraws() { showSection("adminWithdraws"); }
+  function showAccountInfo() {
+    hideAdminMenu();
+    if (!me) return;
+    setMessage("dashboardMessage",
+      `Email: ${me.email}<br>Coins: ${Number(me.balance_coins).toFixed(2)} — Ar: ${Math.floor(Number(me.balance_ar))}`,
+      "success"
+    );
+  }
 
-  // API
+  function showReferral(){ showSection("referral"); }
+  function showDepositHistory(){ showSection("depositHistory"); }
+  function showWithdrawHistory(){ showSection("withdrawHistory"); }
+  function showVerifyAccount(){ showSection("verifyAccount"); }
+  function showAdminCredit(){ showSection("adminCredit"); }
+  function showAdminDeduct(){ showSection("adminDeduct"); }
+  function showAdminBan(){ showSection("adminBan"); }
+  function showAdminUsers(){ showSection("adminUsers"); }
+  function showAdminDeposits(){ showSection("adminDeposits"); }
+  function showAdminWithdraws(){ showSection("adminWithdraws"); }
+  function showAdminVerifyAccounts(){ showSection("adminVerifyAccounts"); }
+
+  // Helpers
   async function api(path, method="GET", body=null) {
     const headers = {"Content-Type":"application/json"};
     if (auth?.token) headers["Authorization"] = "Bearer " + auth.token;
@@ -625,33 +640,42 @@
 
   async function updateMe() {
     if (!auth?.token) return;
-    try {
+    try{
       me = await api("/me", "GET");
       document.getElementById("balanceCoins").textContent = Number(me.balance_coins).toFixed(2);
       document.getElementById("balanceAr").textContent = Math.floor(Number(me.balance_ar));
       const ok = Number(me.balance_coins) >= 20;
-      ["btnAddAccount","btnGetFollower","btnGetLike","btnGetComment"].forEach(id => {
+      ["btnAddAccount","btnGetFollower","btnGetLike","btnGetComment"].forEach(id=>{
         const el = document.getElementById(id);
-        if (el) el.classList.toggle("disabled", !ok);
+        if (!el) return;
+        if (!ok) el.classList.add("disabled"); else el.classList.remove("disabled");
       });
       if (!ok) {
         setMessage("dashboardMessage","Vous devez avoir au moins 20 coins pour ces actions.","error");
       }
-    } catch(e) { console.log(e); }
+      if (me.id) updateReferralLink();
+    }catch(e){ console.log(e); }
   }
 
-  // Referral
-  async function loadReferralInfo() {
-    if (!me) await updateMe();
-    try {
-      const countData = await api("/referral/count", "GET");
-      document.getElementById("referralCount").value = countData.total || 0;
-      document.getElementById("referralLink").value = window.location.origin + "/register?ref=" + me.id;
-    } catch(e) {}
+  function updateReferralLink() {
+    const linkInput = document.getElementById("referralLink");
+    if (linkInput && me?.id) {
+      linkInput.value = window.location.origin + "/register?ref=" + me.id;
+    }
   }
+
+  async function loadReferralCount() {
+    try {
+      const data = await api("/referral/info", "GET");
+      document.getElementById("refCount").textContent = data.total_referrals || 0;
+    } catch(e) {
+      document.getElementById("refCount").textContent = "?";
+    }
+  }
+
   function copyReferral() {
-    const inp = document.getElementById("referralLink");
-    inp.select();
+    const linkInput = document.getElementById("referralLink");
+    linkInput.select();
     document.execCommand("copy");
     setMessage("referralMsg", "Lien copié !", "success");
   }
@@ -661,29 +685,33 @@
     const email = document.getElementById("registerEmail").value.trim();
     const password = document.getElementById("registerPassword").value.trim();
     const ref = document.getElementById("registerRef").value.trim();
-    if (!email || !password) return setMessage("authMessage","Champs obligatoires.","error");
-    try {
+    if (!email || !password) return setMessage("authMessage","Remplis tous les champs.","error");
+    try{
       setMessage("authMessage",'<span class="loader"></span>Inscription...', "");
       const data = await api("/register","POST",{email,password,ref});
       auth = {token: data.token, email: data.email, is_admin: !!data.is_admin};
       localStorage.setItem("auth", JSON.stringify(auth));
       setMessage("authMessage","Inscription réussie.","success");
       showDashboard();
-    } catch(e) { setMessage("authMessage", e.message, "error"); }
+    }catch(e){
+      setMessage("authMessage", e.message, "error");
+    }
   }
 
   async function loginUser() {
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value.trim();
-    if (!email || !password) return setMessage("authMessage","Champs obligatoires.","error");
-    try {
+    if (!email || !password) return setMessage("authMessage","Remplis tous les champs.","error");
+    try{
       setMessage("authMessage",'<span class="loader"></span>Connexion...', "");
       const data = await api("/login","POST",{email,password});
       auth = {token: data.token, email: data.email, is_admin: !!data.is_admin};
       localStorage.setItem("auth", JSON.stringify(auth));
       setMessage("authMessage","Connexion réussie.","success");
       showDashboard();
-    } catch(e) { setMessage("authMessage", e.message, "error"); }
+    }catch(e){
+      setMessage("authMessage", e.message, "error");
+    }
   }
 
   function logoutUser() {
@@ -693,7 +721,7 @@
     setMessage("authMessage","","");
   }
 
-  // Add account
+  // ADD ACCOUNT
   async function addTaskAccount() {
     if (!me) await updateMe();
     if (!me) return;
@@ -704,63 +732,81 @@
     const profile_link = document.getElementById("accProfileLink").value.trim();
     const cookies_string = document.getElementById("accCookies").value.trim();
     if (!profile_link || !cookies_string) return setMessage("addAccountMessage","Remplis tous les champs.","error");
-    try {
+    try{
       setMessage("addAccountMessage",'<span class="loader"></span>Vérification...', "");
       const data = await api("/task_account/add","POST",{profile_link,cookies_string});
       setMessage("addAccountMessage", data.message || "OK", "success");
       await updateMe();
-    } catch(e) { setMessage("addAccountMessage", e.message, "error"); }
+    }catch(e){
+      setMessage("addAccountMessage", e.message, "error");
+    }
   }
 
-  // Work
+  // WORK
   async function loadAccountsForWork() {
-    selectedAccountId = null; currentTask = null;
+    selectedAccountId = null;
+    currentTask = null;
     document.getElementById("currentTaskArea").style.display = "none";
     const area = document.getElementById("accountsForWork");
     area.innerHTML = "Chargement...";
-    try {
+    try{
       const data = await api("/task_account/list","GET");
       const accounts = data.accounts || [];
-      if (!accounts.length) { area.innerHTML = "<div>Aucun compte.</div>"; return; }
+      if (!accounts.length){
+        area.innerHTML = "<div>Aucun compte TASK.</div>";
+        return;
+      }
       area.innerHTML = accounts.map(a => `
         <div class="account-item">
-          <div><strong>${a.display_name||a.profile_link}</strong><br><small>${a.profile_link}</small></div>
+          <div>
+            <strong>${(a.display_name || a.profile_link)}</strong><br>
+            <span style="font-size:12px;opacity:0.8;">${a.profile_link}</span>
+          </div>
           <button class="small-btn" onclick="selectAccountForWork('${a.id}')">Utiliser</button>
-        </div>`).join("");
-    } catch(e) { area.innerHTML = "Erreur: "+e.message; }
+        </div>
+      `).join("");
+    }catch(e){
+      area.innerHTML = "Erreur: " + e.message;
+    }
   }
 
-  async function selectAccountForWork(accId) {
+  async function selectAccountForWork(accId){
     selectedAccountId = accId;
     document.getElementById("currentTaskArea").style.display = "block";
     setMessage("workerMessage", "Chargement tâche...", "");
     await loadNextTask();
   }
 
-  async function loadNextTask() {
+  async function loadNextTask(){
     if (!selectedAccountId) return;
-    try {
+    try{
       const data = await api(`/worker/next_task?account_id=${encodeURIComponent(selectedAccountId)}`,"GET");
-      if (!data.task_id) {
+      if (!data.task_id){
         currentTask = null;
         document.getElementById("currentTaskInfo").innerHTML = data.message || "Aucune tâche.";
         setMessage("workerMessage", data.message || "Aucune tâche.", "error");
         return;
       }
       currentTask = data;
+
       const linkHtml = `<a class="link" href="${data.link}" target="_blank">${data.link}</a>`;
       let commentBlock = "";
       if (data.task_type === "comment" && data.comment_text) {
-        commentBlock = `<div><strong>Commentaire:</strong> ${data.comment_text} <button class="copy-btn" onclick="copyCommentText('${data.comment_text.replace(/'/g,"\\'")}')">📋 Copier</button></div>`;
+        commentBlock = `<div><strong>Comment:</strong> ${data.comment_text} <button class="copy-btn" onclick="copyCommentText('${data.comment_text.replace(/'/g,"\\'")}')">📋 Copier</button></div>`;
       }
-      document.getElementById("currentTaskInfo").innerHTML = `
-        <div><strong>Type:</strong> ${data.task_type.toUpperCase()}</div>
+
+      const info = `
+        <div><strong>Type:</strong> ${String(data.task_type||"").toUpperCase()}</div>
         <div><strong>Lien:</strong> ${linkHtml}</div>
         ${data.task_type==="like" && data.reaction_key ? `<div><strong>Réaction:</strong> ${data.reaction_key}</div>` : ""}
         ${commentBlock}
-        <div class="meta">${data.success_count}/${data.target}</div>`;
+        <div class="meta"><strong>Progress:</strong> ${data.success_count}/${data.target || "-"}</div>
+      `;
+      document.getElementById("currentTaskInfo").innerHTML = info;
       setMessage("workerMessage", "", "");
-    } catch(e) { setMessage("workerMessage", e.message, "error"); }
+    }catch(e){
+      setMessage("workerMessage", e.message, "error");
+    }
   }
 
   function copyCommentText(text) {
@@ -769,30 +815,36 @@
       setTimeout(() => setMessage("workerMessage", "", ""), 2000);
     }).catch(() => {
       const ta = document.createElement("textarea");
-      ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
       setMessage("workerMessage", "Texte copié !", "success");
       setTimeout(() => setMessage("workerMessage", "", ""), 2000);
     });
   }
 
-  async function verifyCurrentTask() {
+  async function verifyCurrentTask(){
     if (!selectedAccountId || !currentTask?.task_id) return;
-    setMessage("workerMessage",'<span class="loader"></span>Vérification...', "");
-    try {
+    setMessage("workerMessage", '<span class="loader"></span>Vérification...', "");
+    try{
       const data = await api("/worker/verify_task","POST",{account_id: selectedAccountId, task_id: currentTask.task_id});
       setMessage("workerMessage", data.message || "OK", data.success ? "success" : "error");
       await updateMe();
       await loadNextTask();
-    } catch(e) { setMessage("workerMessage", e.message, "error"); }
+    }catch(e){
+      setMessage("workerMessage", e.message, "error");
+    }
   }
 
-  async function skipTask() {
+  async function skipTask(){
     setMessage("workerMessage", "Tâche ignorée...", "");
-    try { await api("/worker/skip_task","POST",{}); } catch(e){}
+    try{ await api("/worker/skip_task","POST",{}); }catch(e){}
     await loadNextTask();
   }
 
-  // Orders
+  // ORDERS
   function liveTransformFollow(val) {
     const preview = document.getElementById("gfTransformPreview");
     if (!val) { preview.innerHTML = ""; return; }
@@ -803,263 +855,360 @@
       const parts = p.pathname.split("/").filter(x => x);
       if (parts.length && !parts[0].startsWith("@")) {
         preview.innerHTML = `Sera enregistré comme : <strong>https://www.facebook.com/@${parts[0]}</strong>`;
-      } else preview.innerHTML = "";
+      } else {
+        preview.innerHTML = "";
+      }
     } catch { preview.innerHTML = ""; }
   }
 
-  async function createFollowOrder() {
+  async function createFollowOrder(){
     const link = document.getElementById("gfProfileLink").value.trim();
-    const target = parseInt(document.getElementById("gfTarget").value);
-    if (!link || !target) return setMessage("gfMessage","Champs requis.","error");
-    try {
-      setMessage("gfMessage",'<span class="loader"></span>Création...', "");
+    const target = parseInt(document.getElementById("gfTarget").value || "0", 10);
+    if (!link || !target) return setMessage("gfMessage","Remplis tous les champs.","error");
+    try{
+      setMessage("gfMessage", '<span class="loader"></span>Création...', "");
       const data = await api("/tasks/create_follow","POST",{profile_link: link, target});
-      setMessage("gfMessage", data.message, "success");
+      setMessage("gfMessage", data.message || "OK", "success");
       await updateMe();
-    } catch(e) { setMessage("gfMessage", e.message, "error"); }
+    }catch(e){ setMessage("gfMessage", e.message, "error"); }
   }
-  async function createLikeOrder() {
+
+  async function createLikeOrder(){
     const link = document.getElementById("glLink").value.trim();
     const reaction_key = document.getElementById("glReaction").value;
-    const target = parseInt(document.getElementById("glTarget").value);
-    if (!link || !target) return setMessage("glMessage","Champs requis.","error");
-    try {
-      setMessage("glMessage",'<span class="loader"></span>...', "");
+    const target = parseInt(document.getElementById("glTarget").value || "0", 10);
+    if (!link || !reaction_key || !target) return setMessage("glMessage","Remplis tous les champs.","error");
+    try{
+      setMessage("glMessage", '<span class="loader"></span>Création...', "");
       const data = await api("/tasks/create_like","POST",{link, reaction_key, target});
-      setMessage("glMessage", data.message, "success");
+      setMessage("glMessage", data.message || "OK", "success");
       await updateMe();
-    } catch(e) { setMessage("glMessage", e.message, "error"); }
+    }catch(e){ setMessage("glMessage", e.message, "error"); }
   }
-  async function createCommentOrder() {
+
+  async function createCommentOrder(){
     const link = document.getElementById("gcLink").value.trim();
     const comment_text = document.getElementById("gcText").value.trim();
-    if (!link || !comment_text) return setMessage("gcMessage","Champs requis.","error");
-    try {
-      setMessage("gcMessage",'<span class="loader"></span>...', "");
-      const data = await api("/tasks/create_comment","POST",{link, comment_text, target:1});
-      setMessage("gcMessage", data.message, "success");
+    const target = 1; // forcé à 1
+    if (!link || !comment_text) return setMessage("gcMessage","Remplis tous les champs.","error");
+    try{
+      setMessage("gcMessage", '<span class="loader"></span>Création...', "");
+      const data = await api("/tasks/create_comment","POST",{link, comment_text, target});
+      setMessage("gcMessage", data.message || "OK", "success");
       await updateMe();
-    } catch(e) { setMessage("gcMessage", e.message, "error"); }
+    }catch(e){ setMessage("gcMessage", e.message, "error"); }
   }
 
-  async function loadOrders() {
+  // ORDER STATUS
+  async function loadOrders(){
     document.getElementById("ordersPageLabel").textContent = ordersPage;
     const list = document.getElementById("ordersList");
-    list.innerHTML = "Chargement...";
-    try {
+    list.innerHTML = "Loading...";
+    try{
       const data = await api(`/orders/status?page=${ordersPage}&page_size=30`,"GET");
       const items = data.items || [];
-      list.innerHTML = items.length ? items.map(o => `
-        <div class="task-item"><div><b>${o.task_type.toUpperCase()}</b> - ${o.status}<br>${o.success_count}/${o.target} - <a class="link" href="${o.link}" target="_blank">${o.link}</a></div></div>
-      `).join("") : "<div>Aucune commande.</div>";
-    } catch(e) { list.innerHTML = ""; setMessage("ordersMsg", e.message, "error"); }
+      if (!items.length){ list.innerHTML = "<div>Aucun order</div>"; return; }
+      list.innerHTML = items.map(o => `
+        <div class="task-item">
+          <div>
+            <div><b>${o.task_type.toUpperCase()}</b> — <span class="meta">${o.status}</span></div>
+            <div class="meta">${o.success_count}/${o.target} — ${o.created_at}</div>
+            <div class="meta"><a class="link" target="_blank" href="${o.link}">${o.link}</a></div>
+          </div>
+        </div>
+      `).join("");
+      setMessage("ordersMsg","", "");
+    }catch(e){
+      list.innerHTML = "";
+      setMessage("ordersMsg", e.message, "error");
+    }
   }
 
-  // Deposit
+  // DEPOSIT 2 STEPS
   function updateDepositEstimate() {
     const coins = parseFloat(document.getElementById("depCoins").value) || 0;
-    document.getElementById("depEstimate").innerHTML = `Estimation : <strong>${coins*1.5} Ar</strong> (1 coin = 1.5 Ar)`;
+    const ar = coins * 1.5;
+    document.getElementById("depEstimate").innerHTML = `Estimation : ${ar} Ar (1 coin = 1.5 Ar)`;
   }
+
   function depositNext() {
     const coins = parseFloat(document.getElementById("depCoins").value);
-    if (!coins || coins < 2000) { setMessage("depMessage","Minimum 2000 coins.","error"); return; }
-    document.getElementById("depAmountArLabel").textContent = coins*1.5;
+    if (!coins || coins < 2000) {
+      setMessage("depMessage", "Minimum 2000 coins.", "error");
+      return;
+    }
+    const ar = coins * 1.5;
+    document.getElementById("depAmountArLabel").textContent = ar;
     document.getElementById("depositStep1").style.display = "none";
     document.getElementById("depositStep2").style.display = "block";
   }
-  async function createDeposit() {
+
+  async function createDeposit(){
     const coins = parseFloat(document.getElementById("depCoins").value);
     const reference = document.getElementById("depRef").value.trim();
-    if (!coins || coins<2000) return setMessage("depMessage","Montant invalide","error");
-    try {
-      setMessage("depMessage",'<span class="loader"></span>...', "");
+    if (!coins || coins < 2000) return setMessage("depMessage","Montant invalide","error");
+    try{
+      setMessage("depMessage", '<span class="loader"></span>Envoi...', "");
       const data = await api("/wallet/deposit","POST",{coins, reference});
-      setMessage("depMessage", data.message, "success");
-    } catch(e) { setMessage("depMessage", e.message, "error"); }
+      setMessage("depMessage", data.message + " ID: " + data.request_id, "success");
+    }catch(e){ setMessage("depMessage", e.message, "error"); }
   }
 
-  async function createWithdraw() {
+  // WITHDRAW / SWAP / HISTORY
+  async function createWithdraw(){
     const amount_ar = parseFloat(document.getElementById("wdAmount").value);
     const method = document.getElementById("wdMethod").value;
     const account = document.getElementById("wdAccount").value.trim();
     const recipient_name = document.getElementById("wdName").value.trim();
     if (!amount_ar || amount_ar<5000 || !account || !recipient_name) return setMessage("wdMessage","Champs invalides","error");
-    try {
-      setMessage("wdMessage",'<span class="loader"></span>...', "");
+    try{
+      setMessage("wdMessage", '<span class="loader"></span>Envoi...', "");
       const data = await api("/wallet/withdraw","POST",{amount_ar, method, account, recipient_name});
-      setMessage("wdMessage", data.message, "success");
+      setMessage("wdMessage", data.message + " ID: " + data.request_id, "success");
       await updateMe();
-    } catch(e) { setMessage("wdMessage", e.message, "error"); }
+    }catch(e){ setMessage("wdMessage", e.message, "error"); }
   }
 
-  async function doSwap() {
+  async function doSwap(){
     const amount_ar = parseFloat(document.getElementById("swapAmount").value);
-    if (!amount_ar) return setMessage("swapMessage","Montant invalide","error");
-    try {
-      setMessage("swapMessage",'<span class="loader"></span>...', "");
+    if (!amount_ar || amount_ar<=0) return setMessage("swapMessage","Montant invalide","error");
+    try{
+      setMessage("swapMessage", '<span class="loader"></span>Swap...', "");
       const data = await api("/wallet/swap","POST",{amount_ar});
-      setMessage("swapMessage", `+${data.received_coins} coins`, "success");
+      setMessage("swapMessage", data.message + ` (+${data.received_coins} coins)`, "success");
       await updateMe();
-    } catch(e) { setMessage("swapMessage", e.message, "error"); }
+    }catch(e){ setMessage("swapMessage", e.message, "error"); }
   }
 
-  // Histories
   async function loadDepositHistory() {
     const list = document.getElementById("depositHistoryList");
-    list.innerHTML = "Chargement...";
-    try {
+    list.innerHTML = "Loading...";
+    try{
       const data = await api("/wallet/deposit/history","GET");
-      list.innerHTML = data.items.length ? data.items.map(x=>`<div class="task-item"><div>${x.status} - ${x.coins} coins (${x.amount_ar} Ar) ${x.reference||""}</div></div>`).join("") : "Aucun historique.";
-    } catch(e) { list.innerHTML = ""; setMessage("depositHistoryMsg", e.message, "error"); }
-  }
-  async function loadWithdrawHistory() {
-    const list = document.getElementById("withdrawHistoryList");
-    list.innerHTML = "Chargement...";
-    try {
-      const data = await api("/wallet/withdraw/history","GET");
-      list.innerHTML = data.items.length ? data.items.map(x=>`<div class="task-item"><div>${x.status} - ${x.amount_ar} Ar (${x.method}) ${x.account}</div></div>`).join("") : "Aucun historique.";
-    } catch(e) { list.innerHTML = ""; setMessage("withdrawHistoryMsg", e.message, "error"); }
+      const items = data.items || [];
+      list.innerHTML = items.length ? items.map(x=>`
+        <div class="task-item"><div><b>${x.status}</b> — ${x.created_at}<br>Coins: ${x.coins} | Ar: ${x.amount_ar} | Ref: ${x.reference||""}</div></div>
+      `).join("") : "<div>No history</div>";
+    }catch(e){ list.innerHTML=""; setMessage("depositHistoryMsg", e.message, "error"); }
   }
 
-  // Verification utilisateur
-  async function loadMyAccountsForVerify() {
+  async function loadWithdrawHistory() {
+    const list = document.getElementById("withdrawHistoryList");
+    list.innerHTML = "Loading...";
+    try{
+      const data = await api("/wallet/withdraw/history","GET");
+      const items = data.items || [];
+      list.innerHTML = items.length ? items.map(x=>`
+        <div class="task-item"><div><b>${x.status}</b> — ${x.created_at}<br>Ar: ${x.amount_ar} | ${x.method} | ${x.account}</div></div>
+      `).join("") : "<div>No history</div>";
+    }catch(e){ list.innerHTML=""; setMessage("withdrawHistoryMsg", e.message, "error"); }
+  }
+
+  // VERIFY ACCOUNT (user)
+  async function loadVerifyAccounts() {
     document.getElementById("verifyPageLabel").textContent = verifyPage;
     const list = document.getElementById("verifyAccountsList");
-    list.innerHTML = "Chargement...";
+    list.innerHTML = "Loading...";
     try {
-      const data = await api(`/task_account/list_with_status?page=${verifyPage}&page_size=50`,"GET");
-      const items = data.items || [];
-      if (!items.length) { list.innerHTML = "<div>Aucun compte.</div>"; return; }
-      list.innerHTML = items.map(acc => {
-        let badge = "";
-        let actionBtn = "";
-        if (acc.status === "non_verified") {
-          badge = '<span class="status-badge status-non_verified">Non vérifié</span>';
-          actionBtn = `<button class="small-btn" onclick="requestVerification('${acc.id}')">Get verified</button>`;
-        } else if (acc.status === "pending") {
-          badge = '<span class="status-badge status-pending">En attente</span>';
-        } else if (acc.status === "verified") {
-          badge = '<span class="status-badge status-verified">Vérifié 🟢</span>';
-        } else if (acc.status === "rejected") {
-          badge = '<span class="status-badge status-rejected">Rejeté</span>';
-          actionBtn = `<button class="small-btn" onclick="requestVerification('${acc.id}')">Retry</button>`;
+      const data = await api(`/task_account/verify/list?page=${verifyPage}&page_size=50`, "GET");
+      const accounts = data.accounts || [];
+      if (!accounts.length) {
+        list.innerHTML = "<div>Aucun compte.</div>";
+        return;
+      }
+      list.innerHTML = accounts.map(a => {
+        const status = a.verification_status;
+        let statusHtml = "";
+        let buttonHtml = "";
+        if (status === "verified") {
+          statusHtml = `<span class="status-badge verified">vérifié 🟢</span>`;
+        } else if (status === "pending") {
+          statusHtml = `<span class="status-badge pending">en attente</span>`;
+        } else if (status === "rejected") {
+          statusHtml = `<span class="status-badge rejected">rejeté</span>`;
+          buttonHtml = `<button class="small-btn" onclick="requestVerification('${a.id}')">Retry get verified</button>`;
+        } else { // unverified
+          statusHtml = `<span class="status-badge">non vérifié</span>`;
+          buttonHtml = `<button class="small-btn" onclick="requestVerification('${a.id}')">Get Verified</button>`;
         }
-        return `<div class="account-item">
-          <div><strong>${acc.display_name||acc.profile_link}</strong><br><small>${acc.profile_link}</small> ${badge}</div>
-          ${actionBtn}
-        </div>`;
+        return `
+          <div class="account-item">
+            <div style="flex:1;">
+              <div><a class="link" href="${a.profile_link}" target="_blank">${a.display_name || a.profile_link}</a></div>
+              <div style="font-size:12px;">${statusHtml}</div>
+            </div>
+            ${buttonHtml}
+          </div>
+        `;
       }).join("");
-    } catch(e) { list.innerHTML = "Erreur: "+e.message; }
+      setMessage("verifyMsg", "", "");
+    } catch(e) {
+      list.innerHTML = "";
+      setMessage("verifyMsg", e.message, "error");
+    }
   }
 
   async function requestVerification(accountId) {
     try {
-      setMessage("verifyMessage",'<span class="loader"></span>Envoi...', "");
-      await api("/task_account/request_verification","POST",{account_id: accountId});
-      setMessage("verifyMessage","Demande envoyée !","success");
-      loadMyAccountsForVerify();
-    } catch(e) { setMessage("verifyMessage", e.message, "error"); }
+      setMessage("verifyMsg", '<span class="loader"></span>Envoi...', "");
+      const data = await api("/task_account/request_verification", "POST", { account_id: accountId });
+      setMessage("verifyMsg", data.message || "Demande envoyée", "success");
+      await loadVerifyAccounts();
+    } catch(e) {
+      setMessage("verifyMsg", e.message, "error");
+    }
   }
 
-  // Admin verifications
-  async function loadAdminVerifications() {
-    document.getElementById("adminVerifPageLabel").textContent = adminVerifPage;
-    const list = document.getElementById("adminVerificationsList");
-    list.innerHTML = "Chargement...";
+  // ADMIN VERIFY ACCOUNTS
+  async function loadAdminVerifyAccounts() {
+    document.getElementById("adminVerifyPageLabel").textContent = adminVerifyPage;
+    const list = document.getElementById("adminVerifyList");
+    list.innerHTML = "Loading...";
     try {
-      const data = await api(`/admin/verifications/pending?page=${adminVerifPage}&page_size=30`,"GET");
+      const data = await api(`/admin/verify_accounts?page=${adminVerifyPage}&page_size=50`, "GET");
       const items = data.items || [];
-      list.innerHTML = items.length ? items.map(v => `
+      if (!items.length) {
+        list.innerHTML = "<div>Aucune demande en attente.</div>";
+        return;
+      }
+      list.innerHTML = items.map(item => `
         <div class="task-item">
-          <div><b>${v.user_email}</b> - ${v.display_name}<br><small>${v.profile_link}</small></div>
-          <div style="display:flex; gap:6px;">
-            <button class="small-btn" onclick="handleVerification('${v.id}','approve')">✅ Approuver</button>
-            <button class="small-btn" onclick="handleVerification('${v.id}','reject')">❌ Rejeter</button>
+          <div style="flex:1;">
+            <b>${item.user_email}</b><br>
+            <a class="link" href="${item.profile_link}" target="_blank">${item.display_name || item.profile_link}</a>
+            <div class="meta">ID: ${item.id}</div>
           </div>
-        </div>`).join("") : "<div>Aucune demande.</div>";
-    } catch(e) { list.innerHTML = ""; setMessage("adminVerifMsg", e.message, "error"); }
+          <div style="display:flex;gap:4px;">
+            <button class="small-btn" onclick="handleAdminVerify('${item.id}','approve')">Approve</button>
+            <button class="small-btn" onclick="handleAdminVerify('${item.id}','reject')">Reject</button>
+          </div>
+        </div>
+      `).join("");
+      setMessage("adminVerifyMsg", "", "");
+    } catch(e) {
+      list.innerHTML = "";
+      setMessage("adminVerifyMsg", e.message, "error");
+    }
   }
 
-  async function handleVerification(verificationId, action) {
+  async function handleAdminVerify(accountId, action) {
     try {
-      await api("/admin/verifications/handle","POST",{verification_id: verificationId, action});
-      loadAdminVerifications();
-    } catch(e) { setMessage("adminVerifMsg", e.message, "error"); }
+      await api("/admin/verify_accounts/handle", "POST", { account_id: accountId, action });
+      setMessage("adminVerifyMsg", action === "approve" ? "Approuvé, 10 Ar crédités." : "Rejeté.", "success");
+      loadAdminVerifyAccounts();
+    } catch(e) {
+      setMessage("adminVerifyMsg", e.message, "error");
+    }
   }
 
-  // Admin deposits / withdraws
-  async function loadAdminDeposits() {
-    document.getElementById("adminDepPageLabel").textContent = adminDepPage;
-    const list = document.getElementById("adminDepositsList");
-    list.innerHTML = "Chargement...";
-    try {
-      const data = await api(`/admin/deposits?status=pending&page=${adminDepPage}&page_size=30`,"GET");
-      const items = data.items || [];
-      list.innerHTML = items.length ? items.map(x=>`
-        <div class="task-item"><div style="width:100%">
-          <b>${x.user_email}</b> - ${x.coins} coins (${x.amount_ar} Ar) Ref: ${x.reference||""}
-          <div><button class="small-btn" onclick="handleDeposit('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleDeposit('${x.id}','reject')">Reject</button></div>
-        </div></div>`).join("") : "<div>Vide.</div>";
-    } catch(e) { list.innerHTML = ""; setMessage("adminDepositsMsg", e.message, "error"); }
-  }
-  async function handleDeposit(id, action) { try { await api("/admin/deposits/handle","POST",{request_id:id, action}); loadAdminDeposits(); } catch(e) { setMessage("adminDepositsMsg", e.message, "error"); } }
-
-  async function loadAdminWithdraws() {
-    document.getElementById("adminWdPageLabel").textContent = adminWdPage;
-    const list = document.getElementById("adminWithdrawsList");
-    list.innerHTML = "Chargement...";
-    try {
-      const data = await api(`/admin/withdraws?status=pending&page=${adminWdPage}&page_size=30`,"GET");
-      const items = data.items || [];
-      list.innerHTML = items.length ? items.map(x=>`
-        <div class="task-item"><div style="width:100%">
-          <b>${x.user_email}</b> - ${x.amount_ar} Ar (${x.method}) ${x.account}
-          <div><button class="small-btn" onclick="handleWithdraw('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','reject')">Reject</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','return')">Return</button></div>
-        </div></div>`).join("") : "<div>Vide.</div>";
-    } catch(e) { list.innerHTML = ""; setMessage("adminWithdrawsMsg", e.message, "error"); }
-  }
-  async function handleWithdraw(id, action) { try { await api("/admin/withdraws/handle","POST",{request_id:id, action}); loadAdminWithdraws(); } catch(e) { setMessage("adminWithdrawsMsg", e.message, "error"); } }
-
-  // Admin credit/deduct/ban/users
-  async function adminCredit() {
+  // ADMIN
+  async function adminCredit(){
     const email = document.getElementById("admEmail").value.trim().toLowerCase();
     const coins = parseFloat(document.getElementById("admCoins").value)||0;
     const ar = parseFloat(document.getElementById("admAr").value)||0;
-    if (!email) return setMessage("admMessage","Email requis","error");
-    try { setMessage("admMessage",'<span class="loader"></span>...', ""); const data = await api("/admin/credit","POST",{email, coins, ar}); setMessage("admMessage", data.message, "success"); } catch(e) { setMessage("admMessage", e.message, "error"); }
+    if (!email) return setMessage("admMessage","Email obligatoire","error");
+    try{
+      setMessage("admMessage", '<span class="loader"></span>...', "");
+      const data = await api("/admin/credit","POST",{email, coins, ar});
+      setMessage("admMessage", data.message, "success");
+    }catch(e){ setMessage("admMessage", e.message, "error"); }
   }
-  async function adminDeduct() {
+
+  async function adminDeduct(){
     const email = document.getElementById("deductEmail").value.trim().toLowerCase();
     const coins = parseFloat(document.getElementById("deductCoins").value)||0;
     const ar = parseFloat(document.getElementById("deductAr").value)||0;
-    if (!email) return setMessage("deductMessage","Email requis","error");
-    try { setMessage("deductMessage",'<span class="loader"></span>...', ""); const data = await api("/admin/deduct","POST",{email, coins, ar}); setMessage("deductMessage", data.message, "success"); } catch(e) { setMessage("deductMessage", e.message, "error"); }
-  }
-  async function adminBan() {
-    const email = document.getElementById("banEmail").value.trim().toLowerCase();
-    const action = document.getElementById("banAction").value;
-    if (!email) return setMessage("banMessage","Email requis","error");
-    try { setMessage("banMessage",'<span class="loader"></span>...', ""); const data = await api("/admin/ban","POST",{email, action}); setMessage("banMessage", data.message, "success"); } catch(e) { setMessage("banMessage", e.message, "error"); }
-  }
-  async function loadAdminUsers() {
-    document.getElementById("usersPageLabel").textContent = usersPage;
-    const list = document.getElementById("adminUsersList");
-    const search = document.getElementById("userSearch").value.trim();
-    list.innerHTML = "Chargement...";
-    try {
-      const data = await api(`/admin/users?page=${usersPage}&page_size=100&search=${encodeURIComponent(search)}`,"GET");
-      const items = data.items || [];
-      list.innerHTML = items.length ? items.map(u=>`
-        <div class="task-item"><div><b>${u.email}</b> - Coins:${u.balance_coins} Ar:${u.balance_ar} ${u.banned?"[BAN]":""} ${u.suspended_until?"[SUSP]":""}</div></div>`).join("") : "Aucun.";
-    } catch(e) { list.innerHTML = ""; setMessage("adminUsersMsg", e.message, "error"); }
+    if (!email) return setMessage("deductMessage","Email obligatoire","error");
+    try{
+      setMessage("deductMessage", '<span class="loader"></span>...', "");
+      const data = await api("/admin/deduct","POST",{email, coins, ar});
+      setMessage("deductMessage", data.message, "success");
+    }catch(e){ setMessage("deductMessage", e.message, "error"); }
   }
 
-  // Init
-  window.addEventListener("load", () => {
+  async function adminBan(){
+    const email = document.getElementById("banEmail").value.trim().toLowerCase();
+    const action = document.getElementById("banAction").value;
+    if (!email) return setMessage("banMessage","Email obligatoire","error");
+    try{
+      setMessage("banMessage", '<span class="loader"></span>...', "");
+      const data = await api("/admin/ban","POST",{email, action});
+      setMessage("banMessage", data.message, "success");
+    }catch(e){ setMessage("banMessage", e.message, "error"); }
+  }
+
+  async function loadAdminUsers(){
+    const search = document.getElementById("userSearch").value.trim();
+    document.getElementById("usersPageLabel").textContent = usersPage;
+    const list = document.getElementById("adminUsersList");
+    list.innerHTML = "Loading...";
+    try{
+      const data = await api(`/admin/users?page=${usersPage}&page_size=100&search=${encodeURIComponent(search)}`,"GET");
+      const items = data.items || [];
+      if (!items.length){ list.innerHTML = "<div>Aucun utilisateur</div>"; return; }
+      list.innerHTML = items.map(u=>`
+        <div class="task-item">
+          <div>
+            <b>${u.email}</b> — Coins: ${u.balance_coins} Ar: ${u.balance_ar}
+            ${u.banned ? " [BANNI]" : ""} ${u.suspended_until ? " [SUSPENDU]" : ""}
+            <div class="meta">ID: ${u.id}</div>
+          </div>
+        </div>
+      `).join("");
+    }catch(e){ list.innerHTML=""; setMessage("adminUsersMsg", e.message, "error"); }
+  }
+
+  async function loadAdminDeposits(){
+    document.getElementById("adminDepPageLabel").textContent = adminDepPage;
+    const list = document.getElementById("adminDepositsList");
+    list.innerHTML = "Loading...";
+    try{
+      const data = await api(`/admin/deposits?status=pending&page=${adminDepPage}&page_size=30`,"GET");
+      const items = data.items || [];
+      if (!items.length){ list.innerHTML = "<div>Empty</div>"; return; }
+      list.innerHTML = items.map(x=>`
+        <div class="task-item"><div style="width:100%;">
+          <b>${x.user_email}</b> — ${x.coins} coins (${x.amount_ar} Ar) Ref: ${x.reference||""}
+          <div><button class="small-btn" onclick="handleDeposit('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleDeposit('${x.id}','reject')">Reject</button></div>
+        </div></div>
+      `).join("");
+    }catch(e){ list.innerHTML=""; setMessage("adminDepositsMsg", e.message, "error"); }
+  }
+
+  async function handleDeposit(id, action){
+    try{ await api("/admin/deposits/handle","POST",{request_id:id, action}); loadAdminDeposits(); }
+    catch(e){ setMessage("adminDepositsMsg", e.message, "error"); }
+  }
+
+  async function loadAdminWithdraws(){
+    document.getElementById("adminWdPageLabel").textContent = adminWdPage;
+    const list = document.getElementById("adminWithdrawsList");
+    list.innerHTML = "Loading...";
+    try{
+      const data = await api(`/admin/withdraws?status=pending&page=${adminWdPage}&page_size=30`,"GET");
+      const items = data.items || [];
+      if (!items.length){ list.innerHTML = "<div>Empty</div>"; return; }
+      list.innerHTML = items.map(x=>`
+        <div class="task-item"><div style="width:100%;">
+          <b>${x.user_email}</b> — ${x.amount_ar} Ar (${x.method}) ${x.account}
+          <div><button class="small-btn" onclick="handleWithdraw('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','reject')">Reject</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','return')">Return</button></div>
+        </div></div>
+      `).join("");
+    }catch(e){ list.innerHTML=""; setMessage("adminWithdrawsMsg", e.message, "error"); }
+  }
+
+  async function handleWithdraw(id, action){
+    try{ await api("/admin/withdraws/handle","POST",{request_id:id, action}); loadAdminWithdraws(); }
+    catch(e){ setMessage("adminWithdrawsMsg", e.message, "error"); }
+  }
+
+  // INIT
+  window.addEventListener("load", async () => {
     if (auth?.token) {
       showDashboard();
     } else {
-      showAuthPage(); showLogin();
+      showAuthPage();
+      showLogin();
     }
   });
 </script>
