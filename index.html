@@ -2,191 +2,309 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>FB Tasks Panel</title>
   <style>
-    *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-    body{
-      min-height:100vh;display:flex;align-items:center;justify-content:center;
-      background:linear-gradient(135deg,#ff512f,#dd2476,#7f00ff);
-      padding:20px;color:white;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
     }
-    .container{
-      width:100%;max-width:680px;background:rgba(0,0,0,.35);
-      backdrop-filter:blur(12px);
-      border:1px solid rgba(255,255,255,.2);
-      border-radius:24px;padding:18px 18px 22px;
-      box-shadow:0 20px 40px rgba(0,0,0,.35);
-      position:relative;
+    html, body {
+      width: 100%;
+      min-height: 100%;
     }
-    .page{display:none;animation:fadeIn .25s ease}
-    .page.active{display:block}
-    .title{text-align:center;margin-bottom:18px}
-    .title h1{font-size:26px;margin-bottom:4px}
-    .title p{font-size:14px;opacity:.9}
-
-    .tabs{display:flex;gap:10px;margin:10px 0 16px}
-    .tabs button,.submit-btn,.secondary-btn,.feature-btn,.small-btn{
-      border:none;border-radius:14px;cursor:pointer;font-size:14px;font-weight:bold;transition:.25s;
+    body {
+      min-height: 100vh;
+      display: block;
+      background: linear-gradient(135deg, #0a2f1f, #0d5e2e, #0a2f1f);
+      padding: 0;
+      color: #e0ffe0;
+      overflow-x: hidden;
     }
-    .tabs button{flex:1;padding:11px}
-    .tabs button.active{background:#fff;color:#7f00ff}
-    .tabs button.inactive{background:rgba(255,255,255,.18);color:#fff}
-
-    .form{display:none;animation:fadeIn .25s ease}
-    .form.active{display:block}
-
-    .field{margin-bottom:10px}
-    .field label{display:block;margin-bottom:5px;font-size:13px;font-weight:bold}
-    .field input,.field textarea,.field select{
-      width:100%;padding:11px 12px;border:none;border-radius:12px;outline:none;
-      font-size:14px;background:rgba(255,255,255,.92);color:#222;
+    .container {
+      width: 100%;
+      min-height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(16px);
+      border: 0;
+      border-radius: 0;
+      padding: 20px 20px 30px;
+      box-shadow: none;
+      position: relative;
     }
-    .field textarea{resize:vertical;min-height:70px}
-    .field input:focus,.field textarea:focus,.field select:focus{border:2px solid #ffd700}
+    .page { display: none; animation: fadeIn .25s ease; }
+    .page.active { display: block; }
+    .title { text-align: center; margin-bottom: 20px; }
+    .title h1 { font-size: 32px; margin-bottom: 6px; color: #00ff88; text-shadow: 0 0 20px #00cc66; }
+    .title p { font-size: 15px; opacity: 0.9; color: #b8ffd0; }
 
-    .submit-btn{width:100%;padding:11px;margin-top:8px;background:linear-gradient(90deg,#00c6ff,#0072ff);color:#fff}
-    .feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
-    .feature-btn{padding:11px;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.22)}
-    .feature-btn.disabled{opacity:.4;cursor:not-allowed}
-    .submit-btn:hover,.secondary-btn:hover,.feature-btn:hover,.small-btn:hover{transform:scale(1.03)}
+    /* Tabs */
+    .tabs { display: flex; gap: 10px; margin: 10px 0 16px; }
+    .tabs button, .submit-btn, .secondary-btn, .feature-btn, .small-btn {
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: 0.25s;
+    }
+    .tabs button { flex: 1; padding: 12px; }
+    .tabs button.active { background: #00ff88; color: #0a2f1f; }
+    .tabs button.inactive { background: rgba(255,255,255,0.1); color: #fff; }
 
-    .secondary-btn{padding:10px 12px;background:rgba(255,255,255,.16);color:#fff}
-    .small-btn{
-      padding:6px 10px;font-size:12px;background:rgba(255,255,255,.14);color:#fff;
-      border:1px solid rgba(255,255,255,.25);border-radius:10px;
+    .form { display: none; animation: fadeIn .25s ease; }
+    .form.active { display: block; }
+
+    .field { margin-bottom: 12px; }
+    .field label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: bold; color: #b8ffd0; }
+    .field input, .field textarea, .field select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      border-radius: 12px;
+      outline: none;
+      font-size: 14px;
+      background: rgba(0, 20, 10, 0.8);
+      color: #e0ffe0;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      border: 2px solid #00ff88;
+      box-shadow: 0 0 12px #00ff88;
+    }
+    .field textarea { resize: vertical; min-height: 70px; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      background: linear-gradient(90deg, #00cc66, #00ff88);
+      color: #0a2f1f;
+      font-weight: bold;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .feature-btn {
+      padding: 14px 10px;
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      color: #00ff88;
+      font-size: 14px;
+    }
+    .feature-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+    .submit-btn:hover, .secondary-btn:hover, .feature-btn:hover:not(.disabled), .small-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 15px #00ff88;
     }
 
-    .small-text{text-align:center;margin-top:10px;font-size:13px;opacity:.95}
-    .message{text-align:center;margin-top:10px;min-height:22px;font-size:13px}
-    .success{color:#b7ffb7;font-weight:bold}
-    .error{color:#ffd1d1;font-weight:bold}
-
-    .card{margin-top:8px;padding:10px 12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:16px}
-    .card h2{font-size:17px;margin-bottom:4px}
-    .card p{font-size:13px;line-height:1.5;opacity:.95}
-
-    .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-    .balance{font-size:13px;opacity:.95}
-    .balance strong{font-size:15px}
-
-    .hamburger{width:28px;height:24px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between}
-    .hamburger span{height:3px;border-radius:999px;background:white}
-
-    .admin-menu{
-      position:absolute;top:40px;right:18px;background:rgba(0,0,0,.85);
-      border-radius:12px;border:1px solid rgba(255,255,255,.25);padding:8px;
-      display:none;flex-direction:column;gap:6px;z-index:10;
-      width: 230px;
+    .secondary-btn {
+      padding: 10px 14px;
+      background: rgba(0, 255, 136, 0.15);
+      color: #00ff88;
     }
-    .admin-menu.show{display:flex}
-
-    .section-title{font-size:14px;margin-top:12px;margin-bottom:4px;font-weight:bold}
-    .section-area{margin-top:4px}
-
-    .accounts-list,.tasks-log{
-      margin-top:6px;max-height:220px;overflow-y:auto;border-radius:10px;
-      border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.03);
-      padding:6px;font-size:13px;
+    .small-btn {
+      padding: 7px 12px;
+      font-size: 12px;
+      background: rgba(0, 255, 136, 0.15);
+      color: #00ff88;
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      border-radius: 10px;
     }
 
-    .account-item,.task-item{
-      padding:6px;border-radius:8px;background:rgba(255,255,255,.08);
-      margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;gap:8px;
+    .small-text { text-align: center; margin-top: 10px; font-size: 13px; opacity: 0.95; }
+    .message { text-align: center; margin-top: 12px; min-height: 24px; font-size: 13px; }
+    .success { color: #00ff88; font-weight: bold; }
+    .error { color: #ff8888; font-weight: bold; }
+
+    .card {
+      margin-top: 12px;
+      padding: 14px;
+      background: rgba(0, 40, 20, 0.4);
+      border: 1px solid rgba(0, 255, 136, 0.25);
+      border-radius: 18px;
+    }
+    .card h2 { font-size: 18px; margin-bottom: 6px; color: #00ff88; }
+    .card p { font-size: 13px; line-height: 1.5; opacity: 0.95; color: #b8ffd0; }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .balance {
+      font-size: 13px;
+      opacity: 0.95;
+      color: #b8ffd0;
+    }
+    .balance strong { font-size: 16px; color: #00ff88; }
+
+    .hamburger {
+      width: 30px;
+      height: 26px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+    .hamburger span {
+      height: 4px;
+      border-radius: 999px;
+      background: #00ff88;
+      transition: 0.2s;
     }
 
-    .task-item .meta{font-size:12px;opacity:.9}
-    a.link{color:#fff;text-decoration:underline;word-break:break-all}
-
-    .copy-btn{
-      background:rgba(255,255,255,.2);border:none;border-radius:6px;padding:2px 8px;
-      font-size:12px;cursor:pointer;color:white;margin-left:6px;
+    .admin-menu {
+      position: absolute;
+      top: 50px;
+      right: 20px;
+      background: rgba(0, 20, 10, 0.95);
+      border-radius: 16px;
+      border: 1px solid #00ff88;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      width: 250px;
+      backdrop-filter: blur(16px);
     }
-    .copy-btn:hover{background:rgba(255,255,255,.4)}
+    .admin-menu.show { display: flex; }
 
-    .loader{
-      display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.35);
-      border-top-color:white;border-radius:50%;animation:spin .8s linear infinite;
-      vertical-align:middle;margin-right:8px;
+    .section-title { font-size: 15px; margin-top: 14px; margin-bottom: 6px; font-weight: bold; color: #00ff88; }
+    .section-area { margin-top: 6px; }
+
+    .accounts-list, .tasks-log {
+      margin-top: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 255, 136, 0.25);
+      background: rgba(0, 0, 0, 0.2);
+      padding: 8px;
+      font-size: 13px;
     }
-    @keyframes spin{to{transform:rotate(360deg)}}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+    .account-item, .task-item {
+      padding: 8px;
+      border-radius: 10px;
+      background: rgba(0, 255, 136, 0.08);
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .task-item .meta { font-size: 12px; opacity: 0.9; color: #b8ffd0; }
+    a.link { color: #00ff88; text-decoration: underline; word-break: break-all; }
+
+    .copy-btn {
+      background: rgba(0, 255, 136, 0.2);
+      border: none;
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      color: #00ff88;
+      margin-left: 6px;
+    }
+    .copy-btn:hover { background: rgba(0, 255, 136, 0.4); }
+
+    .loader {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(0, 255, 136, 0.35);
+      border-top-color: #00ff88;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+      margin-left: 6px;
+    }
+    .status-non_verified { background: rgba(255,255,255,0.1); color: #aaa; }
+    .status-pending { background: rgba(255,200,0,0.2); color: #ffcc00; }
+    .status-verified { background: rgba(0,255,136,0.2); color: #00ff88; }
+    .status-rejected { background: rgba(255,100,100,0.2); color: #ff6666; }
   </style>
 </head>
 <body>
   <div class="container">
 
-    <!-- Menu admin / user -->
+    <!-- Menu hamburger (visible pour tous) -->
     <div id="adminMenu" class="admin-menu">
-      <button class="small-btn" onclick="showAccountInfo()">Infos compte</button>
-      <button class="small-btn" onclick="showReferral()">Parrainage</button>
-      <button class="small-btn" onclick="showDepositHistory()">Deposit history</button>
-      <button class="small-btn" onclick="showWithdrawHistory()">Withdraw history</button>
+      <button class="small-btn" onclick="showAccountInfo()">👤 Infos compte</button>
+      <button class="small-btn" onclick="showReferral()">🔗 Parrainage</button>
+      <button class="small-btn" onclick="showDepositHistory()">📥 Deposit history</button>
+      <button class="small-btn" onclick="showWithdrawHistory()">📤 Withdraw history</button>
+      <button class="small-btn" onclick="showSection('verifyCompte')">✅ Verify compte</button>
 
-      <div id="adminOnlyMenu" style="display:none; border-top:1px solid rgba(255,255,255,.18); padding-top:6px;">
-        <button class="small-btn" onclick="showAdminCredit()">Créditer Coins/Ar</button>
-        <button class="small-btn" onclick="showAdminDeduct()">Déduire Coins/Ar</button>
-        <button class="small-btn" onclick="showAdminBan()">Ban / Unban / Suspendre</button>
-        <button class="small-btn" onclick="showAdminUsers()">Liste utilisateurs</button>
-        <button class="small-btn" onclick="showAdminDeposits()">Approve Deposit</button>
-        <button class="small-btn" onclick="showAdminWithdraws()">Approve Withdraw</button>
+      <div id="adminOnlyMenu" style="display:none; border-top:1px solid rgba(0,255,136,0.3); padding-top:8px; margin-top:4px;">
+        <button class="small-btn" onclick="showAdminCredit()">💰 Créditer Coins/Ar</button>
+        <button class="small-btn" onclick="showAdminDeduct()">📉 Déduire Coins/Ar</button>
+        <button class="small-btn" onclick="showAdminBan()">🚫 Ban / Unban / Suspendre</button>
+        <button class="small-btn" onclick="showAdminUsers()">📋 Liste utilisateurs</button>
+        <button class="small-btn" onclick="showAdminVerifications()">🔍 Vérifications comptes</button>
+        <button class="small-btn" onclick="showAdminDeposits()">💵 Approve Deposit</button>
+        <button class="small-btn" onclick="showAdminWithdraws()">💸 Approve Withdraw</button>
       </div>
 
-      <button class="small-btn" onclick="logoutUser()">Déconnexion</button>
+      <button class="small-btn" onclick="logoutUser()" style="background:rgba(255,80,80,0.2); color:#ff8888;">🚪 Déconnexion</button>
     </div>
 
     <!-- Auth Page -->
     <div id="authPage" class="page active">
       <div class="title">
-        <h1>FB Tasks</h1>
-        <p>Connecte-toi ou crée un compte</p>
+        <h1>⚡ FB Tasks</h1>
+        <p>La puissance verte à portée de main</p>
       </div>
 
       <div class="tabs">
-        <button id="loginTab" class="active" onclick="showLogin()">Sign in</button>
-        <button id="registerTab" class="inactive" onclick="showRegister()">Sign up</button>
+        <button id="loginTab" class="active" onclick="showLogin()">Se connecter</button>
+        <button id="registerTab" class="inactive" onclick="showRegister()">Créer un compte</button>
       </div>
 
       <div id="loginForm" class="form active">
-        <div class="field">
-          <label>Email</label>
-          <input type="email" id="loginEmail" placeholder="ton@email.com" />
-        </div>
-        <div class="field">
-          <label>Mot de passe</label>
-          <input type="password" id="loginPassword" placeholder="********" />
-        </div>
-        <button class="submit-btn" onclick="loginUser()">Login</button>
+        <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="ton@email.com" /></div>
+        <div class="field"><label>Mot de passe</label><input type="password" id="loginPassword" placeholder="********" /></div>
+        <button class="submit-btn" onclick="loginUser()">Connexion</button>
       </div>
 
       <div id="registerForm" class="form">
-        <div class="field">
-          <label>Email</label>
-          <input type="email" id="registerEmail" placeholder="ton@email.com" />
-        </div>
-        <div class="field">
-          <label>Mot de passe</label>
-          <input type="password" id="registerPassword" placeholder="Créer un mot de passe" />
-        </div>
-        <div class="field">
-          <label>Code de parrainage (optionnel)</label>
-          <input type="text" id="registerRef" placeholder="ID du parrain" />
-        </div>
-        <button class="submit-btn" onclick="registerUser()">Register</button>
+        <div class="field"><label>Email</label><input type="email" id="registerEmail" placeholder="ton@email.com" /></div>
+        <div class="field"><label>Mot de passe</label><input type="password" id="registerPassword" placeholder="6 caractères min" /></div>
+        <div class="field"><label>Code de parrainage (optionnel)</label><input type="text" id="registerRef" placeholder="ID du parrain" /></div>
+        <button class="submit-btn" onclick="registerUser()">S'inscrire</button>
       </div>
 
       <div id="authMessage" class="message"></div>
-      <div class="small-text">Crée ton compte gratuitement, puis connecte-toi.</div>
+      <div class="small-text">Rejoins la communauté verte 🔥</div>
     </div>
 
     <!-- Dashboard Page -->
     <div id="dashboardPage" class="page">
       <div class="top-bar">
         <div class="balance">
-          <div><strong>Balance:</strong> <span id="balanceCoins">0</span> Coins • <span id="balanceAr">0</span> Ar</div>
-          <div id="userEmailLabel" style="font-size:12px; opacity:0.9;"></div>
+          <div><strong>💰</strong> <span id="balanceCoins">0</span> Coins • <strong>💎</strong> <span id="balanceAr">0</span> Ar</div>
+          <div id="userEmailLabel" style="font-size:12px; opacity:0.8;"></div>
         </div>
-        <div id="hamburgerWrap" style="display:none;">
+        <div id="hamburgerWrap" style="display:block;">
           <div class="hamburger" onclick="toggleAdminMenu()">
             <span></span><span></span><span></span>
           </div>
@@ -194,17 +312,18 @@
       </div>
 
       <div class="card">
-        <h2>Actions</h2>
+        <h2>⚡ Actions rapides</h2>
         <div class="feature-grid">
-          <button id="btnAddAccount" class="feature-btn" onclick="showSection('addAccount')">Add Account</button>
-          <button id="btnWork" class="feature-btn" onclick="showSection('work')">Work Tasks</button>
-          <button id="btnOrderStatus" class="feature-btn" onclick="showSection('orderStatus')">Order status</button>
-          <button id="btnGetFollower" class="feature-btn" onclick="showSection('getFollower')">GET FOLLOWER</button>
-          <button id="btnGetLike" class="feature-btn" onclick="showSection('getLike')">GET LIKE</button>
-          <button id="btnGetComment" class="feature-btn" onclick="showSection('getComment')">GET COMMENT</button>
-          <button class="feature-btn" onclick="showSection('deposit')">Deposit</button>
-          <button class="feature-btn" onclick="showSection('withdraw')">Withdraw</button>
-          <button class="feature-btn" onclick="showSection('swap')">SWAP</button>
+          <button id="btnAddAccount" class="feature-btn" onclick="showSection('addAccount')">➕ Add Account</button>
+          <button id="btnWork" class="feature-btn" onclick="showSection('work')">🔄 Work Tasks</button>
+          <button id="btnOrderStatus" class="feature-btn" onclick="showSection('orderStatus')">📊 Order status</button>
+          <button id="btnGetFollower" class="feature-btn" onclick="showSection('getFollower')">👥 GET FOLLOWER</button>
+          <button id="btnGetLike" class="feature-btn" onclick="showSection('getLike')">❤️ GET LIKE</button>
+          <button id="btnGetComment" class="feature-btn" onclick="showSection('getComment')">💬 GET COMMENT</button>
+          <button class="feature-btn" onclick="showSection('deposit')">💵 Deposit</button>
+          <button class="feature-btn" onclick="showSection('withdraw')">🏦 Withdraw</button>
+          <button class="feature-btn" onclick="showSection('swap')">🔄 SWAP</button>
+          <button id="btnVerifyCompte" class="feature-btn" onclick="showSection('verifyCompte')">✅ Verify compte</button>
         </div>
       </div>
 
@@ -213,33 +332,27 @@
 
         <!-- Add account -->
         <div id="sectionAddAccount" class="card" style="display:none;">
-          <h2>Add Task Account</h2>
-          <p style="font-size:12px;opacity:0.9;">Entrez l'URL du profil Facebook et les cookies du compte.</p>
-          <div class="field">
-            <label>URL du profil Facebook</label>
-            <input type="text" id="accProfileLink" placeholder="https://www.facebook.com/profile.php?id=..." />
-          </div>
-          <div class="field">
-            <label>Cookies</label>
-            <textarea id="accCookies" placeholder="c_user=...; xs=...; datr=...;"></textarea>
-          </div>
+          <h2>➕ Ajouter un compte Task</h2>
+          <p>URL du profil Facebook + cookies.</p>
+          <div class="field"><label>URL du profil</label><input type="text" id="accProfileLink" placeholder="https://www.facebook.com/..." /></div>
+          <div class="field"><label>Cookies</label><textarea id="accCookies" placeholder="c_user=...; xs=...;"></textarea></div>
           <button class="submit-btn" onclick="addTaskAccount()">Check & Save</button>
           <div id="addAccountMessage" class="message"></div>
         </div>
 
         <!-- Work tasks -->
         <div id="sectionWork" class="card" style="display:none;">
-          <h2>Work Tasks</h2>
-          <p style="font-size:12px;opacity:0.9;">Choisissez un compte, puis vérifiez des tâches.</p>
-          <button class="small-btn" onclick="loadAccountsForWork()">Charger comptes</button>
+          <h2>🔄 Work Tasks</h2>
+          <p>Choisis un compte, puis vérifie les tâches.</p>
+          <button class="small-btn" onclick="loadAccountsForWork()">Charger mes comptes</button>
           <div id="accountsForWork" class="accounts-list"></div>
 
-          <div id="currentTaskArea" style="margin-top:8px; display:none;">
+          <div id="currentTaskArea" style="margin-top:10px; display:none;">
             <div class="section-title">Tâche actuelle</div>
-            <div id="currentTaskInfo" style="font-size:13px;"></div>
-            <div style="display:flex;gap:8px;margin-top:6px;">
-              <button class="secondary-btn" style="flex:1;" onclick="verifyCurrentTask()">VERIFY</button>
-              <button class="secondary-btn" style="flex:1;" onclick="skipTask()">SKIP</button>
+            <div id="currentTaskInfo"></div>
+            <div style="display:flex; gap:10px; margin-top:8px;">
+              <button class="secondary-btn" style="flex:1;" onclick="verifyCurrentTask()">✅ VERIFY</button>
+              <button class="secondary-btn" style="flex:1;" onclick="skipTask()">⏩ SKIP</button>
             </div>
             <div id="workerMessage" class="message"></div>
           </div>
@@ -247,114 +360,86 @@
 
         <!-- Order status -->
         <div id="sectionOrderStatus" class="card" style="display:none;">
-          <h2>My Orders</h2>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <button class="small-btn" onclick="ordersPage=0; loadOrders()">Refresh</button>
-            <button class="small-btn" onclick="if(ordersPage>0){ordersPage--;loadOrders()}">Prev</button>
-            <button class="small-btn" onclick="ordersPage++;loadOrders()">Next</button>
-            <span style="font-size:12px;opacity:.9;">Page: <span id="ordersPageLabel">0</span></span>
+          <h2>📊 Mes commandes</h2>
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+            <button class="small-btn" onclick="ordersPage=0; loadOrders()">🔄 Refresh</button>
+            <button class="small-btn" onclick="if(ordersPage>0){ordersPage--;loadOrders()}">◀</button>
+            <button class="small-btn" onclick="ordersPage++;loadOrders()">▶</button>
+            <span>Page: <span id="ordersPageLabel">0</span></span>
           </div>
           <div id="ordersList" class="tasks-log"></div>
           <div id="ordersMsg" class="message"></div>
         </div>
 
-        <!-- Referral -->
+        <!-- Referral (via menu) -->
         <div id="sectionReferral" class="card" style="display:none;">
-          <h2>Parrainage</h2>
-          <p style="font-size:12px;opacity:0.9;">Partagez ce lien, recevez 100 Ar pour chaque filleul qui réussit 5 follows.</p>
-          <div class="field">
-            <label>Lien de parrainage</label>
-            <input type="text" id="referralLink" readonly onclick="this.select();document.execCommand('copy')" style="cursor:pointer;" />
-          </div>
+          <h2>🔗 Parrainage</h2>
+          <p>Partage ton lien et reçois <strong>100 Ar</strong> quand ton filleul réussit 5 follows.</p>
+          <div class="field"><label>Total filleuls</label><input type="text" id="referralCount" readonly value="0" /></div>
+          <div class="field"><label>Lien de parrainage</label><input type="text" id="referralLink" readonly onclick="this.select();document.execCommand('copy')" /></div>
           <button class="small-btn" onclick="copyReferral()">📋 Copier le lien</button>
           <div id="referralMsg" class="message"></div>
         </div>
 
+        <!-- Verify compte (section utilisateur) -->
+        <div id="sectionVerifyCompte" class="card" style="display:none;">
+          <h2>✅ Vérification de compte</h2>
+          <p style="margin-bottom:10px;">Les comptes vérifiés reçoivent beaucoup plus de tâches !<br/>
+          👤 Ajoute une photo de profil Malagasy, au moins 50 amis/followers.<br/>
+          🎁 10 Ar offerts après validation.</p>
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+            <button class="small-btn" onclick="verifyPage=0; loadMyAccountsForVerify()">🔄 Refresh</button>
+            <button class="small-btn" onclick="if(verifyPage>0){verifyPage--;loadMyAccountsForVerify()}">◀</button>
+            <button class="small-btn" onclick="verifyPage++;loadMyAccountsForVerify()">▶</button>
+            <span>Page: <span id="verifyPageLabel">0</span></span>
+          </div>
+          <div id="verifyAccountsList" class="accounts-list"></div>
+          <div id="verifyMessage" class="message"></div>
+        </div>
+
         <!-- GET FOLLOWER -->
         <div id="sectionGetFollower" class="card" style="display:none;">
-          <h2>GET FOLLOWER</h2>
-          <p style="font-size:12px;opacity:0.9;">1 coin / follower. Minimum 20 coins requis.</p>
-          <div class="field">
-            <label>Lien de profil Facebook</label>
-            <input type="text" id="gfProfileLink" placeholder="https://www.facebook.com/nom..." oninput="liveTransformFollow(this.value)" />
-            <div id="gfTransformPreview" style="font-size:12px;opacity:.8;margin-top:4px;"></div>
-          </div>
-          <div class="field">
-            <label>Nombre de followers</label>
-            <input type="number" id="gfTarget" placeholder="ex: 50" />
-          </div>
-          <button class="submit-btn" onclick="createFollowOrder()">Add FOLLOW Order</button>
+          <h2>👥 GET FOLLOWER</h2>
+          <p>1 coin / follower (min 20 coins)</p>
+          <div class="field"><label>Lien profil Facebook</label><input type="text" id="gfProfileLink" placeholder="https://www.facebook.com/nom" oninput="liveTransformFollow(this.value)" /><div id="gfTransformPreview" style="font-size:12px;opacity:0.8;margin-top:4px;"></div></div>
+          <div class="field"><label>Nombre</label><input type="number" id="gfTarget" placeholder="50" /></div>
+          <button class="submit-btn" onclick="createFollowOrder()">Créer commande</button>
           <div id="gfMessage" class="message"></div>
         </div>
 
         <!-- GET LIKE -->
         <div id="sectionGetLike" class="card" style="display:none;">
-          <h2>GET LIKE</h2>
-          <p style="font-size:12px;opacity:0.9;">0.5 coin / like. Minimum 20 coins requis.</p>
-          <div class="field">
-            <label>Lien du post/reel</label>
-            <input type="text" id="glLink" placeholder="https://www.facebook.com/..." />
-          </div>
-          <div class="field">
-            <label>Réaction</label>
-            <select id="glReaction">
-              <option value="like">J'aime</option>
-              <option value="love">J'adore</option>
-              <option value="haha">Haha</option>
-              <option value="wow">Wouah</option>
-              <option value="care">Solidaire</option>
-              <option value="angry">En colère</option>
-              <option value="sad">Triste</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Nombre de likes</label>
-            <input type="number" id="glTarget" placeholder="ex: 50" />
-          </div>
-          <button class="submit-btn" onclick="createLikeOrder()">Add LIKE Order</button>
+          <h2>❤️ GET LIKE</h2>
+          <p>0.5 coin / like (min 20 coins)</p>
+          <div class="field"><label>Lien post/reel</label><input type="text" id="glLink" /></div>
+          <div class="field"><label>Réaction</label><select id="glReaction"><option value="like">J'aime</option><option value="love">J'adore</option><option value="haha">Haha</option><option value="wow">Wouah</option><option value="care">Solidaire</option><option value="angry">En colère</option><option value="sad">Triste</option></select></div>
+          <div class="field"><label>Nombre</label><input type="number" id="glTarget" placeholder="50" /></div>
+          <button class="submit-btn" onclick="createLikeOrder()">Créer commande</button>
           <div id="glMessage" class="message"></div>
         </div>
 
         <!-- GET COMMENT -->
         <div id="sectionGetComment" class="card" style="display:none;">
-          <h2>GET COMMENT</h2>
-          <p style="font-size:12px;opacity:0.9;">2 coins / commentaire (max 1). Minimum 20 coins requis.</p>
-          <div class="field">
-            <label>Lien du post</label>
-            <input type="text" id="gcLink" placeholder="https://www.facebook.com/..." />
-          </div>
-          <div class="field">
-            <label>Texte exact du commentaire</label>
-            <input type="text" id="gcText" placeholder="ex: Merci chef" />
-          </div>
-          <div class="field">
-            <label>Nombre de commentaires</label>
-            <input type="number" id="gcTarget" placeholder="1" value="1" readonly />
-          </div>
-          <button class="submit-btn" onclick="createCommentOrder()">Add COMMENT Order</button>
+          <h2>💬 GET COMMENT</h2>
+          <p>2 coins / commentaire (max 1) (min 20 coins)</p>
+          <div class="field"><label>Lien post</label><input type="text" id="gcLink" /></div>
+          <div class="field"><label>Texte exact</label><input type="text" id="gcText" placeholder="Merci chef" /></div>
+          <div class="field"><label>Nombre</label><input type="number" id="gcTarget" value="1" readonly /></div>
+          <button class="submit-btn" onclick="createCommentOrder()">Créer commande</button>
           <div id="gcMessage" class="message"></div>
         </div>
 
         <!-- Deposit (2 étapes) -->
         <div id="sectionDeposit" class="card" style="display:none;">
-          <h2>Deposit</h2>
+          <h2>💵 Dépôt</h2>
           <div id="depositStep1">
-            <div class="field">
-              <label>Montant en Coins (min 2000)</label>
-              <input type="number" id="depCoins" placeholder="2000" min="2000" oninput="updateDepositEstimate()" />
-            </div>
-            <div id="depEstimate" style="font-size:13px;margin-bottom:8px;">Estimation : 0 Ar (1 coin = 1.5 Ar)</div>
+            <div class="field"><label>Montant en Coins (min 2000)</label><input type="number" id="depCoins" placeholder="2000" oninput="updateDepositEstimate()" /></div>
+            <div id="depEstimate" style="font-size:13px; margin-bottom:10px;">Estimation : 0 Ar (1 coin = 1.5 Ar)</div>
             <button class="submit-btn" onclick="depositNext()">Suivant</button>
           </div>
           <div id="depositStep2" style="display:none;">
-            <p style="font-size:13px;margin-bottom:8px;">
-              Envoyez <strong id="depAmountArLabel">0</strong> Ar au <strong>0328451823</strong><br/>
-              puis entrez la référence ci-dessous.
-            </p>
-            <div class="field">
-              <label>Référence de transaction</label>
-              <input type="text" id="depRef" placeholder="REF-123456" />
-            </div>
+            <p>Envoyez <strong id="depAmountArLabel">0</strong> Ar au <strong>0328451823</strong><br/> puis entrez la référence.</p>
+            <div class="field"><label>Référence transaction</label><input type="text" id="depRef" placeholder="REF-123456" /></div>
             <button class="submit-btn" onclick="createDeposit()">Envoyer la demande</button>
           </div>
           <div id="depMessage" class="message"></div>
@@ -362,108 +447,110 @@
 
         <!-- Withdraw -->
         <div id="sectionWithdraw" class="card" style="display:none;">
-          <h2>Withdraw</h2>
-          <p style="font-size:12px;opacity:0.9;">Minimum 5000 Ar. Les fonds sont déduits immédiatement.</p>
+          <h2>🏦 Retrait</h2>
+          <p>Minimum 5000 Ar</p>
           <div class="field"><label>Montant (Ar)</label><input type="number" id="wdAmount" placeholder="5000" /></div>
           <div class="field"><label>Méthode</label><select id="wdMethod"><option value="om">Orange Money</option><option value="bank">Bank</option></select></div>
           <div class="field"><label>Compte</label><input type="text" id="wdAccount" placeholder="+261..." /></div>
-          <div class="field"><label>Nom du destinataire</label><input type="text" id="wdName" placeholder="Nom complet" /></div>
+          <div class="field"><label>Nom destinataire</label><input type="text" id="wdName" placeholder="Nom complet" /></div>
           <button class="submit-btn" onclick="createWithdraw()">Envoyer demande</button>
           <div id="wdMessage" class="message"></div>
         </div>
 
         <!-- SWAP -->
         <div id="sectionSwap" class="card" style="display:none;">
-          <h2>SWAP</h2>
-          <p style="font-size:12px;opacity:0.9;">Échange Ar → Coins (1 COIN = 1.5 Ar).</p>
+          <h2>🔄 SWAP Ar → Coins</h2>
           <div class="field"><label>Montant en Ar</label><input type="number" id="swapAmount" placeholder="1500" /></div>
           <button class="submit-btn" onclick="doSwap()">SWAP</button>
           <div id="swapMessage" class="message"></div>
         </div>
 
-        <!-- Admin Credit -->
+        <!-- Admin sections -->
         <div id="sectionAdminCredit" class="card" style="display:none;">
-          <h2>Admin: Créditer Coins/Ar</h2>
+          <h2>💰 Créditer</h2>
           <div class="field"><label>Email</label><input type="email" id="admEmail" /></div>
           <div class="field"><label>Coins</label><input type="number" id="admCoins" value="0" /></div>
           <div class="field"><label>Ar</label><input type="number" id="admAr" value="0" /></div>
           <button class="submit-btn" onclick="adminCredit()">Créditer</button>
           <div id="admMessage" class="message"></div>
         </div>
-
-        <!-- Admin Deduct -->
         <div id="sectionAdminDeduct" class="card" style="display:none;">
-          <h2>Admin: Déduire Coins/Ar</h2>
+          <h2>📉 Déduire</h2>
           <div class="field"><label>Email</label><input type="email" id="deductEmail" /></div>
           <div class="field"><label>Coins</label><input type="number" id="deductCoins" value="0" /></div>
           <div class="field"><label>Ar</label><input type="number" id="deductAr" value="0" /></div>
           <button class="submit-btn" onclick="adminDeduct()">Déduire</button>
           <div id="deductMessage" class="message"></div>
         </div>
-
-        <!-- Admin Ban -->
         <div id="sectionAdminBan" class="card" style="display:none;">
-          <h2>Admin: Ban / Unban / Suspendre 10h</h2>
-          <div class="field"><label>Email de l'utilisateur</label><input type="email" id="banEmail" /></div>
+          <h2>🚫 Gestion utilisateur</h2>
+          <div class="field"><label>Email</label><input type="email" id="banEmail" /></div>
           <div class="field"><label>Action</label><select id="banAction"><option value="ban">Ban</option><option value="unban">Unban</option><option value="suspend">Suspendre 10h</option></select></div>
           <button class="submit-btn" onclick="adminBan()">Appliquer</button>
           <div id="banMessage" class="message"></div>
         </div>
-
-        <!-- Admin Users -->
         <div id="sectionAdminUsers" class="card" style="display:none;">
-          <h2>Admin: Liste utilisateurs</h2>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-            <input type="text" id="userSearch" placeholder="Recherche par email" style="flex:1;padding:8px;border-radius:8px;background:rgba(255,255,255,.9);" />
-            <button class="small-btn" onclick="usersPage=0;loadAdminUsers()">Chercher</button>
+          <h2>📋 Utilisateurs</h2>
+          <div style="display:flex; gap:8px; margin-bottom:8px;">
+            <input type="text" id="userSearch" placeholder="Recherche email" style="flex:1; padding:8px; border-radius:8px; background:rgba(0,20,10,0.8); border:1px solid #00ff88; color:#fff;" />
+            <button class="small-btn" onclick="usersPage=0;loadAdminUsers()">🔍</button>
           </div>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
-            <button class="small-btn" onclick="if(usersPage>0){usersPage--;loadAdminUsers()}">Prev</button>
-            <button class="small-btn" onclick="usersPage++;loadAdminUsers()">Next</button>
-            <span style="font-size:12px;">Page: <span id="usersPageLabel">0</span></span>
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+            <button class="small-btn" onclick="if(usersPage>0){usersPage--;loadAdminUsers()}">◀</button>
+            <button class="small-btn" onclick="usersPage++;loadAdminUsers()">▶</button>
+            <span>Page: <span id="usersPageLabel">0</span></span>
           </div>
           <div id="adminUsersList" class="tasks-log"></div>
           <div id="adminUsersMsg" class="message"></div>
         </div>
+        <div id="sectionAdminVerifications" class="card" style="display:none;">
+          <h2>🔍 Vérifications comptes (admin)</h2>
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+            <button class="small-btn" onclick="adminVerifPage=0;loadAdminVerifications()">🔄</button>
+            <button class="small-btn" onclick="if(adminVerifPage>0){adminVerifPage--;loadAdminVerifications()}">◀</button>
+            <button class="small-btn" onclick="adminVerifPage++;loadAdminVerifications()">▶</button>
+            <span>Page: <span id="adminVerifPageLabel">0</span></span>
+          </div>
+          <div id="adminVerificationsList" class="tasks-log"></div>
+          <div id="adminVerifMsg" class="message"></div>
+        </div>
 
-        <!-- Admin Deposits -->
+        <!-- Deposit / Withdraw history (via menu) -->
+        <div id="sectionDepositHistory" class="card" style="display:none;">
+          <h2>📥 Historique dépôts</h2>
+          <button class="small-btn" onclick="loadDepositHistory()">🔄</button>
+          <div id="depositHistoryList" class="tasks-log"></div>
+          <div id="depositHistoryMsg" class="message"></div>
+        </div>
+        <div id="sectionWithdrawHistory" class="card" style="display:none;">
+          <h2>📤 Historique retraits</h2>
+          <button class="small-btn" onclick="loadWithdrawHistory()">🔄</button>
+          <div id="withdrawHistoryList" class="tasks-log"></div>
+          <div id="withdrawHistoryMsg" class="message"></div>
+        </div>
+
+        <!-- Admin Deposits / Withdraws -->
         <div id="sectionAdminDeposits" class="card" style="display:none;">
-          <h2>Admin: Deposits pending</h2>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <button class="small-btn" onclick="adminDepPage=0; loadAdminDeposits()">Refresh</button>
-            <button class="small-btn" onclick="if(adminDepPage>0){adminDepPage--;loadAdminDeposits()}">Prev</button>
-            <button class="small-btn" onclick="adminDepPage++;loadAdminDeposits()">Next</button>
+          <h2>💵 Dépôts en attente</h2>
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+            <button class="small-btn" onclick="adminDepPage=0; loadAdminDeposits()">🔄</button>
+            <button class="small-btn" onclick="if(adminDepPage>0){adminDepPage--;loadAdminDeposits()}">◀</button>
+            <button class="small-btn" onclick="adminDepPage++;loadAdminDeposits()">▶</button>
             <span>Page: <span id="adminDepPageLabel">0</span></span>
           </div>
           <div id="adminDepositsList" class="tasks-log"></div>
           <div id="adminDepositsMsg" class="message"></div>
         </div>
-
-        <!-- Admin Withdraws -->
         <div id="sectionAdminWithdraws" class="card" style="display:none;">
-          <h2>Admin: Withdraws pending</h2>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <button class="small-btn" onclick="adminWdPage=0; loadAdminWithdraws()">Refresh</button>
-            <button class="small-btn" onclick="if(adminWdPage>0){adminWdPage--;loadAdminWithdraws()}">Prev</button>
-            <button class="small-btn" onclick="adminWdPage++;loadAdminWithdraws()">Next</button>
+          <h2>💸 Retraits en attente</h2>
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+            <button class="small-btn" onclick="adminWdPage=0; loadAdminWithdraws()">🔄</button>
+            <button class="small-btn" onclick="if(adminWdPage>0){adminWdPage--;loadAdminWithdraws()}">◀</button>
+            <button class="small-btn" onclick="adminWdPage++;loadAdminWithdraws()">▶</button>
             <span>Page: <span id="adminWdPageLabel">0</span></span>
           </div>
           <div id="adminWithdrawsList" class="tasks-log"></div>
           <div id="adminWithdrawsMsg" class="message"></div>
-        </div>
-
-        <!-- Deposit history / withdraw history (affichés via menu) -->
-        <div id="sectionDepositHistory" class="card" style="display:none;">
-          <h2>Deposit history</h2>
-          <button class="small-btn" onclick="loadDepositHistory()">Refresh</button>
-          <div id="depositHistoryList" class="tasks-log"></div>
-          <div id="depositHistoryMsg" class="message"></div>
-        </div>
-        <div id="sectionWithdrawHistory" class="card" style="display:none;">
-          <h2>Withdraw history</h2>
-          <button class="small-btn" onclick="loadWithdrawHistory()">Refresh</button>
-          <div id="withdrawHistoryList" class="tasks-log"></div>
-          <div id="withdrawHistoryMsg" class="message"></div>
         </div>
 
       </div>
@@ -472,18 +559,20 @@
   </div>
 
 <script>
-  const API_URL = "https://karaoke-done-lightning-maximize.trycloudflare.com"; // À remplacer
+  const API_URL = "https://pepper-parks-dame-massachusetts.trycloudflare.com"; // À remplacer
 
   let auth = JSON.parse(localStorage.getItem("auth") || "null");
   let me = null;
   let selectedAccountId = null;
   let currentTask = null;
-  let ordersPage = 0, adminDepPage = 0, adminWdPage = 0, usersPage = 0;
+  let ordersPage = 0, adminDepPage = 0, adminWdPage = 0, usersPage = 0, verifyPage = 0, adminVerifPage = 0;
 
   function setMessage(id, text, type = "") {
     const el = document.getElementById(id);
-    el.className = "message " + type;
-    el.innerHTML = text;
+    if (el) {
+      el.className = "message " + type;
+      el.innerHTML = text;
+    }
   }
 
   function showLogin() {
@@ -518,9 +607,8 @@
   }
 
   function toggleAdminUI() {
-    const wrap = document.getElementById("hamburgerWrap");
-    wrap.style.display = (auth && auth.is_admin) ? "block" : "none";
-    document.getElementById("adminOnlyMenu").style.display = (auth && auth.is_admin) ? "block" : "none";
+    const adminOnly = document.getElementById("adminOnlyMenu");
+    if (adminOnly) adminOnly.style.display = (auth && auth.is_admin) ? "block" : "none";
   }
 
   function toggleAdminMenu() {
@@ -533,51 +621,42 @@
 
   function showSection(name) {
     hideAdminMenu();
-    const allSections = [
-      "AddAccount","Work","OrderStatus","DepositHistory","WithdrawHistory","Referral",
-      "AdminDeposits","AdminWithdraws","AdminCredit","AdminDeduct","AdminBan","AdminUsers",
-      "GetFollower","GetLike","GetComment","Deposit","Withdraw","Swap"
+    const sections = [
+      "AddAccount","Work","OrderStatus","Referral","VerifyCompte",
+      "GetFollower","GetLike","GetComment","Deposit","Withdraw","Swap",
+      "AdminCredit","AdminDeduct","AdminBan","AdminUsers","AdminVerifications",
+      "DepositHistory","WithdrawHistory","AdminDeposits","AdminWithdraws"
     ];
-    allSections.forEach(s => {
+    sections.forEach(s => {
       const el = document.getElementById("section" + s);
-      if (el) el.style.display = ("section" + name.charAt(0).toUpperCase() + name.slice(1)) === ("section" + s) ? "block" : "none";
+      if (el) el.style.display = ("section" + name) === ("section" + s) ? "block" : "none";
     });
-
     if (name === "work") loadAccountsForWork();
     if (name === "orderStatus") loadOrders();
+    if (name === "referral") loadReferralInfo();
+    if (name === "verifyCompte") { verifyPage = 0; loadMyAccountsForVerify(); }
+    if (name === "deposit") { document.getElementById("depositStep1").style.display = "block"; document.getElementById("depositStep2").style.display = "none"; updateDepositEstimate(); }
     if (name === "depositHistory") loadDepositHistory();
     if (name === "withdrawHistory") loadWithdrawHistory();
     if (name === "adminDeposits") loadAdminDeposits();
     if (name === "adminWithdraws") loadAdminWithdraws();
-    if (name === "referral") updateReferralLink();
-    if (name === "deposit") {
-      document.getElementById("depositStep1").style.display = "block";
-      document.getElementById("depositStep2").style.display = "none";
-      updateDepositEstimate();
-    }
     if (name === "adminUsers") loadAdminUsers();
+    if (name === "adminVerifications") loadAdminVerifications();
   }
 
-  function showAccountInfo() {
-    hideAdminMenu();
-    if (!me) return;
-    setMessage("dashboardMessage",
-      `Email: ${me.email}<br>Coins: ${Number(me.balance_coins).toFixed(2)} — Ar: ${Math.floor(Number(me.balance_ar))}`,
-      "success"
-    );
-  }
+  function showAccountInfo() { hideAdminMenu(); if (me) setMessage("dashboardMessage", `👤 ${me.email}<br>💰 ${me.balance_coins} Coins / ${Math.floor(me.balance_ar)} Ar`, "success"); }
+  function showReferral() { showSection("referral"); }
+  function showDepositHistory() { showSection("depositHistory"); }
+  function showWithdrawHistory() { showSection("withdrawHistory"); }
+  function showAdminCredit() { showSection("adminCredit"); }
+  function showAdminDeduct() { showSection("adminDeduct"); }
+  function showAdminBan() { showSection("adminBan"); }
+  function showAdminUsers() { showSection("adminUsers"); }
+  function showAdminVerifications() { showSection("adminVerifications"); }
+  function showAdminDeposits() { showSection("adminDeposits"); }
+  function showAdminWithdraws() { showSection("adminWithdraws"); }
 
-  function showReferral(){ showSection("referral"); }
-  function showDepositHistory(){ showSection("depositHistory"); }
-  function showWithdrawHistory(){ showSection("withdrawHistory"); }
-  function showAdminCredit(){ showSection("adminCredit"); }
-  function showAdminDeduct(){ showSection("adminDeduct"); }
-  function showAdminBan(){ showSection("adminBan"); }
-  function showAdminUsers(){ showSection("adminUsers"); }
-  function showAdminDeposits(){ showSection("adminDeposits"); }
-  function showAdminWithdraws(){ showSection("adminWithdraws"); }
-
-  // Helpers
+  // Helpers API
   async function api(path, method="GET", body=null) {
     const headers = {"Content-Type":"application/json"};
     if (auth?.token) headers["Authorization"] = "Bearer " + auth.token;
@@ -591,33 +670,30 @@
 
   async function updateMe() {
     if (!auth?.token) return;
-    try{
+    try {
       me = await api("/me", "GET");
       document.getElementById("balanceCoins").textContent = Number(me.balance_coins).toFixed(2);
       document.getElementById("balanceAr").textContent = Math.floor(Number(me.balance_ar));
       const ok = Number(me.balance_coins) >= 20;
-      ["btnAddAccount","btnGetFollower","btnGetLike","btnGetComment"].forEach(id=>{
+      ["btnAddAccount","btnGetFollower","btnGetLike","btnGetComment"].forEach(id => {
         const el = document.getElementById(id);
-        if (!el) return;
-        if (!ok) el.classList.add("disabled"); else el.classList.remove("disabled");
+        if (el) el.classList.toggle("disabled", !ok);
       });
-      if (!ok) {
-        setMessage("dashboardMessage","Vous devez avoir au moins 20 coins pour ces actions.","error");
-      }
-      if (me.id) updateReferralLink();
-    }catch(e){ console.log(e); }
+    } catch(e) { console.log(e); }
   }
 
-  function updateReferralLink() {
-    const linkInput = document.getElementById("referralLink");
-    if (linkInput && me?.id) {
-      linkInput.value = window.location.origin + "/register?ref=" + me.id;
-    }
+  // Referral
+  async function loadReferralInfo() {
+    if (!me) await updateMe();
+    try {
+      const countData = await api("/referral/count", "GET");
+      document.getElementById("referralCount").value = countData.total || 0;
+      document.getElementById("referralLink").value = window.location.origin + "/register?ref=" + me.id;
+    } catch(e) {}
   }
-
   function copyReferral() {
-    const linkInput = document.getElementById("referralLink");
-    linkInput.select();
+    const inp = document.getElementById("referralLink");
+    inp.select();
     document.execCommand("copy");
     setMessage("referralMsg", "Lien copié !", "success");
   }
@@ -627,128 +703,103 @@
     const email = document.getElementById("registerEmail").value.trim();
     const password = document.getElementById("registerPassword").value.trim();
     const ref = document.getElementById("registerRef").value.trim();
-    if (!email || !password) return setMessage("authMessage","Remplis tous les champs.","error");
-    try{
+    if (!email || !password) return setMessage("authMessage","Champs obligatoires.","error");
+    try {
       setMessage("authMessage",'<span class="loader"></span>Inscription...', "");
       const data = await api("/register","POST",{email,password,ref});
       auth = {token: data.token, email: data.email, is_admin: !!data.is_admin};
       localStorage.setItem("auth", JSON.stringify(auth));
       setMessage("authMessage","Inscription réussie.","success");
       showDashboard();
-    }catch(e){
-      setMessage("authMessage", e.message, "error");
-    }
+    } catch(e) { setMessage("authMessage", e.message, "error"); }
   }
 
   async function loginUser() {
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value.trim();
-    if (!email || !password) return setMessage("authMessage","Remplis tous les champs.","error");
-    try{
+    if (!email || !password) return setMessage("authMessage","Champs obligatoires.","error");
+    try {
       setMessage("authMessage",'<span class="loader"></span>Connexion...', "");
       const data = await api("/login","POST",{email,password});
       auth = {token: data.token, email: data.email, is_admin: !!data.is_admin};
       localStorage.setItem("auth", JSON.stringify(auth));
       setMessage("authMessage","Connexion réussie.","success");
       showDashboard();
-    }catch(e){
-      setMessage("authMessage", e.message, "error");
-    }
+    } catch(e) { setMessage("authMessage", e.message, "error"); }
   }
 
   function logoutUser() {
-    auth = null; me=null; currentTask=null; selectedAccountId=null;
+    auth = null; me = null; currentTask = null; selectedAccountId = null;
     localStorage.removeItem("auth");
     showAuthPage(); showLogin();
     setMessage("authMessage","","");
   }
 
-  // ADD ACCOUNT
+  // Add account
   async function addTaskAccount() {
     if (!me) await updateMe();
     if (!me) return;
-    if (Number(me.balance_coins) < 20) {
-      setMessage("addAccountMessage","Minimum 20 Coins requis.","error");
-      return;
-    }
+    if (Number(me.balance_coins) < 20) { setMessage("addAccountMessage","Minimum 20 Coins requis.","error"); return; }
     const profile_link = document.getElementById("accProfileLink").value.trim();
     const cookies_string = document.getElementById("accCookies").value.trim();
     if (!profile_link || !cookies_string) return setMessage("addAccountMessage","Remplis tous les champs.","error");
-    try{
+    try {
       setMessage("addAccountMessage",'<span class="loader"></span>Vérification...', "");
-      const data = await api("/task_account/add","POST",{profile_link,cookies_string});
+      const data = await api("/task_account/add","POST",{profile_link, cookies_string});
       setMessage("addAccountMessage", data.message || "OK", "success");
       await updateMe();
-    }catch(e){
-      setMessage("addAccountMessage", e.message, "error");
-    }
+    } catch(e) { setMessage("addAccountMessage", e.message, "error"); }
   }
 
-  // WORK
+  // Work tasks
   async function loadAccountsForWork() {
-    selectedAccountId = null;
-    currentTask = null;
+    selectedAccountId = null; currentTask = null;
     document.getElementById("currentTaskArea").style.display = "none";
     const area = document.getElementById("accountsForWork");
     area.innerHTML = "Chargement...";
-    try{
+    try {
       const data = await api("/task_account/list","GET");
       const accounts = data.accounts || [];
-      if (!accounts.length){
-        area.innerHTML = "<div>Aucun compte TASK.</div>";
-        return;
-      }
+      if (!accounts.length) { area.innerHTML = "<div>Aucun compte.</div>"; return; }
       area.innerHTML = accounts.map(a => `
         <div class="account-item">
-          <div>
-            <strong>${(a.display_name || a.profile_link)}</strong><br>
-            <span style="font-size:12px;opacity:0.8;">${a.profile_link}</span>
-          </div>
+          <div><strong>${a.display_name||a.profile_link}</strong><br><small>${a.profile_link}</small></div>
           <button class="small-btn" onclick="selectAccountForWork('${a.id}')">Utiliser</button>
-        </div>
-      `).join("");
-    }catch(e){
-      area.innerHTML = "Erreur: " + e.message;
-    }
+        </div>`).join("");
+    } catch(e) { area.innerHTML = "Erreur: "+e.message; }
   }
 
-  async function selectAccountForWork(accId){
+  async function selectAccountForWork(accId) {
     selectedAccountId = accId;
     document.getElementById("currentTaskArea").style.display = "block";
     setMessage("workerMessage", "Chargement tâche...", "");
     await loadNextTask();
   }
 
-  async function loadNextTask(){
+  async function loadNextTask() {
     if (!selectedAccountId) return;
-    try{
+    try {
       const data = await api(`/worker/next_task?account_id=${encodeURIComponent(selectedAccountId)}`,"GET");
-      if (!data.task_id){
+      if (!data.task_id) {
         currentTask = null;
         document.getElementById("currentTaskInfo").innerHTML = data.message || "Aucune tâche.";
         setMessage("workerMessage", data.message || "Aucune tâche.", "error");
         return;
       }
       currentTask = data;
-
       const linkHtml = `<a class="link" href="${data.link}" target="_blank">${data.link}</a>`;
       let commentBlock = "";
       if (data.task_type === "comment" && data.comment_text) {
-        commentBlock = `<div><strong>Comment:</strong> ${data.comment_text} <button class="copy-btn" onclick="copyCommentText('${data.comment_text.replace(/'/g,"\\'")}')">📋 Copier</button></div>`;
+        commentBlock = `<div><strong>Commentaire:</strong> ${data.comment_text} <button class="copy-btn" onclick="copyCommentText('${data.comment_text.replace(/'/g,"\\'")}')">📋 Copier</button></div>`;
       }
-
-      const info = `
-        <div><strong>Type:</strong> ${String(data.task_type||"").toUpperCase()}</div>
+      document.getElementById("currentTaskInfo").innerHTML = `
+        <div><strong>Type:</strong> ${data.task_type.toUpperCase()}</div>
         <div><strong>Lien:</strong> ${linkHtml}</div>
         ${data.task_type==="like" && data.reaction_key ? `<div><strong>Réaction:</strong> ${data.reaction_key}</div>` : ""}
         ${commentBlock}
-        <div class="meta"><strong>Progress:</strong> ${data.success_count}/${data.target || "-"}</div>
-      `;
-      document.getElementById("currentTaskInfo").innerHTML = info;
+        <div class="meta">${data.success_count}/${data.target}</div>`;
       setMessage("workerMessage", "", "");
-    }catch(e){
-      setMessage("workerMessage", e.message, "error");
-    }
+    } catch(e) { setMessage("workerMessage", e.message, "error"); }
   }
 
   function copyCommentText(text) {
@@ -757,36 +808,30 @@
       setTimeout(() => setMessage("workerMessage", "", ""), 2000);
     }).catch(() => {
       const ta = document.createElement("textarea");
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
+      ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
       setMessage("workerMessage", "Texte copié !", "success");
       setTimeout(() => setMessage("workerMessage", "", ""), 2000);
     });
   }
 
-  async function verifyCurrentTask(){
+  async function verifyCurrentTask() {
     if (!selectedAccountId || !currentTask?.task_id) return;
-    setMessage("workerMessage", '<span class="loader"></span>Vérification...', "");
-    try{
+    setMessage("workerMessage",'<span class="loader"></span>Vérification...', "");
+    try {
       const data = await api("/worker/verify_task","POST",{account_id: selectedAccountId, task_id: currentTask.task_id});
       setMessage("workerMessage", data.message || "OK", data.success ? "success" : "error");
       await updateMe();
       await loadNextTask();
-    }catch(e){
-      setMessage("workerMessage", e.message, "error");
-    }
+    } catch(e) { setMessage("workerMessage", e.message, "error"); }
   }
 
-  async function skipTask(){
+  async function skipTask() {
     setMessage("workerMessage", "Tâche ignorée...", "");
-    try{ await api("/worker/skip_task","POST",{}); }catch(e){}
+    try { await api("/worker/skip_task","POST",{}); } catch(e){}
     await loadNextTask();
   }
 
-  // ORDERS
+  // Orders
   function liveTransformFollow(val) {
     const preview = document.getElementById("gfTransformPreview");
     if (!val) { preview.innerHTML = ""; return; }
@@ -796,264 +841,263 @@
       const p = new URL(s);
       const parts = p.pathname.split("/").filter(x => x);
       if (parts.length && !parts[0].startsWith("@")) {
-        preview.innerHTML = `Sera enregistré comme : <strong>https://www.facebook.com/@${parts[0]}</strong>`;
-      } else {
-        preview.innerHTML = "";
-      }
+        preview.innerHTML = `Sera enregistré : <strong>https://www.facebook.com/@${parts[0]}</strong>`;
+      } else preview.innerHTML = "";
     } catch { preview.innerHTML = ""; }
   }
 
-  async function createFollowOrder(){
+  async function createFollowOrder() {
     const link = document.getElementById("gfProfileLink").value.trim();
-    const target = parseInt(document.getElementById("gfTarget").value || "0", 10);
-    if (!link || !target) return setMessage("gfMessage","Remplis tous les champs.","error");
-    try{
-      setMessage("gfMessage", '<span class="loader"></span>Création...', "");
+    const target = parseInt(document.getElementById("gfTarget").value);
+    if (!link || !target) return setMessage("gfMessage","Champs requis.","error");
+    try {
+      setMessage("gfMessage",'<span class="loader"></span>Création...', "");
       const data = await api("/tasks/create_follow","POST",{profile_link: link, target});
-      setMessage("gfMessage", data.message || "OK", "success");
+      setMessage("gfMessage", data.message, "success");
       await updateMe();
-    }catch(e){ setMessage("gfMessage", e.message, "error"); }
+    } catch(e) { setMessage("gfMessage", e.message, "error"); }
   }
-
-  async function createLikeOrder(){
+  async function createLikeOrder() {
     const link = document.getElementById("glLink").value.trim();
     const reaction_key = document.getElementById("glReaction").value;
-    const target = parseInt(document.getElementById("glTarget").value || "0", 10);
-    if (!link || !reaction_key || !target) return setMessage("glMessage","Remplis tous les champs.","error");
-    try{
-      setMessage("glMessage", '<span class="loader"></span>Création...', "");
+    const target = parseInt(document.getElementById("glTarget").value);
+    if (!link || !target) return setMessage("glMessage","Champs requis.","error");
+    try {
+      setMessage("glMessage",'<span class="loader"></span>...', "");
       const data = await api("/tasks/create_like","POST",{link, reaction_key, target});
-      setMessage("glMessage", data.message || "OK", "success");
+      setMessage("glMessage", data.message, "success");
       await updateMe();
-    }catch(e){ setMessage("glMessage", e.message, "error"); }
+    } catch(e) { setMessage("glMessage", e.message, "error"); }
   }
-
-  async function createCommentOrder(){
+  async function createCommentOrder() {
     const link = document.getElementById("gcLink").value.trim();
     const comment_text = document.getElementById("gcText").value.trim();
-    const target = 1; // forcé à 1
-    if (!link || !comment_text) return setMessage("gcMessage","Remplis tous les champs.","error");
-    try{
-      setMessage("gcMessage", '<span class="loader"></span>Création...', "");
-      const data = await api("/tasks/create_comment","POST",{link, comment_text, target});
-      setMessage("gcMessage", data.message || "OK", "success");
+    if (!link || !comment_text) return setMessage("gcMessage","Champs requis.","error");
+    try {
+      setMessage("gcMessage",'<span class="loader"></span>...', "");
+      const data = await api("/tasks/create_comment","POST",{link, comment_text, target:1});
+      setMessage("gcMessage", data.message, "success");
       await updateMe();
-    }catch(e){ setMessage("gcMessage", e.message, "error"); }
+    } catch(e) { setMessage("gcMessage", e.message, "error"); }
   }
 
-  // ORDER STATUS
-  async function loadOrders(){
+  async function loadOrders() {
     document.getElementById("ordersPageLabel").textContent = ordersPage;
     const list = document.getElementById("ordersList");
-    list.innerHTML = "Loading...";
-    try{
+    list.innerHTML = "Chargement...";
+    try {
       const data = await api(`/orders/status?page=${ordersPage}&page_size=30`,"GET");
       const items = data.items || [];
-      if (!items.length){ list.innerHTML = "<div>Aucun order</div>"; return; }
-      list.innerHTML = items.map(o => `
-        <div class="task-item">
-          <div>
-            <div><b>${o.task_type.toUpperCase()}</b> — <span class="meta">${o.status}</span></div>
-            <div class="meta">${o.success_count}/${o.target} — ${o.created_at}</div>
-            <div class="meta"><a class="link" target="_blank" href="${o.link}">${o.link}</a></div>
-          </div>
-        </div>
-      `).join("");
-      setMessage("ordersMsg","", "");
-    }catch(e){
-      list.innerHTML = "";
-      setMessage("ordersMsg", e.message, "error");
-    }
+      list.innerHTML = items.length ? items.map(o => `
+        <div class="task-item"><div><b>${o.task_type.toUpperCase()}</b> - ${o.status}<br>${o.success_count}/${o.target} - <a class="link" href="${o.link}" target="_blank">${o.link}</a></div></div>
+      `).join("") : "<div>Aucune commande.</div>";
+    } catch(e) { list.innerHTML = ""; setMessage("ordersMsg", e.message, "error"); }
   }
 
-  // DEPOSIT 2 STEPS
+  // Deposit
   function updateDepositEstimate() {
     const coins = parseFloat(document.getElementById("depCoins").value) || 0;
-    const ar = coins * 1.5;
-    document.getElementById("depEstimate").innerHTML = `Estimation : ${ar} Ar (1 coin = 1.5 Ar)`;
+    document.getElementById("depEstimate").innerHTML = `Estimation : <strong>${coins*1.5} Ar</strong> (1 coin = 1.5 Ar)`;
   }
-
   function depositNext() {
     const coins = parseFloat(document.getElementById("depCoins").value);
-    if (!coins || coins < 2000) {
-      setMessage("depMessage", "Minimum 2000 coins.", "error");
-      return;
-    }
-    const ar = coins * 1.5;
-    document.getElementById("depAmountArLabel").textContent = ar;
+    if (!coins || coins < 2000) { setMessage("depMessage","Minimum 2000 coins.","error"); return; }
+    document.getElementById("depAmountArLabel").textContent = coins*1.5;
     document.getElementById("depositStep1").style.display = "none";
     document.getElementById("depositStep2").style.display = "block";
   }
-
-  async function createDeposit(){
+  async function createDeposit() {
     const coins = parseFloat(document.getElementById("depCoins").value);
     const reference = document.getElementById("depRef").value.trim();
-    if (!coins || coins < 2000) return setMessage("depMessage","Montant invalide","error");
-    try{
-      setMessage("depMessage", '<span class="loader"></span>Envoi...', "");
+    if (!coins || coins<2000) return setMessage("depMessage","Montant invalide","error");
+    try {
+      setMessage("depMessage",'<span class="loader"></span>...', "");
       const data = await api("/wallet/deposit","POST",{coins, reference});
-      setMessage("depMessage", data.message + " ID: " + data.request_id, "success");
-    }catch(e){ setMessage("depMessage", e.message, "error"); }
+      setMessage("depMessage", data.message, "success");
+    } catch(e) { setMessage("depMessage", e.message, "error"); }
   }
 
-  // WITHDRAW / SWAP / HISTORY
-  async function createWithdraw(){
+  async function createWithdraw() {
     const amount_ar = parseFloat(document.getElementById("wdAmount").value);
     const method = document.getElementById("wdMethod").value;
     const account = document.getElementById("wdAccount").value.trim();
     const recipient_name = document.getElementById("wdName").value.trim();
     if (!amount_ar || amount_ar<5000 || !account || !recipient_name) return setMessage("wdMessage","Champs invalides","error");
-    try{
-      setMessage("wdMessage", '<span class="loader"></span>Envoi...', "");
+    try {
+      setMessage("wdMessage",'<span class="loader"></span>...', "");
       const data = await api("/wallet/withdraw","POST",{amount_ar, method, account, recipient_name});
-      setMessage("wdMessage", data.message + " ID: " + data.request_id, "success");
+      setMessage("wdMessage", data.message, "success");
       await updateMe();
-    }catch(e){ setMessage("wdMessage", e.message, "error"); }
+    } catch(e) { setMessage("wdMessage", e.message, "error"); }
   }
 
-  async function doSwap(){
+  async function doSwap() {
     const amount_ar = parseFloat(document.getElementById("swapAmount").value);
-    if (!amount_ar || amount_ar<=0) return setMessage("swapMessage","Montant invalide","error");
-    try{
-      setMessage("swapMessage", '<span class="loader"></span>Swap...', "");
+    if (!amount_ar) return setMessage("swapMessage","Montant invalide","error");
+    try {
+      setMessage("swapMessage",'<span class="loader"></span>...', "");
       const data = await api("/wallet/swap","POST",{amount_ar});
-      setMessage("swapMessage", data.message + ` (+${data.received_coins} coins)`, "success");
+      setMessage("swapMessage", `+${data.received_coins} coins`, "success");
       await updateMe();
-    }catch(e){ setMessage("swapMessage", e.message, "error"); }
+    } catch(e) { setMessage("swapMessage", e.message, "error"); }
   }
 
   async function loadDepositHistory() {
     const list = document.getElementById("depositHistoryList");
-    list.innerHTML = "Loading...";
-    try{
+    list.innerHTML = "Chargement...";
+    try {
       const data = await api("/wallet/deposit/history","GET");
-      const items = data.items || [];
-      list.innerHTML = items.length ? items.map(x=>`
-        <div class="task-item"><div><b>${x.status}</b> — ${x.created_at}<br>Coins: ${x.coins} | Ar: ${x.amount_ar} | Ref: ${x.reference||""}</div></div>
-      `).join("") : "<div>No history</div>";
-    }catch(e){ list.innerHTML=""; setMessage("depositHistoryMsg", e.message, "error"); }
+      list.innerHTML = data.items.length ? data.items.map(x=>`<div class="task-item"><div>${x.status} - ${x.coins} coins (${x.amount_ar} Ar) ${x.reference||""}</div></div>`).join("") : "Aucun historique.";
+    } catch(e) { list.innerHTML = ""; setMessage("depositHistoryMsg", e.message, "error"); }
   }
-
   async function loadWithdrawHistory() {
     const list = document.getElementById("withdrawHistoryList");
-    list.innerHTML = "Loading...";
-    try{
+    list.innerHTML = "Chargement...";
+    try {
       const data = await api("/wallet/withdraw/history","GET");
-      const items = data.items || [];
-      list.innerHTML = items.length ? items.map(x=>`
-        <div class="task-item"><div><b>${x.status}</b> — ${x.created_at}<br>Ar: ${x.amount_ar} | ${x.method} | ${x.account}</div></div>
-      `).join("") : "<div>No history</div>";
-    }catch(e){ list.innerHTML=""; setMessage("withdrawHistoryMsg", e.message, "error"); }
+      list.innerHTML = data.items.length ? data.items.map(x=>`<div class="task-item"><div>${x.status} - ${x.amount_ar} Ar (${x.method}) ${x.account}</div></div>`).join("") : "Aucun historique.";
+    } catch(e) { list.innerHTML = ""; setMessage("withdrawHistoryMsg", e.message, "error"); }
   }
 
-  // ADMIN
-  async function adminCredit(){
+  // Verification utilisateur
+  async function loadMyAccountsForVerify() {
+    document.getElementById("verifyPageLabel").textContent = verifyPage;
+    const list = document.getElementById("verifyAccountsList");
+    list.innerHTML = "Chargement...";
+    try {
+      const data = await api(`/task_account/list_with_status?page=${verifyPage}&page_size=50`,"GET");
+      const items = data.items || [];
+      if (!items.length) { list.innerHTML = "<div>Aucun compte.</div>"; return; }
+      list.innerHTML = items.map(acc => {
+        let badge = "";
+        let actionBtn = "";
+        if (acc.status === "non_verified") {
+          badge = '<span class="status-badge status-non_verified">Non vérifié</span>';
+          actionBtn = `<button class="small-btn" onclick="requestVerification('${acc.id}')">Get verified</button>`;
+        } else if (acc.status === "pending") {
+          badge = '<span class="status-badge status-pending">En attente</span>';
+        } else if (acc.status === "verified") {
+          badge = '<span class="status-badge status-verified">Vérifié 🟢</span>';
+        } else if (acc.status === "rejected") {
+          badge = '<span class="status-badge status-rejected">Rejeté</span>';
+          actionBtn = `<button class="small-btn" onclick="requestVerification('${acc.id}')">Retry</button>`;
+        }
+        return `<div class="account-item">
+          <div><strong>${acc.display_name||acc.profile_link}</strong><br><small>${acc.profile_link}</small> ${badge}</div>
+          ${actionBtn}
+        </div>`;
+      }).join("");
+    } catch(e) { list.innerHTML = "Erreur: "+e.message; }
+  }
+
+  async function requestVerification(accountId) {
+    try {
+      setMessage("verifyMessage",'<span class="loader"></span>Envoi...', "");
+      await api("/task_account/request_verification","POST",{account_id: accountId});
+      setMessage("verifyMessage","Demande envoyée !","success");
+      loadMyAccountsForVerify();
+    } catch(e) { setMessage("verifyMessage", e.message, "error"); }
+  }
+
+  // Admin verifications
+  async function loadAdminVerifications() {
+    document.getElementById("adminVerifPageLabel").textContent = adminVerifPage;
+    const list = document.getElementById("adminVerificationsList");
+    list.innerHTML = "Chargement...";
+    try {
+      const data = await api(`/admin/verifications/pending?page=${adminVerifPage}&page_size=30`,"GET");
+      const items = data.items || [];
+      list.innerHTML = items.length ? items.map(v => `
+        <div class="task-item">
+          <div><b>${v.user_email}</b> - ${v.display_name}<br><small>${v.profile_link}</small></div>
+          <div style="display:flex; gap:6px;">
+            <button class="small-btn" onclick="handleVerification('${v.id}','approve')">✅ Approuver</button>
+            <button class="small-btn" onclick="handleVerification('${v.id}','reject')">❌ Rejeter</button>
+          </div>
+        </div>`).join("") : "<div>Aucune demande.</div>";
+    } catch(e) { list.innerHTML = ""; setMessage("adminVerifMsg", e.message, "error"); }
+  }
+
+  async function handleVerification(verificationId, action) {
+    try {
+      await api("/admin/verifications/handle","POST",{verification_id: verificationId, action});
+      loadAdminVerifications();
+    } catch(e) { setMessage("adminVerifMsg", e.message, "error"); }
+  }
+
+  // Admin deposits / withdraws
+  async function loadAdminDeposits() {
+    document.getElementById("adminDepPageLabel").textContent = adminDepPage;
+    const list = document.getElementById("adminDepositsList");
+    list.innerHTML = "Chargement...";
+    try {
+      const data = await api(`/admin/deposits?status=pending&page=${adminDepPage}&page_size=30`,"GET");
+      const items = data.items || [];
+      list.innerHTML = items.length ? items.map(x=>`
+        <div class="task-item"><div style="width:100%">
+          <b>${x.user_email}</b> - ${x.coins} coins (${x.amount_ar} Ar) Ref: ${x.reference||""}
+          <div><button class="small-btn" onclick="handleDeposit('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleDeposit('${x.id}','reject')">Reject</button></div>
+        </div></div>`).join("") : "<div>Vide.</div>";
+    } catch(e) { list.innerHTML = ""; setMessage("adminDepositsMsg", e.message, "error"); }
+  }
+  async function handleDeposit(id, action) { try { await api("/admin/deposits/handle","POST",{request_id:id, action}); loadAdminDeposits(); } catch(e) { setMessage("adminDepositsMsg", e.message, "error"); } }
+
+  async function loadAdminWithdraws() {
+    document.getElementById("adminWdPageLabel").textContent = adminWdPage;
+    const list = document.getElementById("adminWithdrawsList");
+    list.innerHTML = "Chargement...";
+    try {
+      const data = await api(`/admin/withdraws?status=pending&page=${adminWdPage}&page_size=30`,"GET");
+      const items = data.items || [];
+      list.innerHTML = items.length ? items.map(x=>`
+        <div class="task-item"><div style="width:100%">
+          <b>${x.user_email}</b> - ${x.amount_ar} Ar (${x.method}) ${x.account}
+          <div><button class="small-btn" onclick="handleWithdraw('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','reject')">Reject</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','return')">Return</button></div>
+        </div></div>`).join("") : "<div>Vide.</div>";
+    } catch(e) { list.innerHTML = ""; setMessage("adminWithdrawsMsg", e.message, "error"); }
+  }
+  async function handleWithdraw(id, action) { try { await api("/admin/withdraws/handle","POST",{request_id:id, action}); loadAdminWithdraws(); } catch(e) { setMessage("adminWithdrawsMsg", e.message, "error"); } }
+
+  // Admin credit/deduct/ban/users
+  async function adminCredit() {
     const email = document.getElementById("admEmail").value.trim().toLowerCase();
     const coins = parseFloat(document.getElementById("admCoins").value)||0;
     const ar = parseFloat(document.getElementById("admAr").value)||0;
-    if (!email) return setMessage("admMessage","Email obligatoire","error");
-    try{
-      setMessage("admMessage", '<span class="loader"></span>...', "");
-      const data = await api("/admin/credit","POST",{email, coins, ar});
-      setMessage("admMessage", data.message, "success");
-    }catch(e){ setMessage("admMessage", e.message, "error"); }
+    if (!email) return setMessage("admMessage","Email requis","error");
+    try { setMessage("admMessage",'<span class="loader"></span>...', ""); const data = await api("/admin/credit","POST",{email, coins, ar}); setMessage("admMessage", data.message, "success"); } catch(e) { setMessage("admMessage", e.message, "error"); }
   }
-
-  async function adminDeduct(){
+  async function adminDeduct() {
     const email = document.getElementById("deductEmail").value.trim().toLowerCase();
     const coins = parseFloat(document.getElementById("deductCoins").value)||0;
     const ar = parseFloat(document.getElementById("deductAr").value)||0;
-    if (!email) return setMessage("deductMessage","Email obligatoire","error");
-    try{
-      setMessage("deductMessage", '<span class="loader"></span>...', "");
-      const data = await api("/admin/deduct","POST",{email, coins, ar});
-      setMessage("deductMessage", data.message, "success");
-    }catch(e){ setMessage("deductMessage", e.message, "error"); }
+    if (!email) return setMessage("deductMessage","Email requis","error");
+    try { setMessage("deductMessage",'<span class="loader"></span>...', ""); const data = await api("/admin/deduct","POST",{email, coins, ar}); setMessage("deductMessage", data.message, "success"); } catch(e) { setMessage("deductMessage", e.message, "error"); }
   }
-
-  async function adminBan(){
+  async function adminBan() {
     const email = document.getElementById("banEmail").value.trim().toLowerCase();
     const action = document.getElementById("banAction").value;
-    if (!email) return setMessage("banMessage","Email obligatoire","error");
-    try{
-      setMessage("banMessage", '<span class="loader"></span>...', "");
-      const data = await api("/admin/ban","POST",{email, action});
-      setMessage("banMessage", data.message, "success");
-    }catch(e){ setMessage("banMessage", e.message, "error"); }
+    if (!email) return setMessage("banMessage","Email requis","error");
+    try { setMessage("banMessage",'<span class="loader"></span>...', ""); const data = await api("/admin/ban","POST",{email, action}); setMessage("banMessage", data.message, "success"); } catch(e) { setMessage("banMessage", e.message, "error"); }
   }
-
-  async function loadAdminUsers(){
-    const search = document.getElementById("userSearch").value.trim();
+  async function loadAdminUsers() {
     document.getElementById("usersPageLabel").textContent = usersPage;
     const list = document.getElementById("adminUsersList");
-    list.innerHTML = "Loading...";
-    try{
+    const search = document.getElementById("userSearch").value.trim();
+    list.innerHTML = "Chargement...";
+    try {
       const data = await api(`/admin/users?page=${usersPage}&page_size=100&search=${encodeURIComponent(search)}`,"GET");
       const items = data.items || [];
-      if (!items.length){ list.innerHTML = "<div>Aucun utilisateur</div>"; return; }
-      list.innerHTML = items.map(u=>`
-        <div class="task-item">
-          <div>
-            <b>${u.email}</b> — Coins: ${u.balance_coins} Ar: ${u.balance_ar}
-            ${u.banned ? " [BANNI]" : ""} ${u.suspended_until ? " [SUSPENDU]" : ""}
-            <div class="meta">ID: ${u.id}</div>
-          </div>
-        </div>
-      `).join("");
-    }catch(e){ list.innerHTML=""; setMessage("adminUsersMsg", e.message, "error"); }
+      list.innerHTML = items.length ? items.map(u=>`
+        <div class="task-item"><div><b>${u.email}</b> - Coins:${u.balance_coins} Ar:${u.balance_ar} ${u.banned?"[BAN]":""} ${u.suspended_until?"[SUSP]":""}</div></div>`).join("") : "Aucun.";
+    } catch(e) { list.innerHTML = ""; setMessage("adminUsersMsg", e.message, "error"); }
   }
 
-  async function loadAdminDeposits(){
-    document.getElementById("adminDepPageLabel").textContent = adminDepPage;
-    const list = document.getElementById("adminDepositsList");
-    list.innerHTML = "Loading...";
-    try{
-      const data = await api(`/admin/deposits?status=pending&page=${adminDepPage}&page_size=30`,"GET");
-      const items = data.items || [];
-      if (!items.length){ list.innerHTML = "<div>Empty</div>"; return; }
-      list.innerHTML = items.map(x=>`
-        <div class="task-item"><div style="width:100%;">
-          <b>${x.user_email}</b> — ${x.coins} coins (${x.amount_ar} Ar) Ref: ${x.reference||""}
-          <div><button class="small-btn" onclick="handleDeposit('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleDeposit('${x.id}','reject')">Reject</button></div>
-        </div></div>
-      `).join("");
-    }catch(e){ list.innerHTML=""; setMessage("adminDepositsMsg", e.message, "error"); }
-  }
-
-  async function handleDeposit(id, action){
-    try{ await api("/admin/deposits/handle","POST",{request_id:id, action}); loadAdminDeposits(); }
-    catch(e){ setMessage("adminDepositsMsg", e.message, "error"); }
-  }
-
-  async function loadAdminWithdraws(){
-    document.getElementById("adminWdPageLabel").textContent = adminWdPage;
-    const list = document.getElementById("adminWithdrawsList");
-    list.innerHTML = "Loading...";
-    try{
-      const data = await api(`/admin/withdraws?status=pending&page=${adminWdPage}&page_size=30`,"GET");
-      const items = data.items || [];
-      if (!items.length){ list.innerHTML = "<div>Empty</div>"; return; }
-      list.innerHTML = items.map(x=>`
-        <div class="task-item"><div style="width:100%;">
-          <b>${x.user_email}</b> — ${x.amount_ar} Ar (${x.method}) ${x.account}
-          <div><button class="small-btn" onclick="handleWithdraw('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','reject')">Reject</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','return')">Return</button></div>
-        </div></div>
-      `).join("");
-    }catch(e){ list.innerHTML=""; setMessage("adminWithdrawsMsg", e.message, "error"); }
-  }
-
-  async function handleWithdraw(id, action){
-    try{ await api("/admin/withdraws/handle","POST",{request_id:id, action}); loadAdminWithdraws(); }
-    catch(e){ setMessage("adminWithdrawsMsg", e.message, "error"); }
-  }
-
-  // INIT
-  window.addEventListener("load", async () => {
+  // Init
+  window.addEventListener("load", () => {
     if (auth?.token) {
       showDashboard();
     } else {
-      showAuthPage();
-      showLogin();
+      showAuthPage(); showLogin();
     }
   });
 </script>
