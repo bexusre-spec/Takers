@@ -122,7 +122,6 @@
 </head>
 <body>
   <div class="container">
-
     <!-- Menu hamburger (visible pour tous) -->
     <div id="adminMenu" class="admin-menu">
       <button class="small-btn" onclick="showAccountInfo()">Infos compte</button>
@@ -150,40 +149,21 @@
         <h1>FB Tasks</h1>
         <p>Connecte-toi ou crée un compte</p>
       </div>
-
       <div class="tabs">
         <button id="loginTab" class="active" onclick="showLogin()">Sign in</button>
         <button id="registerTab" class="inactive" onclick="showRegister()">Sign up</button>
       </div>
-
       <div id="loginForm" class="form active">
-        <div class="field">
-          <label>Email</label>
-          <input type="email" id="loginEmail" placeholder="ton@email.com" />
-        </div>
-        <div class="field">
-          <label>Mot de passe</label>
-          <input type="password" id="loginPassword" placeholder="********" />
-        </div>
+        <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="ton@email.com" /></div>
+        <div class="field"><label>Mot de passe</label><input type="password" id="loginPassword" placeholder="********" /></div>
         <button class="submit-btn" onclick="loginUser()">Login</button>
       </div>
-
       <div id="registerForm" class="form">
-        <div class="field">
-          <label>Email</label>
-          <input type="email" id="registerEmail" placeholder="ton@email.com" />
-        </div>
-        <div class="field">
-          <label>Mot de passe</label>
-          <input type="password" id="registerPassword" placeholder="Créer un mot de passe" />
-        </div>
-        <div class="field">
-          <label>Code de parrainage (optionnel)</label>
-          <input type="text" id="registerRef" placeholder="ID du parrain" />
-        </div>
+        <div class="field"><label>Email</label><input type="email" id="registerEmail" placeholder="ton@email.com" /></div>
+        <div class="field"><label>Mot de passe</label><input type="password" id="registerPassword" placeholder="Créer un mot de passe" /></div>
+        <div class="field"><label>Code de parrainage (optionnel)</label><input type="text" id="registerRef" placeholder="ID du parrain" /></div>
         <button class="submit-btn" onclick="registerUser()">Register</button>
       </div>
-
       <div id="authMessage" class="message"></div>
       <div class="small-text">Crée ton compte gratuitement, puis connecte-toi.</div>
     </div>
@@ -214,24 +194,18 @@
           <button class="feature-btn" onclick="showSection('deposit')">Deposit</button>
           <button class="feature-btn" onclick="showSection('withdraw')">Withdraw</button>
           <button class="feature-btn" onclick="showSection('swap')">SWAP</button>
+          <button class="feature-btn" onclick="showSection('vip')">VIP Task</button>
         </div>
       </div>
 
       <!-- Sections dynamiques -->
       <div id="sectionsArea" class="section-area">
-
         <!-- Add account -->
         <div id="sectionAddAccount" class="card" style="display:none;">
           <h2>Add Task Account</h2>
           <p style="font-size:12px;opacity:0.9;">Entrez l'URL du profil Facebook et les cookies du compte.</p>
-          <div class="field">
-            <label>URL du profil Facebook</label>
-            <input type="text" id="accProfileLink" placeholder="https://www.facebook.com/profile.php?id=..." />
-          </div>
-          <div class="field">
-            <label>Cookies</label>
-            <textarea id="accCookies" placeholder="c_user=...; xs=...; datr=...;"></textarea>
-          </div>
+          <div class="field"><label>URL du profil Facebook</label><input type="text" id="accProfileLink" placeholder="https://www.facebook.com/..." /></div>
+          <div class="field"><label>Cookies</label><textarea id="accCookies" placeholder="c_user=...; xs=...; datr=...;"></textarea></div>
           <button class="submit-btn" onclick="addTaskAccount()">Check & Save</button>
           <div id="addAccountMessage" class="message"></div>
         </div>
@@ -242,7 +216,6 @@
           <p style="font-size:12px;opacity:0.9;">Choisissez un compte, puis vérifiez des tâches.</p>
           <button class="small-btn" onclick="loadAccountsForWork()">Charger comptes</button>
           <div id="accountsForWork" class="accounts-list"></div>
-
           <div id="currentTaskArea" style="margin-top:8px; display:none;">
             <div class="section-title">Tâche actuelle</div>
             <div id="currentTaskInfo" style="font-size:13px;"></div>
@@ -271,10 +244,7 @@
         <div id="sectionReferral" class="card" style="display:none;">
           <h2>Parrainage</h2>
           <p style="font-size:12px;opacity:0.9;">Partagez ce lien, recevez 100 Ar pour chaque filleul qui réussit 5 follows.</p>
-          <div class="field">
-            <label>Lien de parrainage</label>
-            <input type="text" id="referralLink" readonly onclick="this.select();document.execCommand('copy')" style="cursor:pointer;" />
-          </div>
+          <div class="field"><label>Lien de parrainage</label><input type="text" id="referralLink" readonly onclick="this.select();document.execCommand('copy')" style="cursor:pointer;" /></div>
           <button class="small-btn" onclick="copyReferral()">📋 Copier le lien</button>
           <div id="referralMsg" class="message"></div>
           <div id="referralCount" style="margin-top:8px;font-size:13px;">Nombre de filleuls : <span id="refCount">0</span></div>
@@ -283,16 +253,9 @@
         <!-- GET FOLLOWER -->
         <div id="sectionGetFollower" class="card" style="display:none;">
           <h2>GET FOLLOWER</h2>
-          <p style="font-size:12px;opacity:0.9;">1 coin / follower. Minimum 20 coins requis.</p>
-          <div class="field">
-            <label>Lien de profil Facebook</label>
-            <input type="text" id="gfProfileLink" placeholder="https://www.facebook.com/nom..." oninput="liveTransformFollow(this.value)" />
-            <div id="gfTransformPreview" style="font-size:12px;opacity:.8;margin-top:4px;"></div>
-          </div>
-          <div class="field">
-            <label>Nombre de followers</label>
-            <input type="number" id="gfTarget" placeholder="ex: 50" />
-          </div>
+          <p style="font-size:12px;opacity:0.9;">1 coin / follower. Minimum 20 coins requis. Lien de profil uniquement.</p>
+          <div class="field"><label>Lien de profil Facebook</label><input type="text" id="gfProfileLink" placeholder="https://www.facebook.com/nom..." oninput="liveTransformFollow(this.value)" /><div id="gfTransformPreview" style="font-size:12px;opacity:.8;margin-top:4px;"></div></div>
+          <div class="field"><label>Nombre de followers</label><input type="number" id="gfTarget" placeholder="ex: 50" /></div>
           <button class="submit-btn" onclick="createFollowOrder()">Add FOLLOW Order</button>
           <div id="gfMessage" class="message"></div>
         </div>
@@ -300,27 +263,10 @@
         <!-- GET LIKE -->
         <div id="sectionGetLike" class="card" style="display:none;">
           <h2>GET LIKE</h2>
-          <p style="font-size:12px;opacity:0.9;">0.5 coin / like. Minimum 20 coins requis.</p>
-          <div class="field">
-            <label>Lien du post/reel</label>
-            <input type="text" id="glLink" placeholder="https://www.facebook.com/..." />
-          </div>
-          <div class="field">
-            <label>Réaction</label>
-            <select id="glReaction">
-              <option value="like">J'aime</option>
-              <option value="love">J'adore</option>
-              <option value="haha">Haha</option>
-              <option value="wow">Wouah</option>
-              <option value="care">Solidaire</option>
-              <option value="angry">En colère</option>
-              <option value="sad">Triste</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Nombre de likes</label>
-            <input type="number" id="glTarget" placeholder="ex: 50" />
-          </div>
+          <p style="font-size:12px;opacity:0.9;">0.5 coin / like. Minimum 20 coins requis. Liens reel, share ou story acceptés (pas de profil).</p>
+          <div class="field"><label>Lien du post/reel/story</label><input type="text" id="glLink" placeholder="https://www.facebook.com/..." /></div>
+          <div class="field"><label>Réaction</label><select id="glReaction"><option value="like">J'aime</option><option value="love">J'adore</option><option value="haha">Haha</option><option value="wow">Wouah</option><option value="care">Solidaire</option><option value="angry">En colère</option><option value="sad">Triste</option></select></div>
+          <div class="field"><label>Nombre de likes</label><input type="number" id="glTarget" placeholder="ex: 50" /></div>
           <button class="submit-btn" onclick="createLikeOrder()">Add LIKE Order</button>
           <div id="glMessage" class="message"></div>
         </div>
@@ -328,19 +274,10 @@
         <!-- GET COMMENT -->
         <div id="sectionGetComment" class="card" style="display:none;">
           <h2>GET COMMENT</h2>
-          <p style="font-size:12px;opacity:0.9;">2 coins / commentaire (max 1). Minimum 20 coins requis.</p>
-          <div class="field">
-            <label>Lien du post</label>
-            <input type="text" id="gcLink" placeholder="https://www.facebook.com/..." />
-          </div>
-          <div class="field">
-            <label>Texte exact du commentaire</label>
-            <input type="text" id="gcText" placeholder="ex: Merci chef" />
-          </div>
-          <div class="field">
-            <label>Nombre de commentaires</label>
-            <input type="number" id="gcTarget" placeholder="1" value="1" readonly />
-          </div>
+          <p style="font-size:12px;opacity:0.9;">2 coins / commentaire (max 1). Minimum 20 coins requis. Liens post ou story acceptés (pas de profil, reel, share).</p>
+          <div class="field"><label>Lien du post/story</label><input type="text" id="gcLink" placeholder="https://www.facebook.com/..." /></div>
+          <div class="field"><label>Texte exact du commentaire</label><input type="text" id="gcText" placeholder="ex: Merci chef" /></div>
+          <div class="field"><label>Nombre de commentaires</label><input type="number" id="gcTarget" placeholder="1" value="1" readonly /></div>
           <button class="submit-btn" onclick="createCommentOrder()">Add COMMENT Order</button>
           <div id="gcMessage" class="message"></div>
         </div>
@@ -349,22 +286,13 @@
         <div id="sectionDeposit" class="card" style="display:none;">
           <h2>Deposit</h2>
           <div id="depositStep1">
-            <div class="field">
-              <label>Montant en Coins (min 2000)</label>
-              <input type="number" id="depCoins" placeholder="2000" min="2000" oninput="updateDepositEstimate()" />
-            </div>
+            <div class="field"><label>Montant en Coins (min 2000)</label><input type="number" id="depCoins" placeholder="2000" min="2000" oninput="updateDepositEstimate()" /></div>
             <div id="depEstimate" style="font-size:13px;margin-bottom:8px;">Estimation : 0 Ar (1 coin = 1.5 Ar)</div>
             <button class="submit-btn" onclick="depositNext()">Suivant</button>
           </div>
           <div id="depositStep2" style="display:none;">
-            <p style="font-size:13px;margin-bottom:8px;">
-              Envoyez <strong id="depAmountArLabel">0</strong> Ar au <strong>0328451823</strong><br/>
-              puis entrez la référence ci-dessous.
-            </p>
-            <div class="field">
-              <label>Référence de transaction</label>
-              <input type="text" id="depRef" placeholder="REF-123456" />
-            </div>
+            <p style="font-size:13px;margin-bottom:8px;">Envoyez <strong id="depAmountArLabel">0</strong> Ar au <strong>0328451823</strong><br/>puis entrez la référence ci-dessous.</p>
+            <div class="field"><label>Référence de transaction</label><input type="text" id="depRef" placeholder="REF-123456" /></div>
             <button class="submit-btn" onclick="createDeposit()">Envoyer la demande</button>
           </div>
           <div id="depMessage" class="message"></div>
@@ -391,14 +319,29 @@
           <div id="swapMessage" class="message"></div>
         </div>
 
+        <!-- VIP Task -->
+        <div id="sectionVip" class="card" style="display:none;">
+          <h2>VIP Task</h2>
+          <p style="font-size:12px;opacity:0.9;">
+            Clicker sur <b>Buy</b> pour acheter un code VIP pour 500 Ar.<br/>
+            Donnez le code à quelqu'un qui fera un dépôt, vous recevrez 900 Ar et lui 100 Ar une fois le dépôt approuvé.<br/>
+            Clicker sur <b>Activer code VIP</b> pour utiliser un code reçu.
+          </p>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button class="small-btn" style="flex:1;" onclick="buyVip()">Buy (500 Ar)</button>
+            <button class="small-btn" style="flex:1;" onclick="showVipActivate()">Activer code VIP</button>
+          </div>
+          <div id="vipActivateArea" style="display:none; margin-top:8px;">
+            <div class="field"><label>Code VIP</label><input type="text" id="vipCode" placeholder="R45ET588TUUIXFFGY579T8880G" /></div>
+            <button class="submit-btn" onclick="activateVip()">Activer</button>
+          </div>
+          <div id="vipMessage" class="message"></div>
+        </div>
+
         <!-- Vérifier compte (user) -->
         <div id="sectionVerifyAccount" class="card" style="display:none;">
           <h2>Vérifier compte</h2>
-          <p style="font-size:12px;opacity:0.9;">
-            Les comptes vérifiés reçoivent beaucoup plus de tâches.<br/>
-            Pour être vérifié : ajoutez une photo de profil Malagasy, ajoutez au moins 50 amis ou followers.<br/>
-            Vous recevrez 10 Ar après vérification approuvée.
-          </p>
+          <p style="font-size:12px;opacity:0.9;">Les comptes vérifiés reçoivent beaucoup plus de tâches. Ajoutez une photo de profil Malagasy et au moins 50 amis/followers. Vous recevrez 10 Ar après vérification approuvée.</p>
           <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
             <button class="small-btn" onclick="verifyPage=0; loadVerifyAccounts()">Refresh</button>
             <button class="small-btn" onclick="if(verifyPage>0){verifyPage--;loadVerifyAccounts()}">Prev</button>
@@ -493,7 +436,7 @@
           <div id="adminVerifyMsg" class="message"></div>
         </div>
 
-        <!-- Deposit history / withdraw history (affichés via menu) -->
+        <!-- Deposit history / withdraw history -->
         <div id="sectionDepositHistory" class="card" style="display:none;">
           <h2>Deposit history</h2>
           <button class="small-btn" onclick="loadDepositHistory()">Refresh</button>
@@ -506,14 +449,13 @@
           <div id="withdrawHistoryList" class="tasks-log"></div>
           <div id="withdrawHistoryMsg" class="message"></div>
         </div>
-
       </div>
       <div id="dashboardMessage" class="message"></div>
     </div>
   </div>
 
 <script>
-  const API_URL = "https://deleted-rankings-afford-careful.trycloudflare.com"; // À remplacer
+  const API_URL = "https://mediterranean-adequate-apnic-acc.trycloudflare.com";
 
   let auth = JSON.parse(localStorage.getItem("auth") || "null");
   let me = null;
@@ -560,10 +502,7 @@
   }
 
   function toggleAdminUI() {
-    const wrap = document.getElementById("hamburgerWrap");
-    // Menu hamburger visible pour tout le monde
-    wrap.style.display = "block";
-    // Admin-only items
+    document.getElementById("hamburgerWrap").style.display = "block";
     document.getElementById("adminOnlyMenu").style.display = (auth && auth.is_admin) ? "block" : "none";
   }
 
@@ -581,12 +520,15 @@
       "AddAccount","Work","OrderStatus","DepositHistory","WithdrawHistory","Referral",
       "AdminDeposits","AdminWithdraws","AdminCredit","AdminDeduct","AdminBan","AdminUsers",
       "GetFollower","GetLike","GetComment","Deposit","Withdraw","Swap",
-      "VerifyAccount","AdminVerifyAccounts"
+      "VerifyAccount","AdminVerifyAccounts","Vip"
     ];
     allSections.forEach(s => {
       const el = document.getElementById("section" + s);
-      if (el) el.style.display = ("section" + name.charAt(0).toUpperCase() + name.slice(1)) === ("section" + s) ? "block" : "none";
+      if (el) el.style.display = "none";
     });
+    const sectionId = "section" + name.charAt(0).toUpperCase() + name.slice(1);
+    const target = document.getElementById(sectionId);
+    if (target) target.style.display = "block";
 
     if (name === "work") loadAccountsForWork();
     if (name === "orderStatus") loadOrders();
@@ -603,6 +545,9 @@
     if (name === "adminUsers") loadAdminUsers();
     if (name === "verifyAccount") loadVerifyAccounts();
     if (name === "adminVerifyAccounts") loadAdminVerifyAccounts();
+    if (name === "vip") {
+      document.getElementById("vipActivateArea").style.display = "none";
+    }
   }
 
   function showAccountInfo() {
@@ -625,8 +570,8 @@
   function showAdminDeposits(){ showSection("adminDeposits"); }
   function showAdminWithdraws(){ showSection("adminWithdraws"); }
   function showAdminVerifyAccounts(){ showSection("adminVerifyAccounts"); }
+  function showVipActivate(){ document.getElementById("vipActivateArea").style.display = "block"; }
 
-  // Helpers
   async function api(path, method="GET", body=null) {
     const headers = {"Content-Type":"application/json"};
     if (auth?.token) headers["Authorization"] = "Bearer " + auth.token;
@@ -650,9 +595,8 @@
         if (!el) return;
         if (!ok) el.classList.add("disabled"); else el.classList.remove("disabled");
       });
-      if (!ok) {
-        setMessage("dashboardMessage","Vous devez avoir au moins 20 coins pour ces actions.","error");
-      }
+      // Add Account n'a plus de minimum coins
+      document.getElementById("btnAddAccount").classList.remove("disabled");
       if (me.id) updateReferralLink();
     }catch(e){ console.log(e); }
   }
@@ -668,9 +612,7 @@
     try {
       const data = await api("/referral/info", "GET");
       document.getElementById("refCount").textContent = data.total_referrals || 0;
-    } catch(e) {
-      document.getElementById("refCount").textContent = "?";
-    }
+    } catch(e) { document.getElementById("refCount").textContent = "?"; }
   }
 
   function copyReferral() {
@@ -693,9 +635,7 @@
       localStorage.setItem("auth", JSON.stringify(auth));
       setMessage("authMessage","Inscription réussie.","success");
       showDashboard();
-    }catch(e){
-      setMessage("authMessage", e.message, "error");
-    }
+    }catch(e){ setMessage("authMessage", e.message, "error"); }
   }
 
   async function loginUser() {
@@ -709,9 +649,7 @@
       localStorage.setItem("auth", JSON.stringify(auth));
       setMessage("authMessage","Connexion réussie.","success");
       showDashboard();
-    }catch(e){
-      setMessage("authMessage", e.message, "error");
-    }
+    }catch(e){ setMessage("authMessage", e.message, "error"); }
   }
 
   function logoutUser() {
@@ -724,11 +662,6 @@
   // ADD ACCOUNT
   async function addTaskAccount() {
     if (!me) await updateMe();
-    if (!me) return;
-    if (Number(me.balance_coins) < 20) {
-      setMessage("addAccountMessage","Minimum 20 Coins requis.","error");
-      return;
-    }
     const profile_link = document.getElementById("accProfileLink").value.trim();
     const cookies_string = document.getElementById("accCookies").value.trim();
     if (!profile_link || !cookies_string) return setMessage("addAccountMessage","Remplis tous les champs.","error");
@@ -737,9 +670,7 @@
       const data = await api("/task_account/add","POST",{profile_link,cookies_string});
       setMessage("addAccountMessage", data.message || "OK", "success");
       await updateMe();
-    }catch(e){
-      setMessage("addAccountMessage", e.message, "error");
-    }
+    }catch(e){ setMessage("addAccountMessage", e.message, "error"); }
   }
 
   // WORK
@@ -752,22 +683,13 @@
     try{
       const data = await api("/task_account/list","GET");
       const accounts = data.accounts || [];
-      if (!accounts.length){
-        area.innerHTML = "<div>Aucun compte TASK.</div>";
-        return;
-      }
+      if (!accounts.length){ area.innerHTML = "<div>Aucun compte TASK.</div>"; return; }
       area.innerHTML = accounts.map(a => `
         <div class="account-item">
-          <div>
-            <strong>${(a.display_name || a.profile_link)}</strong><br>
-            <span style="font-size:12px;opacity:0.8;">${a.profile_link}</span>
-          </div>
+          <div><strong>${(a.display_name || a.profile_link)}</strong><br><span style="font-size:12px;opacity:0.8;">${a.profile_link}</span></div>
           <button class="small-btn" onclick="selectAccountForWork('${a.id}')">Utiliser</button>
-        </div>
-      `).join("");
-    }catch(e){
-      area.innerHTML = "Erreur: " + e.message;
-    }
+        </div>`).join("");
+    }catch(e){ area.innerHTML = "Erreur: " + e.message; }
   }
 
   async function selectAccountForWork(accId){
@@ -788,25 +710,19 @@
         return;
       }
       currentTask = data;
-
       const linkHtml = `<a class="link" href="${data.link}" target="_blank">${data.link}</a>`;
       let commentBlock = "";
       if (data.task_type === "comment" && data.comment_text) {
         commentBlock = `<div><strong>Comment:</strong> ${data.comment_text} <button class="copy-btn" onclick="copyCommentText('${data.comment_text.replace(/'/g,"\\'")}')">📋 Copier</button></div>`;
       }
-
-      const info = `
+      document.getElementById("currentTaskInfo").innerHTML = `
         <div><strong>Type:</strong> ${String(data.task_type||"").toUpperCase()}</div>
         <div><strong>Lien:</strong> ${linkHtml}</div>
         ${data.task_type==="like" && data.reaction_key ? `<div><strong>Réaction:</strong> ${data.reaction_key}</div>` : ""}
         ${commentBlock}
-        <div class="meta"><strong>Progress:</strong> ${data.success_count}/${data.target || "-"}</div>
-      `;
-      document.getElementById("currentTaskInfo").innerHTML = info;
+        <div class="meta"><strong>Progress:</strong> ${data.success_count}/${data.target || "-"}</div>`;
       setMessage("workerMessage", "", "");
-    }catch(e){
-      setMessage("workerMessage", e.message, "error");
-    }
+    }catch(e){ setMessage("workerMessage", e.message, "error"); }
   }
 
   function copyCommentText(text) {
@@ -815,10 +731,7 @@
       setTimeout(() => setMessage("workerMessage", "", ""), 2000);
     }).catch(() => {
       const ta = document.createElement("textarea");
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
+      ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand("copy");
       document.body.removeChild(ta);
       setMessage("workerMessage", "Texte copié !", "success");
       setTimeout(() => setMessage("workerMessage", "", ""), 2000);
@@ -833,9 +746,7 @@
       setMessage("workerMessage", data.message || "OK", data.success ? "success" : "error");
       await updateMe();
       await loadNextTask();
-    }catch(e){
-      setMessage("workerMessage", e.message, "error");
-    }
+    }catch(e){ setMessage("workerMessage", e.message, "error"); }
   }
 
   async function skipTask(){
@@ -889,11 +800,10 @@
   async function createCommentOrder(){
     const link = document.getElementById("gcLink").value.trim();
     const comment_text = document.getElementById("gcText").value.trim();
-    const target = 1; // forcé à 1
     if (!link || !comment_text) return setMessage("gcMessage","Remplis tous les champs.","error");
     try{
       setMessage("gcMessage", '<span class="loader"></span>Création...', "");
-      const data = await api("/tasks/create_comment","POST",{link, comment_text, target});
+      const data = await api("/tasks/create_comment","POST",{link, comment_text, target: 1});
       setMessage("gcMessage", data.message || "OK", "success");
       await updateMe();
     }catch(e){ setMessage("gcMessage", e.message, "error"); }
@@ -909,22 +819,14 @@
       const items = data.items || [];
       if (!items.length){ list.innerHTML = "<div>Aucun order</div>"; return; }
       list.innerHTML = items.map(o => `
-        <div class="task-item">
-          <div>
-            <div><b>${o.task_type.toUpperCase()}</b> — <span class="meta">${o.status}</span></div>
-            <div class="meta">${o.success_count}/${o.target} — ${o.created_at}</div>
-            <div class="meta"><a class="link" target="_blank" href="${o.link}">${o.link}</a></div>
-          </div>
-        </div>
-      `).join("");
-      setMessage("ordersMsg","", "");
-    }catch(e){
-      list.innerHTML = "";
-      setMessage("ordersMsg", e.message, "error");
-    }
+        <div class="task-item"><div><b>${o.task_type.toUpperCase()}</b> — <span class="meta">${o.status}</span><br>
+        <span class="meta">${o.success_count}/${o.target} — ${o.created_at}</span><br>
+        <a class="link" target="_blank" href="${o.link}">${o.link}</a></div></div>`).join("");
+      setMessage("ordersMsg","");
+    }catch(e){ list.innerHTML = ""; setMessage("ordersMsg", e.message, "error"); }
   }
 
-  // DEPOSIT 2 STEPS
+  // DEPOSIT
   function updateDepositEstimate() {
     const coins = parseFloat(document.getElementById("depCoins").value) || 0;
     const ar = coins * 1.5;
@@ -933,10 +835,7 @@
 
   function depositNext() {
     const coins = parseFloat(document.getElementById("depCoins").value);
-    if (!coins || coins < 2000) {
-      setMessage("depMessage", "Minimum 2000 coins.", "error");
-      return;
-    }
+    if (!coins || coins < 2000) { setMessage("depMessage", "Minimum 2000 coins.", "error"); return; }
     const ar = coins * 1.5;
     document.getElementById("depAmountArLabel").textContent = ar;
     document.getElementById("depositStep1").style.display = "none";
@@ -987,8 +886,7 @@
       const data = await api("/wallet/deposit/history","GET");
       const items = data.items || [];
       list.innerHTML = items.length ? items.map(x=>`
-        <div class="task-item"><div><b>${x.status}</b> — ${x.created_at}<br>Coins: ${x.coins} | Ar: ${x.amount_ar} | Ref: ${x.reference||""}</div></div>
-      `).join("") : "<div>No history</div>";
+        <div class="task-item"><div><b>${x.status}</b> — ${x.created_at}<br>Coins: ${x.coins} | Ar: ${x.amount_ar} | Ref: ${x.reference||""}</div></div>`).join("") : "<div>No history</div>";
     }catch(e){ list.innerHTML=""; setMessage("depositHistoryMsg", e.message, "error"); }
   }
 
@@ -999,8 +897,7 @@
       const data = await api("/wallet/withdraw/history","GET");
       const items = data.items || [];
       list.innerHTML = items.length ? items.map(x=>`
-        <div class="task-item"><div><b>${x.status}</b> — ${x.created_at}<br>Ar: ${x.amount_ar} | ${x.method} | ${x.account}</div></div>
-      `).join("") : "<div>No history</div>";
+        <div class="task-item"><div><b>${x.status}</b> — ${x.created_at}<br>Ar: ${x.amount_ar} | ${x.method} | ${x.account}</div></div>`).join("") : "<div>No history</div>";
     }catch(e){ list.innerHTML=""; setMessage("withdrawHistoryMsg", e.message, "error"); }
   }
 
@@ -1012,10 +909,7 @@
     try {
       const data = await api(`/task_account/verify/list?page=${verifyPage}&page_size=50`, "GET");
       const accounts = data.accounts || [];
-      if (!accounts.length) {
-        list.innerHTML = "<div>Aucun compte.</div>";
-        return;
-      }
+      if (!accounts.length) { list.innerHTML = "<div>Aucun compte.</div>"; return; }
       list.innerHTML = accounts.map(a => {
         const status = a.verification_status;
         let statusHtml = "";
@@ -1027,25 +921,14 @@
         } else if (status === "rejected") {
           statusHtml = `<span class="status-badge rejected">rejeté</span>`;
           buttonHtml = `<button class="small-btn" onclick="requestVerification('${a.id}')">Retry get verified</button>`;
-        } else { // unverified
+        } else {
           statusHtml = `<span class="status-badge">non vérifié</span>`;
           buttonHtml = `<button class="small-btn" onclick="requestVerification('${a.id}')">Get Verified</button>`;
         }
-        return `
-          <div class="account-item">
-            <div style="flex:1;">
-              <div><a class="link" href="${a.profile_link}" target="_blank">${a.display_name || a.profile_link}</a></div>
-              <div style="font-size:12px;">${statusHtml}</div>
-            </div>
-            ${buttonHtml}
-          </div>
-        `;
+        return `<div class="account-item"><div style="flex:1;"><a class="link" href="${a.profile_link}" target="_blank">${a.display_name || a.profile_link}</a><br>${statusHtml}</div>${buttonHtml}</div>`;
       }).join("");
       setMessage("verifyMsg", "", "");
-    } catch(e) {
-      list.innerHTML = "";
-      setMessage("verifyMsg", e.message, "error");
-    }
+    } catch(e) { list.innerHTML = ""; setMessage("verifyMsg", e.message, "error"); }
   }
 
   async function requestVerification(accountId) {
@@ -1054,9 +937,32 @@
       const data = await api("/task_account/request_verification", "POST", { account_id: accountId });
       setMessage("verifyMsg", data.message || "Demande envoyée", "success");
       await loadVerifyAccounts();
-    } catch(e) {
-      setMessage("verifyMsg", e.message, "error");
-    }
+    } catch(e) { setMessage("verifyMsg", e.message, "error"); }
+  }
+
+  // VIP
+  async function buyVip() {
+    if (!me) await updateMe();
+    if (!me) return;
+    const confirmBuy = confirm("Acheter un code VIP pour 500 Ar ?");
+    if (!confirmBuy) return;
+    try {
+      setMessage("vipMessage", '<span class="loader"></span>Achat...', "");
+      const data = await api("/vip/buy", "POST");
+      setMessage("vipMessage", data.message + " Code : " + data.code, "success");
+      await updateMe();
+    } catch(e) { setMessage("vipMessage", e.message, "error"); }
+  }
+
+  async function activateVip() {
+    const code = document.getElementById("vipCode").value.trim();
+    if (!code) return setMessage("vipMessage", "Entrez un code.", "error");
+    try {
+      setMessage("vipMessage", '<span class="loader"></span>Activation...', "");
+      const data = await api("/vip/activate", "POST", { code });
+      setMessage("vipMessage", data.message, "success");
+      document.getElementById("vipCode").value = "";
+    } catch(e) { setMessage("vipMessage", e.message, "error"); }
   }
 
   // ADMIN VERIFY ACCOUNTS
@@ -1067,28 +973,12 @@
     try {
       const data = await api(`/admin/verify_accounts?page=${adminVerifyPage}&page_size=50`, "GET");
       const items = data.items || [];
-      if (!items.length) {
-        list.innerHTML = "<div>Aucune demande en attente.</div>";
-        return;
-      }
+      if (!items.length) { list.innerHTML = "<div>Aucune demande en attente.</div>"; return; }
       list.innerHTML = items.map(item => `
-        <div class="task-item">
-          <div style="flex:1;">
-            <b>${item.user_email}</b><br>
-            <a class="link" href="${item.profile_link}" target="_blank">${item.display_name || item.profile_link}</a>
-            <div class="meta">ID: ${item.id}</div>
-          </div>
-          <div style="display:flex;gap:4px;">
-            <button class="small-btn" onclick="handleAdminVerify('${item.id}','approve')">Approve</button>
-            <button class="small-btn" onclick="handleAdminVerify('${item.id}','reject')">Reject</button>
-          </div>
-        </div>
-      `).join("");
-      setMessage("adminVerifyMsg", "", "");
-    } catch(e) {
-      list.innerHTML = "";
-      setMessage("adminVerifyMsg", e.message, "error");
-    }
+        <div class="task-item"><div style="flex:1;"><b>${item.user_email}</b><br><a class="link" href="${item.profile_link}" target="_blank">${item.display_name || item.profile_link}</a><div class="meta">ID: ${item.id}</div></div>
+        <div style="display:flex;gap:4px;"><button class="small-btn" onclick="handleAdminVerify('${item.id}','approve')">Approve</button><button class="small-btn" onclick="handleAdminVerify('${item.id}','reject')">Reject</button></div></div>`).join("");
+      setMessage("adminVerifyMsg", "");
+    } catch(e) { list.innerHTML = ""; setMessage("adminVerifyMsg", e.message, "error"); }
   }
 
   async function handleAdminVerify(accountId, action) {
@@ -1096,9 +986,7 @@
       await api("/admin/verify_accounts/handle", "POST", { account_id: accountId, action });
       setMessage("adminVerifyMsg", action === "approve" ? "Approuvé, 10 Ar crédités." : "Rejeté.", "success");
       loadAdminVerifyAccounts();
-    } catch(e) {
-      setMessage("adminVerifyMsg", e.message, "error");
-    }
+    } catch(e) { setMessage("adminVerifyMsg", e.message, "error"); }
   }
 
   // ADMIN
@@ -1147,14 +1035,7 @@
       const items = data.items || [];
       if (!items.length){ list.innerHTML = "<div>Aucun utilisateur</div>"; return; }
       list.innerHTML = items.map(u=>`
-        <div class="task-item">
-          <div>
-            <b>${u.email}</b> — Coins: ${u.balance_coins} Ar: ${u.balance_ar}
-            ${u.banned ? " [BANNI]" : ""} ${u.suspended_until ? " [SUSPENDU]" : ""}
-            <div class="meta">ID: ${u.id}</div>
-          </div>
-        </div>
-      `).join("");
+        <div class="task-item"><div><b>${u.email}</b> — Coins: ${u.balance_coins} Ar: ${u.balance_ar} ${u.banned ? " [BANNI]" : ""} ${u.suspended_until ? " [SUSPENDU]" : ""}<div class="meta">ID: ${u.id}</div></div></div>`).join("");
     }catch(e){ list.innerHTML=""; setMessage("adminUsersMsg", e.message, "error"); }
   }
 
@@ -1167,11 +1048,8 @@
       const items = data.items || [];
       if (!items.length){ list.innerHTML = "<div>Empty</div>"; return; }
       list.innerHTML = items.map(x=>`
-        <div class="task-item"><div style="width:100%;">
-          <b>${x.user_email}</b> — ${x.coins} coins (${x.amount_ar} Ar) Ref: ${x.reference||""}
-          <div><button class="small-btn" onclick="handleDeposit('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleDeposit('${x.id}','reject')">Reject</button></div>
-        </div></div>
-      `).join("");
+        <div class="task-item"><div style="width:100%;"><b>${x.user_email}</b> — ${x.coins} coins (${x.amount_ar} Ar) Ref: ${x.reference||""}<br>
+        <button class="small-btn" onclick="handleDeposit('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleDeposit('${x.id}','reject')">Reject</button></div></div>`).join("");
     }catch(e){ list.innerHTML=""; setMessage("adminDepositsMsg", e.message, "error"); }
   }
 
@@ -1189,11 +1067,8 @@
       const items = data.items || [];
       if (!items.length){ list.innerHTML = "<div>Empty</div>"; return; }
       list.innerHTML = items.map(x=>`
-        <div class="task-item"><div style="width:100%;">
-          <b>${x.user_email}</b> — ${x.amount_ar} Ar (${x.method}) ${x.account}
-          <div><button class="small-btn" onclick="handleWithdraw('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','reject')">Reject</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','return')">Return</button></div>
-        </div></div>
-      `).join("");
+        <div class="task-item"><div style="width:100%;"><b>${x.user_email}</b> — ${x.amount_ar} Ar (${x.method}) ${x.account}<br>
+        <button class="small-btn" onclick="handleWithdraw('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','reject')">Reject</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','return')">Return</button></div></div>`).join("");
     }catch(e){ list.innerHTML=""; setMessage("adminWithdrawsMsg", e.message, "error"); }
   }
 
