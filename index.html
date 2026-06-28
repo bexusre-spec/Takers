@@ -129,6 +129,7 @@
       <button class="small-btn" onclick="showDepositHistory()">Deposit history</button>
       <button class="small-btn" onclick="showWithdrawHistory()">Withdraw history</button>
       <button class="small-btn" onclick="showVerifyAccount()">Vérifier compte</button>
+      <button class="small-btn" onclick="showVipCodes()">Code VIP</button>
 
       <div id="adminOnlyMenu" style="display:none; border-top:1px solid rgba(255,255,255,.18); padding-top:6px;">
         <button class="small-btn" onclick="showAdminCredit()">Créditer Coins/Ar</button>
@@ -145,19 +146,41 @@
 
     <!-- Auth Page -->
     <div id="authPage" class="page active">
-      <div class="title">
-        <h1>FB Tasks</h1>
-        <p>Connecte-toi ou crée un compte</p>
-      </div>
+      <div class="title"><h1>FB Tasks</h1><p>Connecte-toi ou crée un compte</p></div>
       <div class="tabs">
         <button id="loginTab" class="active" onclick="showLogin()">Sign in</button>
         <button id="registerTab" class="inactive" onclick="showRegister()">Sign up</button>
       </div>
+
+      <!-- Login form -->
       <div id="loginForm" class="form active">
         <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="ton@email.com" /></div>
         <div class="field"><label>Mot de passe</label><input type="password" id="loginPassword" placeholder="********" /></div>
         <button class="submit-btn" onclick="loginUser()">Login</button>
+        <div class="small-text" style="cursor:pointer;text-decoration:underline" onclick="showForgotPassword()">Mot de passe oublié ?</div>
       </div>
+
+      <!-- Forgot password flow -->
+      <div id="forgotPasswordForm" class="form" style="display:none;">
+        <div class="field"><label>Email</label><input type="email" id="forgotEmail" placeholder="ton@email.com" /></div>
+        <button class="submit-btn" onclick="requestResetCode()">Get Code</button>
+        <div id="forgotMsg" class="message"></div>
+        <!-- Code verification area -->
+        <div id="codeInputArea" style="display:none; margin-top:10px;">
+          <div class="field"><label>Code reçu par email (vérifiez les spams)</label><input type="text" id="resetCode" placeholder="123456" /></div>
+          <button class="submit-btn" onclick="checkResetCode()">Check</button>
+          <div id="codeCheckMsg" class="message"></div>
+        </div>
+        <!-- New password area -->
+        <div id="newPasswordArea" style="display:none; margin-top:10px;">
+          <div class="field"><label>Nouveau mot de passe</label><input type="password" id="newPassword" placeholder="min 6 caractères" /></div>
+          <button class="submit-btn" onclick="submitNewPassword()">Valider</button>
+          <div id="newPassMsg" class="message"></div>
+        </div>
+        <div class="small-text" style="cursor:pointer;text-decoration:underline" onclick="backToLogin()">Retour à la connexion</div>
+      </div>
+
+      <!-- Register form -->
       <div id="registerForm" class="form">
         <div class="field"><label>Email</label><input type="email" id="registerEmail" placeholder="ton@email.com" /></div>
         <div class="field"><label>Mot de passe</label><input type="password" id="registerPassword" placeholder="Créer un mot de passe" /></div>
@@ -165,7 +188,6 @@
         <button class="submit-btn" onclick="registerUser()">Register</button>
       </div>
       <div id="authMessage" class="message"></div>
-      <div class="small-text">Crée ton compte gratuitement, puis connecte-toi.</div>
     </div>
 
     <!-- Dashboard Page -->
@@ -176,9 +198,7 @@
           <div id="userEmailLabel" style="font-size:12px; opacity:0.9;"></div>
         </div>
         <div id="hamburgerWrap">
-          <div class="hamburger" onclick="toggleAdminMenu()">
-            <span></span><span></span><span></span>
-          </div>
+          <div class="hamburger" onclick="toggleAdminMenu()"><span></span><span></span><span></span></div>
         </div>
       </div>
 
@@ -282,7 +302,7 @@
           <div id="gcMessage" class="message"></div>
         </div>
 
-        <!-- Deposit (2 étapes) -->
+        <!-- Deposit -->
         <div id="sectionDeposit" class="card" style="display:none;">
           <h2>Deposit</h2>
           <div id="depositStep1">
@@ -322,11 +342,7 @@
         <!-- VIP Task -->
         <div id="sectionVip" class="card" style="display:none;">
           <h2>VIP Task</h2>
-          <p style="font-size:12px;opacity:0.9;">
-            Clicker sur <b>Buy</b> pour acheter un code VIP pour 500 Ar.<br/>
-            Donnez le code à quelqu'un qui fera un dépôt, vous recevrez 900 Ar et lui 100 Ar une fois le dépôt approuvé.<br/>
-            Clicker sur <b>Activer code VIP</b> pour utiliser un code reçu.
-          </p>
+          <p style="font-size:12px;opacity:0.9;">Clicker sur <b>Buy</b> pour acheter un code VIP pour 500 Ar. Donnez le code à quelqu'un qui fera un dépôt, vous recevrez 900 Ar et lui 100 Ar une fois le dépôt approuvé. Clicker sur <b>Activer code VIP</b> pour utiliser un code reçu.</p>
           <div style="display:flex;gap:8px;margin-top:8px;">
             <button class="small-btn" style="flex:1;" onclick="buyVip()">Buy (500 Ar)</button>
             <button class="small-btn" style="flex:1;" onclick="showVipActivate()">Activer code VIP</button>
@@ -338,7 +354,7 @@
           <div id="vipMessage" class="message"></div>
         </div>
 
-        <!-- Vérifier compte (user) -->
+        <!-- Vérifier compte -->
         <div id="sectionVerifyAccount" class="card" style="display:none;">
           <h2>Vérifier compte</h2>
           <p style="font-size:12px;opacity:0.9;">Les comptes vérifiés reçoivent beaucoup plus de tâches. Ajoutez une photo de profil Malagasy et au moins 50 amis/followers. Vous recevrez 10 Ar après vérification approuvée.</p>
@@ -352,7 +368,16 @@
           <div id="verifyMsg" class="message"></div>
         </div>
 
-        <!-- Admin Credit -->
+        <!-- Code VIP (menu) -->
+        <div id="sectionVipCodes" class="card" style="display:none;">
+          <h2>Mes Codes VIP</h2>
+          <p style="font-size:12px;opacity:0.9;" id="vipActiveStatus">Statut VIP : non actif</p>
+          <button class="small-btn" onclick="loadVipCodes()">Refresh</button>
+          <div id="vipUnusedCodes" class="tasks-log" style="margin-top:8px;">Chargement...</div>
+          <div id="vipCodesMsg" class="message"></div>
+        </div>
+
+        <!-- Admin sections -->
         <div id="sectionAdminCredit" class="card" style="display:none;">
           <h2>Admin: Créditer Coins/Ar</h2>
           <div class="field"><label>Email</label><input type="email" id="admEmail" /></div>
@@ -361,8 +386,6 @@
           <button class="submit-btn" onclick="adminCredit()">Créditer</button>
           <div id="admMessage" class="message"></div>
         </div>
-
-        <!-- Admin Deduct -->
         <div id="sectionAdminDeduct" class="card" style="display:none;">
           <h2>Admin: Déduire Coins/Ar</h2>
           <div class="field"><label>Email</label><input type="email" id="deductEmail" /></div>
@@ -371,17 +394,13 @@
           <button class="submit-btn" onclick="adminDeduct()">Déduire</button>
           <div id="deductMessage" class="message"></div>
         </div>
-
-        <!-- Admin Ban -->
         <div id="sectionAdminBan" class="card" style="display:none;">
           <h2>Admin: Ban / Unban / Suspendre 10h</h2>
-          <div class="field"><label>Email de l'utilisateur</label><input type="email" id="banEmail" /></div>
+          <div class="field"><label>Email</label><input type="email" id="banEmail" /></div>
           <div class="field"><label>Action</label><select id="banAction"><option value="ban">Ban</option><option value="unban">Unban</option><option value="suspend">Suspendre 10h</option></select></div>
           <button class="submit-btn" onclick="adminBan()">Appliquer</button>
           <div id="banMessage" class="message"></div>
         </div>
-
-        <!-- Admin Users -->
         <div id="sectionAdminUsers" class="card" style="display:none;">
           <h2>Admin: Liste utilisateurs</h2>
           <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
@@ -396,8 +415,6 @@
           <div id="adminUsersList" class="tasks-log"></div>
           <div id="adminUsersMsg" class="message"></div>
         </div>
-
-        <!-- Admin Deposits -->
         <div id="sectionAdminDeposits" class="card" style="display:none;">
           <h2>Admin: Deposits pending</h2>
           <div style="display:flex;gap:8px;align-items:center;">
@@ -409,8 +426,6 @@
           <div id="adminDepositsList" class="tasks-log"></div>
           <div id="adminDepositsMsg" class="message"></div>
         </div>
-
-        <!-- Admin Withdraws -->
         <div id="sectionAdminWithdraws" class="card" style="display:none;">
           <h2>Admin: Withdraws pending</h2>
           <div style="display:flex;gap:8px;align-items:center;">
@@ -422,8 +437,6 @@
           <div id="adminWithdrawsList" class="tasks-log"></div>
           <div id="adminWithdrawsMsg" class="message"></div>
         </div>
-
-        <!-- Admin Verify Accounts -->
         <div id="sectionAdminVerifyAccounts" class="card" style="display:none;">
           <h2>Admin: Verify Accounts</h2>
           <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
@@ -436,7 +449,7 @@
           <div id="adminVerifyMsg" class="message"></div>
         </div>
 
-        <!-- Deposit history / withdraw history -->
+        <!-- Histories -->
         <div id="sectionDepositHistory" class="card" style="display:none;">
           <h2>Deposit history</h2>
           <button class="small-btn" onclick="loadDepositHistory()">Refresh</button>
@@ -455,7 +468,7 @@
   </div>
 
 <script>
-  const API_URL = "https://mediterranean-adequate-apnic-acc.trycloudflare.com";
+  const API_URL = "https://divine-retreat-gale-finally.trycloudflare.com"; // À remplacer par l'URL réelle
 
   let auth = JSON.parse(localStorage.getItem("auth") || "null");
   let me = null;
@@ -463,9 +476,11 @@
   let currentTask = null;
   let ordersPage = 0, adminDepPage = 0, adminWdPage = 0, usersPage = 0;
   let verifyPage = 0, adminVerifyPage = 0;
+  let resetEmail = "";
 
   function setMessage(id, text, type = "") {
     const el = document.getElementById(id);
+    if (!el) return;
     el.className = "message " + type;
     el.innerHTML = text;
   }
@@ -473,20 +488,37 @@
   function showLogin() {
     document.getElementById("loginForm").classList.add("active");
     document.getElementById("registerForm").classList.remove("active");
+    document.getElementById("forgotPasswordForm").style.display = "none";
     document.getElementById("loginTab").classList.add("active");
     document.getElementById("loginTab").classList.remove("inactive");
     document.getElementById("registerTab").classList.remove("active");
     document.getElementById("registerTab").classList.add("inactive");
+    setMessage("authMessage","");
   }
 
   function showRegister() {
     document.getElementById("registerForm").classList.add("active");
     document.getElementById("loginForm").classList.remove("active");
+    document.getElementById("forgotPasswordForm").style.display = "none";
     document.getElementById("registerTab").classList.add("active");
     document.getElementById("registerTab").classList.remove("inactive");
     document.getElementById("loginTab").classList.remove("active");
     document.getElementById("loginTab").classList.add("inactive");
+    setMessage("authMessage","");
   }
+
+  function showForgotPassword() {
+    document.getElementById("loginForm").classList.remove("active");
+    document.getElementById("registerForm").classList.remove("active");
+    document.getElementById("forgotPasswordForm").style.display = "block";
+    document.getElementById("codeInputArea").style.display = "none";
+    document.getElementById("newPasswordArea").style.display = "none";
+    setMessage("forgotMsg","");
+    setMessage("codeCheckMsg","");
+    setMessage("newPassMsg","");
+  }
+
+  function backToLogin() { showLogin(); }
 
   function showAuthPage() {
     document.getElementById("authPage").classList.add("active");
@@ -520,14 +552,13 @@
       "AddAccount","Work","OrderStatus","DepositHistory","WithdrawHistory","Referral",
       "AdminDeposits","AdminWithdraws","AdminCredit","AdminDeduct","AdminBan","AdminUsers",
       "GetFollower","GetLike","GetComment","Deposit","Withdraw","Swap",
-      "VerifyAccount","AdminVerifyAccounts","Vip"
+      "VerifyAccount","AdminVerifyAccounts","Vip","VipCodes"
     ];
     allSections.forEach(s => {
       const el = document.getElementById("section" + s);
       if (el) el.style.display = "none";
     });
-    const sectionId = "section" + name.charAt(0).toUpperCase() + name.slice(1);
-    const target = document.getElementById(sectionId);
+    const target = document.getElementById("section" + name.charAt(0).toUpperCase() + name.slice(1));
     if (target) target.style.display = "block";
 
     if (name === "work") loadAccountsForWork();
@@ -545,24 +576,21 @@
     if (name === "adminUsers") loadAdminUsers();
     if (name === "verifyAccount") loadVerifyAccounts();
     if (name === "adminVerifyAccounts") loadAdminVerifyAccounts();
-    if (name === "vip") {
-      document.getElementById("vipActivateArea").style.display = "none";
-    }
+    if (name === "vip") { document.getElementById("vipActivateArea").style.display = "none"; }
+    if (name === "vipCodes") loadVipCodes();
   }
 
   function showAccountInfo() {
     hideAdminMenu();
     if (!me) return;
-    setMessage("dashboardMessage",
-      `Email: ${me.email}<br>Coins: ${Number(me.balance_coins).toFixed(2)} — Ar: ${Math.floor(Number(me.balance_ar))}`,
-      "success"
-    );
+    setMessage("dashboardMessage", `Email: ${me.email}<br>Coins: ${Number(me.balance_coins).toFixed(2)} — Ar: ${Math.floor(Number(me.balance_ar))}`, "success");
   }
 
   function showReferral(){ showSection("referral"); }
   function showDepositHistory(){ showSection("depositHistory"); }
   function showWithdrawHistory(){ showSection("withdrawHistory"); }
   function showVerifyAccount(){ showSection("verifyAccount"); }
+  function showVipCodes(){ showSection("vipCodes"); }
   function showAdminCredit(){ showSection("adminCredit"); }
   function showAdminDeduct(){ showSection("adminDeduct"); }
   function showAdminBan(){ showSection("adminBan"); }
@@ -570,7 +598,6 @@
   function showAdminDeposits(){ showSection("adminDeposits"); }
   function showAdminWithdraws(){ showSection("adminWithdraws"); }
   function showAdminVerifyAccounts(){ showSection("adminVerifyAccounts"); }
-  function showVipActivate(){ document.getElementById("vipActivateArea").style.display = "block"; }
 
   async function api(path, method="GET", body=null) {
     const headers = {"Content-Type":"application/json"};
@@ -585,27 +612,23 @@
 
   async function updateMe() {
     if (!auth?.token) return;
-    try{
+    try {
       me = await api("/me", "GET");
       document.getElementById("balanceCoins").textContent = Number(me.balance_coins).toFixed(2);
       document.getElementById("balanceAr").textContent = Math.floor(Number(me.balance_ar));
-      const ok = Number(me.balance_coins) >= 20;
-      ["btnAddAccount","btnGetFollower","btnGetLike","btnGetComment"].forEach(id=>{
-        const el = document.getElementById(id);
-        if (!el) return;
-        if (!ok) el.classList.add("disabled"); else el.classList.remove("disabled");
-      });
-      // Add Account n'a plus de minimum coins
       document.getElementById("btnAddAccount").classList.remove("disabled");
+      const ok = Number(me.balance_coins) >= 20;
+      ["btnGetFollower","btnGetLike","btnGetComment"].forEach(id=>{
+        const el = document.getElementById(id);
+        if (el) { if (!ok) el.classList.add("disabled"); else el.classList.remove("disabled"); }
+      });
       if (me.id) updateReferralLink();
-    }catch(e){ console.log(e); }
+    } catch(e) { console.log(e); }
   }
 
   function updateReferralLink() {
     const linkInput = document.getElementById("referralLink");
-    if (linkInput && me?.id) {
-      linkInput.value = window.location.origin + "/register?ref=" + me.id;
-    }
+    if (linkInput && me?.id) linkInput.value = window.location.origin + "/register?ref=" + me.id;
   }
 
   async function loadReferralCount() {
@@ -628,35 +651,69 @@
     const password = document.getElementById("registerPassword").value.trim();
     const ref = document.getElementById("registerRef").value.trim();
     if (!email || !password) return setMessage("authMessage","Remplis tous les champs.","error");
-    try{
+    try {
       setMessage("authMessage",'<span class="loader"></span>Inscription...', "");
       const data = await api("/register","POST",{email,password,ref});
       auth = {token: data.token, email: data.email, is_admin: !!data.is_admin};
       localStorage.setItem("auth", JSON.stringify(auth));
       setMessage("authMessage","Inscription réussie.","success");
       showDashboard();
-    }catch(e){ setMessage("authMessage", e.message, "error"); }
+    } catch(e) { setMessage("authMessage", e.message, "error"); }
   }
 
   async function loginUser() {
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value.trim();
     if (!email || !password) return setMessage("authMessage","Remplis tous les champs.","error");
-    try{
+    try {
       setMessage("authMessage",'<span class="loader"></span>Connexion...', "");
       const data = await api("/login","POST",{email,password});
       auth = {token: data.token, email: data.email, is_admin: !!data.is_admin};
       localStorage.setItem("auth", JSON.stringify(auth));
       setMessage("authMessage","Connexion réussie.","success");
       showDashboard();
-    }catch(e){ setMessage("authMessage", e.message, "error"); }
+    } catch(e) { setMessage("authMessage", e.message, "error"); }
   }
 
   function logoutUser() {
     auth = null; me=null; currentTask=null; selectedAccountId=null;
     localStorage.removeItem("auth");
     showAuthPage(); showLogin();
-    setMessage("authMessage","","");
+    setMessage("authMessage","");
+  }
+
+  // Password reset
+  async function requestResetCode() {
+    const email = document.getElementById("forgotEmail").value.trim();
+    if (!email) return setMessage("forgotMsg","Email requis.","error");
+    try {
+      setMessage("forgotMsg",'<span class="loader"></span>Envoi...', "");
+      await api("/auth/forgot_password","POST",{email});
+      setMessage("forgotMsg","Code envoyé à l'email (vérifiez les spams).","success");
+      resetEmail = email;
+      document.getElementById("codeInputArea").style.display = "block";
+    } catch(e) { setMessage("forgotMsg", e.message, "error"); }
+  }
+
+  async function checkResetCode() {
+    const code = document.getElementById("resetCode").value.trim();
+    if (!code) return setMessage("codeCheckMsg","Code requis.","error");
+    // Just show new password field
+    document.getElementById("newPasswordArea").style.display = "block";
+    setMessage("codeCheckMsg","");
+  }
+
+  async function submitNewPassword() {
+    const code = document.getElementById("resetCode").value.trim();
+    const newPassword = document.getElementById("newPassword").value.trim();
+    if (!code || !newPassword) return setMessage("newPassMsg","Code et nouveau mot de passe requis.","error");
+    if (newPassword.length < 6) return setMessage("newPassMsg","Mot de passe trop court (min 6).","error");
+    try {
+      setMessage("newPassMsg",'<span class="loader"></span>Mise à jour...', "");
+      const data = await api("/auth/reset_password","POST",{email: resetEmail, code, new_password: newPassword});
+      setMessage("newPassMsg", data.message, "success");
+      setTimeout(() => { backToLogin(); setMessage("authMessage","Mot de passe modifié, connectez-vous.","success"); }, 2000);
+    } catch(e) { setMessage("newPassMsg", e.message, "error"); }
   }
 
   // ADD ACCOUNT
@@ -665,12 +722,12 @@
     const profile_link = document.getElementById("accProfileLink").value.trim();
     const cookies_string = document.getElementById("accCookies").value.trim();
     if (!profile_link || !cookies_string) return setMessage("addAccountMessage","Remplis tous les champs.","error");
-    try{
+    try {
       setMessage("addAccountMessage",'<span class="loader"></span>Vérification...', "");
       const data = await api("/task_account/add","POST",{profile_link,cookies_string});
       setMessage("addAccountMessage", data.message || "OK", "success");
       await updateMe();
-    }catch(e){ setMessage("addAccountMessage", e.message, "error"); }
+    } catch(e) { setMessage("addAccountMessage", e.message, "error"); }
   }
 
   // WORK
@@ -680,7 +737,7 @@
     document.getElementById("currentTaskArea").style.display = "none";
     const area = document.getElementById("accountsForWork");
     area.innerHTML = "Chargement...";
-    try{
+    try {
       const data = await api("/task_account/list","GET");
       const accounts = data.accounts || [];
       if (!accounts.length){ area.innerHTML = "<div>Aucun compte TASK.</div>"; return; }
@@ -689,7 +746,7 @@
           <div><strong>${(a.display_name || a.profile_link)}</strong><br><span style="font-size:12px;opacity:0.8;">${a.profile_link}</span></div>
           <button class="small-btn" onclick="selectAccountForWork('${a.id}')">Utiliser</button>
         </div>`).join("");
-    }catch(e){ area.innerHTML = "Erreur: " + e.message; }
+    } catch(e){ area.innerHTML = "Erreur: " + e.message; }
   }
 
   async function selectAccountForWork(accId){
@@ -701,7 +758,7 @@
 
   async function loadNextTask(){
     if (!selectedAccountId) return;
-    try{
+    try {
       const data = await api(`/worker/next_task?account_id=${encodeURIComponent(selectedAccountId)}`,"GET");
       if (!data.task_id){
         currentTask = null;
@@ -722,7 +779,7 @@
         ${commentBlock}
         <div class="meta"><strong>Progress:</strong> ${data.success_count}/${data.target || "-"}</div>`;
       setMessage("workerMessage", "", "");
-    }catch(e){ setMessage("workerMessage", e.message, "error"); }
+    } catch(e){ setMessage("workerMessage", e.message, "error"); }
   }
 
   function copyCommentText(text) {
@@ -741,17 +798,17 @@
   async function verifyCurrentTask(){
     if (!selectedAccountId || !currentTask?.task_id) return;
     setMessage("workerMessage", '<span class="loader"></span>Vérification...', "");
-    try{
+    try {
       const data = await api("/worker/verify_task","POST",{account_id: selectedAccountId, task_id: currentTask.task_id});
       setMessage("workerMessage", data.message || "OK", data.success ? "success" : "error");
       await updateMe();
       await loadNextTask();
-    }catch(e){ setMessage("workerMessage", e.message, "error"); }
+    } catch(e){ setMessage("workerMessage", e.message, "error"); }
   }
 
   async function skipTask(){
     setMessage("workerMessage", "Tâche ignorée...", "");
-    try{ await api("/worker/skip_task","POST",{}); }catch(e){}
+    try { await api("/worker/skip_task","POST",{}); } catch(e){}
     await loadNextTask();
   }
 
@@ -776,12 +833,12 @@
     const link = document.getElementById("gfProfileLink").value.trim();
     const target = parseInt(document.getElementById("gfTarget").value || "0", 10);
     if (!link || !target) return setMessage("gfMessage","Remplis tous les champs.","error");
-    try{
+    try {
       setMessage("gfMessage", '<span class="loader"></span>Création...', "");
       const data = await api("/tasks/create_follow","POST",{profile_link: link, target});
       setMessage("gfMessage", data.message || "OK", "success");
       await updateMe();
-    }catch(e){ setMessage("gfMessage", e.message, "error"); }
+    } catch(e){ setMessage("gfMessage", e.message, "error"); }
   }
 
   async function createLikeOrder(){
@@ -789,24 +846,24 @@
     const reaction_key = document.getElementById("glReaction").value;
     const target = parseInt(document.getElementById("glTarget").value || "0", 10);
     if (!link || !reaction_key || !target) return setMessage("glMessage","Remplis tous les champs.","error");
-    try{
+    try {
       setMessage("glMessage", '<span class="loader"></span>Création...', "");
       const data = await api("/tasks/create_like","POST",{link, reaction_key, target});
       setMessage("glMessage", data.message || "OK", "success");
       await updateMe();
-    }catch(e){ setMessage("glMessage", e.message, "error"); }
+    } catch(e){ setMessage("glMessage", e.message, "error"); }
   }
 
   async function createCommentOrder(){
     const link = document.getElementById("gcLink").value.trim();
     const comment_text = document.getElementById("gcText").value.trim();
     if (!link || !comment_text) return setMessage("gcMessage","Remplis tous les champs.","error");
-    try{
+    try {
       setMessage("gcMessage", '<span class="loader"></span>Création...', "");
       const data = await api("/tasks/create_comment","POST",{link, comment_text, target: 1});
       setMessage("gcMessage", data.message || "OK", "success");
       await updateMe();
-    }catch(e){ setMessage("gcMessage", e.message, "error"); }
+    } catch(e){ setMessage("gcMessage", e.message, "error"); }
   }
 
   // ORDER STATUS
@@ -814,7 +871,7 @@
     document.getElementById("ordersPageLabel").textContent = ordersPage;
     const list = document.getElementById("ordersList");
     list.innerHTML = "Loading...";
-    try{
+    try {
       const data = await api(`/orders/status?page=${ordersPage}&page_size=30`,"GET");
       const items = data.items || [];
       if (!items.length){ list.innerHTML = "<div>Aucun order</div>"; return; }
@@ -823,7 +880,7 @@
         <span class="meta">${o.success_count}/${o.target} — ${o.created_at}</span><br>
         <a class="link" target="_blank" href="${o.link}">${o.link}</a></div></div>`).join("");
       setMessage("ordersMsg","");
-    }catch(e){ list.innerHTML = ""; setMessage("ordersMsg", e.message, "error"); }
+    } catch(e){ list.innerHTML = ""; setMessage("ordersMsg", e.message, "error"); }
   }
 
   // DEPOSIT
@@ -846,11 +903,11 @@
     const coins = parseFloat(document.getElementById("depCoins").value);
     const reference = document.getElementById("depRef").value.trim();
     if (!coins || coins < 2000) return setMessage("depMessage","Montant invalide","error");
-    try{
+    try {
       setMessage("depMessage", '<span class="loader"></span>Envoi...', "");
       const data = await api("/wallet/deposit","POST",{coins, reference});
       setMessage("depMessage", data.message + " ID: " + data.request_id, "success");
-    }catch(e){ setMessage("depMessage", e.message, "error"); }
+    } catch(e){ setMessage("depMessage", e.message, "error"); }
   }
 
   // WITHDRAW / SWAP / HISTORY
@@ -860,45 +917,45 @@
     const account = document.getElementById("wdAccount").value.trim();
     const recipient_name = document.getElementById("wdName").value.trim();
     if (!amount_ar || amount_ar<5000 || !account || !recipient_name) return setMessage("wdMessage","Champs invalides","error");
-    try{
+    try {
       setMessage("wdMessage", '<span class="loader"></span>Envoi...', "");
       const data = await api("/wallet/withdraw","POST",{amount_ar, method, account, recipient_name});
       setMessage("wdMessage", data.message + " ID: " + data.request_id, "success");
       await updateMe();
-    }catch(e){ setMessage("wdMessage", e.message, "error"); }
+    } catch(e){ setMessage("wdMessage", e.message, "error"); }
   }
 
   async function doSwap(){
     const amount_ar = parseFloat(document.getElementById("swapAmount").value);
     if (!amount_ar || amount_ar<=0) return setMessage("swapMessage","Montant invalide","error");
-    try{
+    try {
       setMessage("swapMessage", '<span class="loader"></span>Swap...', "");
       const data = await api("/wallet/swap","POST",{amount_ar});
       setMessage("swapMessage", data.message + ` (+${data.received_coins} coins)`, "success");
       await updateMe();
-    }catch(e){ setMessage("swapMessage", e.message, "error"); }
+    } catch(e){ setMessage("swapMessage", e.message, "error"); }
   }
 
   async function loadDepositHistory() {
     const list = document.getElementById("depositHistoryList");
     list.innerHTML = "Loading...";
-    try{
+    try {
       const data = await api("/wallet/deposit/history","GET");
       const items = data.items || [];
       list.innerHTML = items.length ? items.map(x=>`
         <div class="task-item"><div><b>${x.status}</b> — ${x.created_at}<br>Coins: ${x.coins} | Ar: ${x.amount_ar} | Ref: ${x.reference||""}</div></div>`).join("") : "<div>No history</div>";
-    }catch(e){ list.innerHTML=""; setMessage("depositHistoryMsg", e.message, "error"); }
+    } catch(e){ list.innerHTML=""; setMessage("depositHistoryMsg", e.message, "error"); }
   }
 
   async function loadWithdrawHistory() {
     const list = document.getElementById("withdrawHistoryList");
     list.innerHTML = "Loading...";
-    try{
+    try {
       const data = await api("/wallet/withdraw/history","GET");
       const items = data.items || [];
       list.innerHTML = items.length ? items.map(x=>`
         <div class="task-item"><div><b>${x.status}</b> — ${x.created_at}<br>Ar: ${x.amount_ar} | ${x.method} | ${x.account}</div></div>`).join("") : "<div>No history</div>";
-    }catch(e){ list.innerHTML=""; setMessage("withdrawHistoryMsg", e.message, "error"); }
+    } catch(e){ list.innerHTML=""; setMessage("withdrawHistoryMsg", e.message, "error"); }
   }
 
   // VERIFY ACCOUNT (user)
@@ -965,7 +1022,108 @@
     } catch(e) { setMessage("vipMessage", e.message, "error"); }
   }
 
-  // ADMIN VERIFY ACCOUNTS
+  async function loadVipCodes() {
+    try {
+      const data = await api("/vip/my_codes","GET");
+      document.getElementById("vipActiveStatus").innerHTML = `Statut VIP : ${data.active_vip ? "<span style='color:#2ecc71'>actif</span>" : "non actif"}`;
+      const list = document.getElementById("vipUnusedCodes");
+      if (!data.unused_codes || data.unused_codes.length === 0) {
+        list.innerHTML = "<div>Aucun code VIP non utilisé.</div>";
+      } else {
+        list.innerHTML = data.unused_codes.map(c => `<div class="account-item"><div><b>${c.code}</b><br><span style="font-size:12px;">Créé le ${c.created_at}</span></div></div>`).join("");
+      }
+      setMessage("vipCodesMsg","");
+    } catch(e) { setMessage("vipCodesMsg", e.message, "error"); }
+  }
+
+  // ADMIN functions (identical to before, with verify accounts and deposit/withdraw handling)
+  async function adminCredit(){
+    const email = document.getElementById("admEmail").value.trim().toLowerCase();
+    const coins = parseFloat(document.getElementById("admCoins").value)||0;
+    const ar = parseFloat(document.getElementById("admAr").value)||0;
+    if (!email) return setMessage("admMessage","Email obligatoire","error");
+    try {
+      setMessage("admMessage", '<span class="loader"></span>...', "");
+      const data = await api("/admin/credit","POST",{email, coins, ar});
+      setMessage("admMessage", data.message, "success");
+    } catch(e){ setMessage("admMessage", e.message, "error"); }
+  }
+
+  async function adminDeduct(){
+    const email = document.getElementById("deductEmail").value.trim().toLowerCase();
+    const coins = parseFloat(document.getElementById("deductCoins").value)||0;
+    const ar = parseFloat(document.getElementById("deductAr").value)||0;
+    if (!email) return setMessage("deductMessage","Email obligatoire","error");
+    try {
+      setMessage("deductMessage", '<span class="loader"></span>...', "");
+      const data = await api("/admin/deduct","POST",{email, coins, ar});
+      setMessage("deductMessage", data.message, "success");
+    } catch(e){ setMessage("deductMessage", e.message, "error"); }
+  }
+
+  async function adminBan(){
+    const email = document.getElementById("banEmail").value.trim().toLowerCase();
+    const action = document.getElementById("banAction").value;
+    if (!email) return setMessage("banMessage","Email obligatoire","error");
+    try {
+      setMessage("banMessage", '<span class="loader"></span>...', "");
+      const data = await api("/admin/ban","POST",{email, action});
+      setMessage("banMessage", data.message, "success");
+    } catch(e){ setMessage("banMessage", e.message, "error"); }
+  }
+
+  async function loadAdminUsers(){
+    const search = document.getElementById("userSearch").value.trim();
+    document.getElementById("usersPageLabel").textContent = usersPage;
+    const list = document.getElementById("adminUsersList");
+    list.innerHTML = "Loading...";
+    try {
+      const data = await api(`/admin/users?page=${usersPage}&page_size=100&search=${encodeURIComponent(search)}`,"GET");
+      const items = data.items || [];
+      if (!items.length){ list.innerHTML = "<div>Aucun utilisateur</div>"; return; }
+      list.innerHTML = items.map(u=>`
+        <div class="task-item"><div><b>${u.email}</b> — Coins: ${u.balance_coins} Ar: ${u.balance_ar} ${u.banned ? " [BANNI]" : ""} ${u.suspended_until ? " [SUSPENDU]" : ""}<div class="meta">ID: ${u.id}</div></div></div>`).join("");
+    } catch(e){ list.innerHTML=""; setMessage("adminUsersMsg", e.message, "error"); }
+  }
+
+  async function loadAdminDeposits(){
+    document.getElementById("adminDepPageLabel").textContent = adminDepPage;
+    const list = document.getElementById("adminDepositsList");
+    list.innerHTML = "Loading...";
+    try {
+      const data = await api(`/admin/deposits?status=pending&page=${adminDepPage}&page_size=30`,"GET");
+      const items = data.items || [];
+      if (!items.length){ list.innerHTML = "<div>Empty</div>"; return; }
+      list.innerHTML = items.map(x=>`
+        <div class="task-item"><div style="width:100%;"><b>${x.user_email}</b> — ${x.coins} coins (${x.amount_ar} Ar) Ref: ${x.reference||""}<br>
+        <button class="small-btn" onclick="handleDeposit('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleDeposit('${x.id}','reject')">Reject</button></div></div>`).join("");
+    } catch(e){ list.innerHTML=""; setMessage("adminDepositsMsg", e.message, "error"); }
+  }
+
+  async function handleDeposit(id, action){
+    try { await api("/admin/deposits/handle","POST",{request_id:id, action}); loadAdminDeposits(); }
+    catch(e){ setMessage("adminDepositsMsg", e.message, "error"); }
+  }
+
+  async function loadAdminWithdraws(){
+    document.getElementById("adminWdPageLabel").textContent = adminWdPage;
+    const list = document.getElementById("adminWithdrawsList");
+    list.innerHTML = "Loading...";
+    try {
+      const data = await api(`/admin/withdraws?status=pending&page=${adminWdPage}&page_size=30`,"GET");
+      const items = data.items || [];
+      if (!items.length){ list.innerHTML = "<div>Empty</div>"; return; }
+      list.innerHTML = items.map(x=>`
+        <div class="task-item"><div style="width:100%;"><b>${x.user_email}</b> — ${x.amount_ar} Ar (${x.method}) ${x.account}<br>
+        <button class="small-btn" onclick="handleWithdraw('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','reject')">Reject</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','return')">Return</button></div></div>`).join("");
+    } catch(e){ list.innerHTML=""; setMessage("adminWithdrawsMsg", e.message, "error"); }
+  }
+
+  async function handleWithdraw(id, action){
+    try { await api("/admin/withdraws/handle","POST",{request_id:id, action}); loadAdminWithdraws(); }
+    catch(e){ setMessage("adminWithdrawsMsg", e.message, "error"); }
+  }
+
   async function loadAdminVerifyAccounts() {
     document.getElementById("adminVerifyPageLabel").textContent = adminVerifyPage;
     const list = document.getElementById("adminVerifyList");
@@ -987,94 +1145,6 @@
       setMessage("adminVerifyMsg", action === "approve" ? "Approuvé, 10 Ar crédités." : "Rejeté.", "success");
       loadAdminVerifyAccounts();
     } catch(e) { setMessage("adminVerifyMsg", e.message, "error"); }
-  }
-
-  // ADMIN
-  async function adminCredit(){
-    const email = document.getElementById("admEmail").value.trim().toLowerCase();
-    const coins = parseFloat(document.getElementById("admCoins").value)||0;
-    const ar = parseFloat(document.getElementById("admAr").value)||0;
-    if (!email) return setMessage("admMessage","Email obligatoire","error");
-    try{
-      setMessage("admMessage", '<span class="loader"></span>...', "");
-      const data = await api("/admin/credit","POST",{email, coins, ar});
-      setMessage("admMessage", data.message, "success");
-    }catch(e){ setMessage("admMessage", e.message, "error"); }
-  }
-
-  async function adminDeduct(){
-    const email = document.getElementById("deductEmail").value.trim().toLowerCase();
-    const coins = parseFloat(document.getElementById("deductCoins").value)||0;
-    const ar = parseFloat(document.getElementById("deductAr").value)||0;
-    if (!email) return setMessage("deductMessage","Email obligatoire","error");
-    try{
-      setMessage("deductMessage", '<span class="loader"></span>...', "");
-      const data = await api("/admin/deduct","POST",{email, coins, ar});
-      setMessage("deductMessage", data.message, "success");
-    }catch(e){ setMessage("deductMessage", e.message, "error"); }
-  }
-
-  async function adminBan(){
-    const email = document.getElementById("banEmail").value.trim().toLowerCase();
-    const action = document.getElementById("banAction").value;
-    if (!email) return setMessage("banMessage","Email obligatoire","error");
-    try{
-      setMessage("banMessage", '<span class="loader"></span>...', "");
-      const data = await api("/admin/ban","POST",{email, action});
-      setMessage("banMessage", data.message, "success");
-    }catch(e){ setMessage("banMessage", e.message, "error"); }
-  }
-
-  async function loadAdminUsers(){
-    const search = document.getElementById("userSearch").value.trim();
-    document.getElementById("usersPageLabel").textContent = usersPage;
-    const list = document.getElementById("adminUsersList");
-    list.innerHTML = "Loading...";
-    try{
-      const data = await api(`/admin/users?page=${usersPage}&page_size=100&search=${encodeURIComponent(search)}`,"GET");
-      const items = data.items || [];
-      if (!items.length){ list.innerHTML = "<div>Aucun utilisateur</div>"; return; }
-      list.innerHTML = items.map(u=>`
-        <div class="task-item"><div><b>${u.email}</b> — Coins: ${u.balance_coins} Ar: ${u.balance_ar} ${u.banned ? " [BANNI]" : ""} ${u.suspended_until ? " [SUSPENDU]" : ""}<div class="meta">ID: ${u.id}</div></div></div>`).join("");
-    }catch(e){ list.innerHTML=""; setMessage("adminUsersMsg", e.message, "error"); }
-  }
-
-  async function loadAdminDeposits(){
-    document.getElementById("adminDepPageLabel").textContent = adminDepPage;
-    const list = document.getElementById("adminDepositsList");
-    list.innerHTML = "Loading...";
-    try{
-      const data = await api(`/admin/deposits?status=pending&page=${adminDepPage}&page_size=30`,"GET");
-      const items = data.items || [];
-      if (!items.length){ list.innerHTML = "<div>Empty</div>"; return; }
-      list.innerHTML = items.map(x=>`
-        <div class="task-item"><div style="width:100%;"><b>${x.user_email}</b> — ${x.coins} coins (${x.amount_ar} Ar) Ref: ${x.reference||""}<br>
-        <button class="small-btn" onclick="handleDeposit('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleDeposit('${x.id}','reject')">Reject</button></div></div>`).join("");
-    }catch(e){ list.innerHTML=""; setMessage("adminDepositsMsg", e.message, "error"); }
-  }
-
-  async function handleDeposit(id, action){
-    try{ await api("/admin/deposits/handle","POST",{request_id:id, action}); loadAdminDeposits(); }
-    catch(e){ setMessage("adminDepositsMsg", e.message, "error"); }
-  }
-
-  async function loadAdminWithdraws(){
-    document.getElementById("adminWdPageLabel").textContent = adminWdPage;
-    const list = document.getElementById("adminWithdrawsList");
-    list.innerHTML = "Loading...";
-    try{
-      const data = await api(`/admin/withdraws?status=pending&page=${adminWdPage}&page_size=30`,"GET");
-      const items = data.items || [];
-      if (!items.length){ list.innerHTML = "<div>Empty</div>"; return; }
-      list.innerHTML = items.map(x=>`
-        <div class="task-item"><div style="width:100%;"><b>${x.user_email}</b> — ${x.amount_ar} Ar (${x.method}) ${x.account}<br>
-        <button class="small-btn" onclick="handleWithdraw('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','reject')">Reject</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','return')">Return</button></div></div>`).join("");
-    }catch(e){ list.innerHTML=""; setMessage("adminWithdrawsMsg", e.message, "error"); }
-  }
-
-  async function handleWithdraw(id, action){
-    try{ await api("/admin/withdraws/handle","POST",{request_id:id, action}); loadAdminWithdraws(); }
-    catch(e){ setMessage("adminWithdrawsMsg", e.message, "error"); }
   }
 
   // INIT
