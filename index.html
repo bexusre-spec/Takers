@@ -2,246 +2,124 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FB Tasks Panel</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Arial, sans-serif;
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+    body{
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,#ff512f,#dd2476,#7f00ff);
+      padding:20px;color:white;
     }
-    html, body {
-      width: 100%;
-      min-height: 100%;
+    .container{
+      width:100%;max-width:680px;background:rgba(0,0,0,.35);
+      backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,.2);
+      border-radius:24px;padding:18px 18px 22px;
+      box-shadow:0 20px 40px rgba(0,0,0,.35);
+      position:relative;
     }
-    body {
-      min-height: 100vh;
-      display: block;
-      background: linear-gradient(135deg, #0a2f1f, #0d5e2e, #0a2f1f);
-      padding: 0;
-      color: #e0ffe0;
-      overflow-x: hidden;
-    }
-    .container {
-      width: 100%;
-      min-height: 100vh;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(16px);
-      border: 0;
-      border-radius: 0;
-      padding: 20px 20px 30px;
-      box-shadow: none;
-      position: relative;
-    }
-    .page { display: none; animation: fadeIn .25s ease; }
-    .page.active { display: block; }
-    .title { text-align: center; margin-bottom: 20px; }
-    .title h1 { font-size: 32px; margin-bottom: 6px; color: #00ff88; text-shadow: 0 0 20px #00cc66; }
-    .title p { font-size: 15px; opacity: 0.9; color: #b8ffd0; }
+    .page{display:none;animation:fadeIn .25s ease}
+    .page.active{display:block}
+    .title{text-align:center;margin-bottom:18px}
+    .title h1{font-size:26px;margin-bottom:4px}
+    .title p{font-size:14px;opacity:.9}
 
-    /* Tabs */
-    .tabs { display: flex; gap: 10px; margin: 10px 0 16px; }
-    .tabs button, .submit-btn, .secondary-btn, .feature-btn, .small-btn {
-      border: none;
-      border-radius: 14px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: bold;
-      transition: 0.25s;
+    .tabs{display:flex;gap:10px;margin:10px 0 16px}
+    .tabs button,.submit-btn,.secondary-btn,.feature-btn,.small-btn{
+      border:none;border-radius:14px;cursor:pointer;font-size:14px;font-weight:bold;transition:.25s;
     }
-    .tabs button { flex: 1; padding: 12px; }
-    .tabs button.active { background: #00ff88; color: #0a2f1f; }
-    .tabs button.inactive { background: rgba(255,255,255,0.1); color: #fff; }
+    .tabs button{flex:1;padding:11px}
+    .tabs button.active{background:#fff;color:#7f00ff}
+    .tabs button.inactive{background:rgba(255,255,255,.18);color:#fff}
 
-    .form { display: none; animation: fadeIn .25s ease; }
-    .form.active { display: block; }
+    .form{display:none;animation:fadeIn .25s ease}
+    .form.active{display:block}
 
-    .field { margin-bottom: 12px; }
-    .field label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: bold; color: #b8ffd0; }
-    .field input, .field textarea, .field select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid rgba(0, 255, 136, 0.3);
-      border-radius: 12px;
-      outline: none;
-      font-size: 14px;
-      background: rgba(0, 20, 10, 0.8);
-      color: #e0ffe0;
+    .field{margin-bottom:10px}
+    .field label{display:block;margin-bottom:5px;font-size:13px;font-weight:bold}
+    .field input,.field textarea,.field select{
+      width:100%;padding:11px 12px;border:none;border-radius:12px;outline:none;
+      font-size:14px;background:rgba(255,255,255,.92);color:#222;
     }
-    .field input:focus, .field textarea:focus, .field select:focus {
-      border: 2px solid #00ff88;
-      box-shadow: 0 0 12px #00ff88;
-    }
-    .field textarea { resize: vertical; min-height: 70px; }
+    .field textarea{resize:vertical;min-height:70px}
+    .field input:focus,.field textarea:focus,.field select:focus{border:2px solid #ffd700}
 
-    .submit-btn {
-      width: 100%;
-      padding: 12px;
-      margin-top: 8px;
-      background: linear-gradient(90deg, #00cc66, #00ff88);
-      color: #0a2f1f;
-      font-weight: bold;
-    }
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .feature-btn {
-      padding: 14px 10px;
-      background: rgba(0, 255, 136, 0.1);
-      border: 1px solid rgba(0, 255, 136, 0.3);
-      color: #00ff88;
-      font-size: 14px;
-    }
-    .feature-btn.disabled { opacity: 0.4; cursor: not-allowed; }
-    .submit-btn:hover, .secondary-btn:hover, .feature-btn:hover:not(.disabled), .small-btn:hover {
-      transform: scale(1.03);
-      box-shadow: 0 0 15px #00ff88;
+    .submit-btn{width:100%;padding:11px;margin-top:8px;background:linear-gradient(90deg,#00c6ff,#0072ff);color:#fff}
+    .feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+    .feature-btn{padding:11px;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.22)}
+    .feature-btn.disabled{opacity:.4;cursor:not-allowed}
+    .submit-btn:hover,.secondary-btn:hover,.feature-btn:hover,.small-btn:hover{transform:scale(1.03)}
+
+    .secondary-btn{padding:10px 12px;background:rgba(255,255,255,.16);color:#fff}
+    .small-btn{
+      padding:6px 10px;font-size:12px;background:rgba(255,255,255,.14);color:#fff;
+      border:1px solid rgba(255,255,255,.25);border-radius:10px;
     }
 
-    .secondary-btn {
-      padding: 10px 14px;
-      background: rgba(0, 255, 136, 0.15);
-      color: #00ff88;
+    .small-text{text-align:center;margin-top:10px;font-size:13px;opacity:.95}
+    .message{text-align:center;margin-top:10px;min-height:22px;font-size:13px}
+    .success{color:#b7ffb7;font-weight:bold}
+    .error{color:#ffd1d1;font-weight:bold}
+
+    .card{margin-top:8px;padding:10px 12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:16px}
+    .card h2{font-size:17px;margin-bottom:4px}
+    .card p{font-size:13px;line-height:1.5;opacity:.95}
+
+    .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+    .balance{font-size:13px;opacity:.95}
+    .balance strong{font-size:15px}
+
+    .hamburger{width:28px;height:24px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between}
+    .hamburger span{height:3px;border-radius:999px;background:white}
+
+    .admin-menu{
+      position:absolute;top:40px;right:18px;background:rgba(0,0,0,.85);
+      border-radius:12px;border:1px solid rgba(255,255,255,.25);padding:8px;
+      display:none;flex-direction:column;gap:6px;z-index:10;
+      width: 230px;
     }
-    .small-btn {
-      padding: 7px 12px;
-      font-size: 12px;
-      background: rgba(0, 255, 136, 0.15);
-      color: #00ff88;
-      border: 1px solid rgba(0, 255, 136, 0.3);
-      border-radius: 10px;
+    .admin-menu.show{display:flex}
+
+    .section-title{font-size:14px;margin-top:12px;margin-bottom:4px;font-weight:bold}
+    .section-area{margin-top:4px}
+
+    .accounts-list,.tasks-log{
+      margin-top:6px;max-height:220px;overflow-y:auto;border-radius:10px;
+      border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.03);
+      padding:6px;font-size:13px;
     }
 
-    .small-text { text-align: center; margin-top: 10px; font-size: 13px; opacity: 0.95; }
-    .message { text-align: center; margin-top: 12px; min-height: 24px; font-size: 13px; }
-    .success { color: #00ff88; font-weight: bold; }
-    .error { color: #ff8888; font-weight: bold; }
-
-    .card {
-      margin-top: 12px;
-      padding: 14px;
-      background: rgba(0, 40, 20, 0.4);
-      border: 1px solid rgba(0, 255, 136, 0.25);
-      border-radius: 18px;
-    }
-    .card h2 { font-size: 18px; margin-bottom: 6px; color: #00ff88; }
-    .card p { font-size: 13px; line-height: 1.5; opacity: 0.95; color: #b8ffd0; }
-
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .balance {
-      font-size: 13px;
-      opacity: 0.95;
-      color: #b8ffd0;
-    }
-    .balance strong { font-size: 16px; color: #00ff88; }
-
-    .hamburger {
-      width: 30px;
-      height: 26px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-    }
-    .hamburger span {
-      height: 4px;
-      border-radius: 999px;
-      background: #00ff88;
-      transition: 0.2s;
+    .account-item,.task-item{
+      padding:6px;border-radius:8px;background:rgba(255,255,255,.08);
+      margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;gap:8px;
     }
 
-    .admin-menu {
-      position: absolute;
-      top: 50px;
-      right: 20px;
-      background: rgba(0, 20, 10, 0.95);
-      border-radius: 16px;
-      border: 1px solid #00ff88;
-      padding: 10px;
-      display: none;
-      flex-direction: column;
-      gap: 8px;
-      z-index: 10;
-      width: 250px;
-      backdrop-filter: blur(16px);
+    .task-item .meta{font-size:12px;opacity:.9}
+    a.link{color:#fff;text-decoration:underline;word-break:break-all}
+
+    .copy-btn{
+      background:rgba(255,255,255,.2);border:none;border-radius:6px;padding:2px 8px;
+      font-size:12px;cursor:pointer;color:white;margin-left:6px;
     }
-    .admin-menu.show { display: flex; }
+    .copy-btn:hover{background:rgba(255,255,255,.4)}
 
-    .section-title { font-size: 15px; margin-top: 14px; margin-bottom: 6px; font-weight: bold; color: #00ff88; }
-    .section-area { margin-top: 6px; }
-
-    .accounts-list, .tasks-log {
-      margin-top: 8px;
-      max-height: 300px;
-      overflow-y: auto;
-      border-radius: 12px;
-      border: 1px solid rgba(0, 255, 136, 0.25);
-      background: rgba(0, 0, 0, 0.2);
-      padding: 8px;
-      font-size: 13px;
+    .loader{
+      display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.35);
+      border-top-color:white;border-radius:50%;animation:spin .8s linear infinite;
+      vertical-align:middle;margin-right:8px;
     }
 
-    .account-item, .task-item {
-      padding: 8px;
-      border-radius: 10px;
-      background: rgba(0, 255, 136, 0.08);
-      margin-bottom: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
+    .status-badge{
+      display:inline-block;padding:2px 6px;border-radius:20px;font-size:11px;font-weight:bold;margin-left:6px;
     }
-    .task-item .meta { font-size: 12px; opacity: 0.9; color: #b8ffd0; }
-    a.link { color: #00ff88; text-decoration: underline; word-break: break-all; }
+    .status-non_verified{background:rgba(255,255,255,.1);color:#aaa}
+    .status-pending{background:rgba(255,200,0,.2);color:#ffcc00}
+    .status-verified{background:rgba(0,255,0,.2);color:#0f0}
+    .status-rejected{background:rgba(255,0,0,.2);color:#f66}
 
-    .copy-btn {
-      background: rgba(0, 255, 136, 0.2);
-      border: none;
-      border-radius: 6px;
-      padding: 3px 10px;
-      font-size: 12px;
-      cursor: pointer;
-      color: #00ff88;
-      margin-left: 6px;
-    }
-    .copy-btn:hover { background: rgba(0, 255, 136, 0.4); }
-
-    .loader {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(0, 255, 136, 0.35);
-      border-top-color: #00ff88;
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-      vertical-align: middle;
-      margin-right: 8px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    .status-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: bold;
-      margin-left: 6px;
-    }
-    .status-non_verified { background: rgba(255,255,255,0.1); color: #aaa; }
-    .status-pending { background: rgba(255,200,0,0.2); color: #ffcc00; }
-    .status-verified { background: rgba(0,255,136,0.2); color: #00ff88; }
-    .status-rejected { background: rgba(255,100,100,0.2); color: #ff6666; }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   </style>
 </head>
 <body>
@@ -251,11 +129,11 @@
     <div id="adminMenu" class="admin-menu">
       <button class="small-btn" onclick="showAccountInfo()">👤 Infos compte</button>
       <button class="small-btn" onclick="showReferral()">🔗 Parrainage</button>
-      <button class="small-btn" onclick="showDepositHistory()">📥 Deposit history</button>
-      <button class="small-btn" onclick="showWithdrawHistory()">📤 Withdraw history</button>
-      <button class="small-btn" onclick="showSection('verifyCompte')">✅ Verify compte</button>
+      <button class="small-btn" onclick="showDepositHistory()">📥 Historique dépôts</button>
+      <button class="small-btn" onclick="showWithdrawHistory()">📤 Historique retraits</button>
+      <button class="small-btn" onclick="showSection('verifyCompte')">✅ Vérifier compte</button>
 
-      <div id="adminOnlyMenu" style="display:none; border-top:1px solid rgba(0,255,136,0.3); padding-top:8px; margin-top:4px;">
+      <div id="adminOnlyMenu" style="display:none; border-top:1px solid rgba(255,255,255,.18); padding-top:6px; margin-top:4px;">
         <button class="small-btn" onclick="showAdminCredit()">💰 Créditer Coins/Ar</button>
         <button class="small-btn" onclick="showAdminDeduct()">📉 Déduire Coins/Ar</button>
         <button class="small-btn" onclick="showAdminBan()">🚫 Ban / Unban / Suspendre</button>
@@ -265,14 +143,14 @@
         <button class="small-btn" onclick="showAdminWithdraws()">💸 Approve Withdraw</button>
       </div>
 
-      <button class="small-btn" onclick="logoutUser()" style="background:rgba(255,80,80,0.2); color:#ff8888;">🚪 Déconnexion</button>
+      <button class="small-btn" onclick="logoutUser()" style="background:rgba(255,80,80,.2);">🚪 Déconnexion</button>
     </div>
 
     <!-- Auth Page -->
     <div id="authPage" class="page active">
       <div class="title">
-        <h1>⚡ FB Tasks</h1>
-        <p>La puissance verte à portée de main</p>
+        <h1>FB Tasks</h1>
+        <p>Connecte-toi ou crée un compte</p>
       </div>
 
       <div class="tabs">
@@ -281,28 +159,43 @@
       </div>
 
       <div id="loginForm" class="form active">
-        <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="ton@email.com" /></div>
-        <div class="field"><label>Mot de passe</label><input type="password" id="loginPassword" placeholder="********" /></div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="loginEmail" placeholder="ton@email.com" />
+        </div>
+        <div class="field">
+          <label>Mot de passe</label>
+          <input type="password" id="loginPassword" placeholder="********" />
+        </div>
         <button class="submit-btn" onclick="loginUser()">Connexion</button>
       </div>
 
       <div id="registerForm" class="form">
-        <div class="field"><label>Email</label><input type="email" id="registerEmail" placeholder="ton@email.com" /></div>
-        <div class="field"><label>Mot de passe</label><input type="password" id="registerPassword" placeholder="6 caractères min" /></div>
-        <div class="field"><label>Code de parrainage (optionnel)</label><input type="text" id="registerRef" placeholder="ID du parrain" /></div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="registerEmail" placeholder="ton@email.com" />
+        </div>
+        <div class="field">
+          <label>Mot de passe</label>
+          <input type="password" id="registerPassword" placeholder="6 caractères min" />
+        </div>
+        <div class="field">
+          <label>Code de parrainage (optionnel)</label>
+          <input type="text" id="registerRef" placeholder="ID du parrain" />
+        </div>
         <button class="submit-btn" onclick="registerUser()">S'inscrire</button>
       </div>
 
       <div id="authMessage" class="message"></div>
-      <div class="small-text">Rejoins la communauté verte 🔥</div>
+      <div class="small-text">Rejoins la communauté 🔥</div>
     </div>
 
     <!-- Dashboard Page -->
     <div id="dashboardPage" class="page">
       <div class="top-bar">
         <div class="balance">
-          <div><strong>💰</strong> <span id="balanceCoins">0</span> Coins • <strong>💎</strong> <span id="balanceAr">0</span> Ar</div>
-          <div id="userEmailLabel" style="font-size:12px; opacity:0.8;"></div>
+          <div><strong>Balance:</strong> <span id="balanceCoins">0</span> Coins • <span id="balanceAr">0</span> Ar</div>
+          <div id="userEmailLabel" style="font-size:12px; opacity:0.9;"></div>
         </div>
         <div id="hamburgerWrap" style="display:block;">
           <div class="hamburger" onclick="toggleAdminMenu()">
@@ -312,17 +205,17 @@
       </div>
 
       <div class="card">
-        <h2>⚡ Actions rapides</h2>
+        <h2>⚡ Actions</h2>
         <div class="feature-grid">
-          <button id="btnAddAccount" class="feature-btn" onclick="showSection('addAccount')">➕ Add Account</button>
-          <button id="btnWork" class="feature-btn" onclick="showSection('work')">🔄 Work Tasks</button>
-          <button id="btnOrderStatus" class="feature-btn" onclick="showSection('orderStatus')">📊 Order status</button>
-          <button id="btnGetFollower" class="feature-btn" onclick="showSection('getFollower')">👥 GET FOLLOWER</button>
-          <button id="btnGetLike" class="feature-btn" onclick="showSection('getLike')">❤️ GET LIKE</button>
-          <button id="btnGetComment" class="feature-btn" onclick="showSection('getComment')">💬 GET COMMENT</button>
-          <button class="feature-btn" onclick="showSection('deposit')">💵 Deposit</button>
-          <button class="feature-btn" onclick="showSection('withdraw')">🏦 Withdraw</button>
-          <button class="feature-btn" onclick="showSection('swap')">🔄 SWAP</button>
+          <button id="btnAddAccount" class="feature-btn" onclick="showSection('addAccount')">Add Account</button>
+          <button id="btnWork" class="feature-btn" onclick="showSection('work')">Work Tasks</button>
+          <button id="btnOrderStatus" class="feature-btn" onclick="showSection('orderStatus')">Order status</button>
+          <button id="btnGetFollower" class="feature-btn" onclick="showSection('getFollower')">GET FOLLOWER</button>
+          <button id="btnGetLike" class="feature-btn" onclick="showSection('getLike')">GET LIKE</button>
+          <button id="btnGetComment" class="feature-btn" onclick="showSection('getComment')">GET COMMENT</button>
+          <button class="feature-btn" onclick="showSection('deposit')">Deposit</button>
+          <button class="feature-btn" onclick="showSection('withdraw')">Withdraw</button>
+          <button class="feature-btn" onclick="showSection('swap')">SWAP</button>
           <button id="btnVerifyCompte" class="feature-btn" onclick="showSection('verifyCompte')">✅ Verify compte</button>
         </div>
       </div>
@@ -332,27 +225,33 @@
 
         <!-- Add account -->
         <div id="sectionAddAccount" class="card" style="display:none;">
-          <h2>➕ Ajouter un compte Task</h2>
-          <p>URL du profil Facebook + cookies.</p>
-          <div class="field"><label>URL du profil</label><input type="text" id="accProfileLink" placeholder="https://www.facebook.com/..." /></div>
-          <div class="field"><label>Cookies</label><textarea id="accCookies" placeholder="c_user=...; xs=...;"></textarea></div>
+          <h2>Add Task Account</h2>
+          <p style="font-size:12px;opacity:0.9;">Entrez l'URL du profil Facebook et les cookies du compte.</p>
+          <div class="field">
+            <label>URL du profil Facebook</label>
+            <input type="text" id="accProfileLink" placeholder="https://www.facebook.com/profile.php?id=..." />
+          </div>
+          <div class="field">
+            <label>Cookies</label>
+            <textarea id="accCookies" placeholder="c_user=...; xs=...; datr=...;"></textarea>
+          </div>
           <button class="submit-btn" onclick="addTaskAccount()">Check & Save</button>
           <div id="addAccountMessage" class="message"></div>
         </div>
 
         <!-- Work tasks -->
         <div id="sectionWork" class="card" style="display:none;">
-          <h2>🔄 Work Tasks</h2>
-          <p>Choisis un compte, puis vérifie les tâches.</p>
-          <button class="small-btn" onclick="loadAccountsForWork()">Charger mes comptes</button>
+          <h2>Work Tasks</h2>
+          <p style="font-size:12px;opacity:0.9;">Choisissez un compte, puis vérifiez des tâches.</p>
+          <button class="small-btn" onclick="loadAccountsForWork()">Charger comptes</button>
           <div id="accountsForWork" class="accounts-list"></div>
 
-          <div id="currentTaskArea" style="margin-top:10px; display:none;">
+          <div id="currentTaskArea" style="margin-top:8px; display:none;">
             <div class="section-title">Tâche actuelle</div>
-            <div id="currentTaskInfo"></div>
-            <div style="display:flex; gap:10px; margin-top:8px;">
-              <button class="secondary-btn" style="flex:1;" onclick="verifyCurrentTask()">✅ VERIFY</button>
-              <button class="secondary-btn" style="flex:1;" onclick="skipTask()">⏩ SKIP</button>
+            <div id="currentTaskInfo" style="font-size:13px;"></div>
+            <div style="display:flex;gap:8px;margin-top:6px;">
+              <button class="secondary-btn" style="flex:1;" onclick="verifyCurrentTask()">VERIFY</button>
+              <button class="secondary-btn" style="flex:1;" onclick="skipTask()">SKIP</button>
             </div>
             <div id="workerMessage" class="message"></div>
           </div>
@@ -360,12 +259,12 @@
 
         <!-- Order status -->
         <div id="sectionOrderStatus" class="card" style="display:none;">
-          <h2>📊 Mes commandes</h2>
-          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
-            <button class="small-btn" onclick="ordersPage=0; loadOrders()">🔄 Refresh</button>
-            <button class="small-btn" onclick="if(ordersPage>0){ordersPage--;loadOrders()}">◀</button>
-            <button class="small-btn" onclick="ordersPage++;loadOrders()">▶</button>
-            <span>Page: <span id="ordersPageLabel">0</span></span>
+          <h2>My Orders</h2>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="small-btn" onclick="ordersPage=0; loadOrders()">Refresh</button>
+            <button class="small-btn" onclick="if(ordersPage>0){ordersPage--;loadOrders()}">Prev</button>
+            <button class="small-btn" onclick="ordersPage++;loadOrders()">Next</button>
+            <span style="font-size:12px;opacity:.9;">Page: <span id="ordersPageLabel">0</span></span>
           </div>
           <div id="ordersList" class="tasks-log"></div>
           <div id="ordersMsg" class="message"></div>
@@ -374,24 +273,32 @@
         <!-- Referral (via menu) -->
         <div id="sectionReferral" class="card" style="display:none;">
           <h2>🔗 Parrainage</h2>
-          <p>Partage ton lien et reçois <strong>100 Ar</strong> quand ton filleul réussit 5 follows.</p>
-          <div class="field"><label>Total filleuls</label><input type="text" id="referralCount" readonly value="0" /></div>
-          <div class="field"><label>Lien de parrainage</label><input type="text" id="referralLink" readonly onclick="this.select();document.execCommand('copy')" /></div>
+          <p style="font-size:12px;opacity:0.9;">Partage ton lien, reçois <b>100 Ar</b> pour chaque filleul qui réussit 5 follows.</p>
+          <div class="field">
+            <label>Nombre de filleuls</label>
+            <input type="text" id="referralCount" readonly value="0" />
+          </div>
+          <div class="field">
+            <label>Lien de parrainage</label>
+            <input type="text" id="referralLink" readonly onclick="this.select();document.execCommand('copy')" />
+          </div>
           <button class="small-btn" onclick="copyReferral()">📋 Copier le lien</button>
           <div id="referralMsg" class="message"></div>
         </div>
 
-        <!-- Verify compte (section utilisateur) -->
+        <!-- Verify compte (utilisateur) -->
         <div id="sectionVerifyCompte" class="card" style="display:none;">
           <h2>✅ Vérification de compte</h2>
-          <p style="margin-bottom:10px;">Les comptes vérifiés reçoivent beaucoup plus de tâches !<br/>
-          👤 Ajoute une photo de profil Malagasy, au moins 50 amis/followers.<br/>
-          🎁 10 Ar offerts après validation.</p>
-          <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+          <p style="font-size:12px;opacity:0.9; margin-bottom:8px;">
+            Les comptes vérifiés reçoivent beaucoup plus de tâches !<br/>
+            👤 Ajoute une photo de profil Malagasy, au moins 50 amis/followers.<br/>
+            🎁 <b>10 Ar</b> seront crédités après validation.
+          </p>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
             <button class="small-btn" onclick="verifyPage=0; loadMyAccountsForVerify()">🔄 Refresh</button>
             <button class="small-btn" onclick="if(verifyPage>0){verifyPage--;loadMyAccountsForVerify()}">◀</button>
             <button class="small-btn" onclick="verifyPage++;loadMyAccountsForVerify()">▶</button>
-            <span>Page: <span id="verifyPageLabel">0</span></span>
+            <span style="font-size:12px;">Page: <span id="verifyPageLabel">0</span></span>
           </div>
           <div id="verifyAccountsList" class="accounts-list"></div>
           <div id="verifyMessage" class="message"></div>
@@ -399,47 +306,89 @@
 
         <!-- GET FOLLOWER -->
         <div id="sectionGetFollower" class="card" style="display:none;">
-          <h2>👥 GET FOLLOWER</h2>
-          <p>1 coin / follower (min 20 coins)</p>
-          <div class="field"><label>Lien profil Facebook</label><input type="text" id="gfProfileLink" placeholder="https://www.facebook.com/nom" oninput="liveTransformFollow(this.value)" /><div id="gfTransformPreview" style="font-size:12px;opacity:0.8;margin-top:4px;"></div></div>
-          <div class="field"><label>Nombre</label><input type="number" id="gfTarget" placeholder="50" /></div>
-          <button class="submit-btn" onclick="createFollowOrder()">Créer commande</button>
+          <h2>GET FOLLOWER</h2>
+          <p style="font-size:12px;opacity:0.9;">1 coin / follower. Min 20 coins requis.</p>
+          <div class="field">
+            <label>Lien de profil Facebook</label>
+            <input type="text" id="gfProfileLink" placeholder="https://www.facebook.com/nom..." oninput="liveTransformFollow(this.value)" />
+            <div id="gfTransformPreview" style="font-size:12px;opacity:.8;margin-top:4px;"></div>
+          </div>
+          <div class="field">
+            <label>Nombre de followers</label>
+            <input type="number" id="gfTarget" placeholder="ex: 50" />
+          </div>
+          <button class="submit-btn" onclick="createFollowOrder()">Add FOLLOW Order</button>
           <div id="gfMessage" class="message"></div>
         </div>
 
         <!-- GET LIKE -->
         <div id="sectionGetLike" class="card" style="display:none;">
-          <h2>❤️ GET LIKE</h2>
-          <p>0.5 coin / like (min 20 coins)</p>
-          <div class="field"><label>Lien post/reel</label><input type="text" id="glLink" /></div>
-          <div class="field"><label>Réaction</label><select id="glReaction"><option value="like">J'aime</option><option value="love">J'adore</option><option value="haha">Haha</option><option value="wow">Wouah</option><option value="care">Solidaire</option><option value="angry">En colère</option><option value="sad">Triste</option></select></div>
-          <div class="field"><label>Nombre</label><input type="number" id="glTarget" placeholder="50" /></div>
-          <button class="submit-btn" onclick="createLikeOrder()">Créer commande</button>
+          <h2>GET LIKE</h2>
+          <p style="font-size:12px;opacity:0.9;">0.5 coin / like. Min 20 coins requis.</p>
+          <div class="field">
+            <label>Lien du post/reel</label>
+            <input type="text" id="glLink" placeholder="https://www.facebook.com/..." />
+          </div>
+          <div class="field">
+            <label>Réaction</label>
+            <select id="glReaction">
+              <option value="like">J'aime</option>
+              <option value="love">J'adore</option>
+              <option value="haha">Haha</option>
+              <option value="wow">Wouah</option>
+              <option value="care">Solidaire</option>
+              <option value="angry">En colère</option>
+              <option value="sad">Triste</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Nombre de likes</label>
+            <input type="number" id="glTarget" placeholder="ex: 50" />
+          </div>
+          <button class="submit-btn" onclick="createLikeOrder()">Add LIKE Order</button>
           <div id="glMessage" class="message"></div>
         </div>
 
         <!-- GET COMMENT -->
         <div id="sectionGetComment" class="card" style="display:none;">
-          <h2>💬 GET COMMENT</h2>
-          <p>2 coins / commentaire (max 1) (min 20 coins)</p>
-          <div class="field"><label>Lien post</label><input type="text" id="gcLink" /></div>
-          <div class="field"><label>Texte exact</label><input type="text" id="gcText" placeholder="Merci chef" /></div>
-          <div class="field"><label>Nombre</label><input type="number" id="gcTarget" value="1" readonly /></div>
-          <button class="submit-btn" onclick="createCommentOrder()">Créer commande</button>
+          <h2>GET COMMENT</h2>
+          <p style="font-size:12px;opacity:0.9;">2 coins / commentaire (max 1). Min 20 coins requis.</p>
+          <div class="field">
+            <label>Lien du post</label>
+            <input type="text" id="gcLink" placeholder="https://www.facebook.com/..." />
+          </div>
+          <div class="field">
+            <label>Texte exact du commentaire</label>
+            <input type="text" id="gcText" placeholder="ex: Merci chef" />
+          </div>
+          <div class="field">
+            <label>Nombre de commentaires</label>
+            <input type="number" id="gcTarget" placeholder="1" value="1" readonly />
+          </div>
+          <button class="submit-btn" onclick="createCommentOrder()">Add COMMENT Order</button>
           <div id="gcMessage" class="message"></div>
         </div>
 
         <!-- Deposit (2 étapes) -->
         <div id="sectionDeposit" class="card" style="display:none;">
-          <h2>💵 Dépôt</h2>
+          <h2>Deposit</h2>
           <div id="depositStep1">
-            <div class="field"><label>Montant en Coins (min 2000)</label><input type="number" id="depCoins" placeholder="2000" oninput="updateDepositEstimate()" /></div>
-            <div id="depEstimate" style="font-size:13px; margin-bottom:10px;">Estimation : 0 Ar (1 coin = 1.5 Ar)</div>
+            <div class="field">
+              <label>Montant en Coins (min 2000)</label>
+              <input type="number" id="depCoins" placeholder="2000" min="2000" oninput="updateDepositEstimate()" />
+            </div>
+            <div id="depEstimate" style="font-size:13px;margin-bottom:8px;">Estimation : 0 Ar (1 coin = 1.5 Ar)</div>
             <button class="submit-btn" onclick="depositNext()">Suivant</button>
           </div>
           <div id="depositStep2" style="display:none;">
-            <p>Envoyez <strong id="depAmountArLabel">0</strong> Ar au <strong>0328451823</strong><br/> puis entrez la référence.</p>
-            <div class="field"><label>Référence transaction</label><input type="text" id="depRef" placeholder="REF-123456" /></div>
+            <p style="font-size:13px;margin-bottom:8px;">
+              Envoyez <strong id="depAmountArLabel">0</strong> Ar au <strong>0328451823</strong><br/>
+              puis entrez la référence ci-dessous.
+            </p>
+            <div class="field">
+              <label>Référence de transaction</label>
+              <input type="text" id="depRef" placeholder="REF-123456" />
+            </div>
             <button class="submit-btn" onclick="createDeposit()">Envoyer la demande</button>
           </div>
           <div id="depMessage" class="message"></div>
@@ -447,19 +396,20 @@
 
         <!-- Withdraw -->
         <div id="sectionWithdraw" class="card" style="display:none;">
-          <h2>🏦 Retrait</h2>
-          <p>Minimum 5000 Ar</p>
+          <h2>Withdraw</h2>
+          <p style="font-size:12px;opacity:0.9;">Minimum 5000 Ar. Les fonds sont déduits immédiatement.</p>
           <div class="field"><label>Montant (Ar)</label><input type="number" id="wdAmount" placeholder="5000" /></div>
           <div class="field"><label>Méthode</label><select id="wdMethod"><option value="om">Orange Money</option><option value="bank">Bank</option></select></div>
           <div class="field"><label>Compte</label><input type="text" id="wdAccount" placeholder="+261..." /></div>
-          <div class="field"><label>Nom destinataire</label><input type="text" id="wdName" placeholder="Nom complet" /></div>
+          <div class="field"><label>Nom du destinataire</label><input type="text" id="wdName" placeholder="Nom complet" /></div>
           <button class="submit-btn" onclick="createWithdraw()">Envoyer demande</button>
           <div id="wdMessage" class="message"></div>
         </div>
 
         <!-- SWAP -->
         <div id="sectionSwap" class="card" style="display:none;">
-          <h2>🔄 SWAP Ar → Coins</h2>
+          <h2>SWAP</h2>
+          <p style="font-size:12px;opacity:0.9;">Échange Ar → Coins (1 COIN = 1.5 Ar).</p>
           <div class="field"><label>Montant en Ar</label><input type="number" id="swapAmount" placeholder="1500" /></div>
           <button class="submit-btn" onclick="doSwap()">SWAP</button>
           <div id="swapMessage" class="message"></div>
@@ -467,7 +417,7 @@
 
         <!-- Admin sections -->
         <div id="sectionAdminCredit" class="card" style="display:none;">
-          <h2>💰 Créditer</h2>
+          <h2>Admin: Créditer Coins/Ar</h2>
           <div class="field"><label>Email</label><input type="email" id="admEmail" /></div>
           <div class="field"><label>Coins</label><input type="number" id="admCoins" value="0" /></div>
           <div class="field"><label>Ar</label><input type="number" id="admAr" value="0" /></div>
@@ -475,7 +425,7 @@
           <div id="admMessage" class="message"></div>
         </div>
         <div id="sectionAdminDeduct" class="card" style="display:none;">
-          <h2>📉 Déduire</h2>
+          <h2>Admin: Déduire Coins/Ar</h2>
           <div class="field"><label>Email</label><input type="email" id="deductEmail" /></div>
           <div class="field"><label>Coins</label><input type="number" id="deductCoins" value="0" /></div>
           <div class="field"><label>Ar</label><input type="number" id="deductAr" value="0" /></div>
@@ -483,29 +433,29 @@
           <div id="deductMessage" class="message"></div>
         </div>
         <div id="sectionAdminBan" class="card" style="display:none;">
-          <h2>🚫 Gestion utilisateur</h2>
+          <h2>Admin: Ban / Unban / Suspendre 10h</h2>
           <div class="field"><label>Email</label><input type="email" id="banEmail" /></div>
           <div class="field"><label>Action</label><select id="banAction"><option value="ban">Ban</option><option value="unban">Unban</option><option value="suspend">Suspendre 10h</option></select></div>
           <button class="submit-btn" onclick="adminBan()">Appliquer</button>
           <div id="banMessage" class="message"></div>
         </div>
         <div id="sectionAdminUsers" class="card" style="display:none;">
-          <h2>📋 Utilisateurs</h2>
-          <div style="display:flex; gap:8px; margin-bottom:8px;">
-            <input type="text" id="userSearch" placeholder="Recherche email" style="flex:1; padding:8px; border-radius:8px; background:rgba(0,20,10,0.8); border:1px solid #00ff88; color:#fff;" />
-            <button class="small-btn" onclick="usersPage=0;loadAdminUsers()">🔍</button>
+          <h2>Admin: Liste utilisateurs</h2>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <input type="text" id="userSearch" placeholder="Recherche par email" style="flex:1;padding:8px;border-radius:8px;background:rgba(255,255,255,.9);" />
+            <button class="small-btn" onclick="usersPage=0;loadAdminUsers()">Chercher</button>
           </div>
-          <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
-            <button class="small-btn" onclick="if(usersPage>0){usersPage--;loadAdminUsers()}">◀</button>
-            <button class="small-btn" onclick="usersPage++;loadAdminUsers()">▶</button>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+            <button class="small-btn" onclick="if(usersPage>0){usersPage--;loadAdminUsers()}">Prev</button>
+            <button class="small-btn" onclick="usersPage++;loadAdminUsers()">Next</button>
             <span>Page: <span id="usersPageLabel">0</span></span>
           </div>
           <div id="adminUsersList" class="tasks-log"></div>
           <div id="adminUsersMsg" class="message"></div>
         </div>
         <div id="sectionAdminVerifications" class="card" style="display:none;">
-          <h2>🔍 Vérifications comptes (admin)</h2>
-          <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+          <h2>Admin: Vérifications comptes</h2>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
             <button class="small-btn" onclick="adminVerifPage=0;loadAdminVerifications()">🔄</button>
             <button class="small-btn" onclick="if(adminVerifPage>0){adminVerifPage--;loadAdminVerifications()}">◀</button>
             <button class="small-btn" onclick="adminVerifPage++;loadAdminVerifications()">▶</button>
@@ -515,38 +465,38 @@
           <div id="adminVerifMsg" class="message"></div>
         </div>
 
-        <!-- Deposit / Withdraw history (via menu) -->
+        <!-- Historiques (accessibles depuis le menu) -->
         <div id="sectionDepositHistory" class="card" style="display:none;">
-          <h2>📥 Historique dépôts</h2>
-          <button class="small-btn" onclick="loadDepositHistory()">🔄</button>
+          <h2>Historique dépôts</h2>
+          <button class="small-btn" onclick="loadDepositHistory()">Refresh</button>
           <div id="depositHistoryList" class="tasks-log"></div>
           <div id="depositHistoryMsg" class="message"></div>
         </div>
         <div id="sectionWithdrawHistory" class="card" style="display:none;">
-          <h2>📤 Historique retraits</h2>
-          <button class="small-btn" onclick="loadWithdrawHistory()">🔄</button>
+          <h2>Historique retraits</h2>
+          <button class="small-btn" onclick="loadWithdrawHistory()">Refresh</button>
           <div id="withdrawHistoryList" class="tasks-log"></div>
           <div id="withdrawHistoryMsg" class="message"></div>
         </div>
 
-        <!-- Admin Deposits / Withdraws -->
+        <!-- Admin deposits / withdraws -->
         <div id="sectionAdminDeposits" class="card" style="display:none;">
-          <h2>💵 Dépôts en attente</h2>
-          <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
-            <button class="small-btn" onclick="adminDepPage=0; loadAdminDeposits()">🔄</button>
-            <button class="small-btn" onclick="if(adminDepPage>0){adminDepPage--;loadAdminDeposits()}">◀</button>
-            <button class="small-btn" onclick="adminDepPage++;loadAdminDeposits()">▶</button>
+          <h2>Admin: Deposits pending</h2>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="small-btn" onclick="adminDepPage=0; loadAdminDeposits()">Refresh</button>
+            <button class="small-btn" onclick="if(adminDepPage>0){adminDepPage--;loadAdminDeposits()}">Prev</button>
+            <button class="small-btn" onclick="adminDepPage++;loadAdminDeposits()">Next</button>
             <span>Page: <span id="adminDepPageLabel">0</span></span>
           </div>
           <div id="adminDepositsList" class="tasks-log"></div>
           <div id="adminDepositsMsg" class="message"></div>
         </div>
         <div id="sectionAdminWithdraws" class="card" style="display:none;">
-          <h2>💸 Retraits en attente</h2>
-          <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
-            <button class="small-btn" onclick="adminWdPage=0; loadAdminWithdraws()">🔄</button>
-            <button class="small-btn" onclick="if(adminWdPage>0){adminWdPage--;loadAdminWithdraws()}">◀</button>
-            <button class="small-btn" onclick="adminWdPage++;loadAdminWithdraws()">▶</button>
+          <h2>Admin: Withdraws pending</h2>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="small-btn" onclick="adminWdPage=0; loadAdminWithdraws()">Refresh</button>
+            <button class="small-btn" onclick="if(adminWdPage>0){adminWdPage--;loadAdminWithdraws()}">Prev</button>
+            <button class="small-btn" onclick="adminWdPage++;loadAdminWithdraws()">Next</button>
             <span>Page: <span id="adminWdPageLabel">0</span></span>
           </div>
           <div id="adminWithdrawsList" class="tasks-log"></div>
@@ -559,7 +509,7 @@
   </div>
 
 <script>
-  const API_URL = "https://pepper-parks-dame-massachusetts.trycloudflare.com"; // À remplacer
+  const API_URL = "https://hormone-copied-amended-derek.trycloudflare.com"; // À remplacer
 
   let auth = JSON.parse(localStorage.getItem("auth") || "null");
   let me = null;
@@ -631,11 +581,16 @@
       const el = document.getElementById("section" + s);
       if (el) el.style.display = ("section" + name) === ("section" + s) ? "block" : "none";
     });
+
     if (name === "work") loadAccountsForWork();
     if (name === "orderStatus") loadOrders();
     if (name === "referral") loadReferralInfo();
     if (name === "verifyCompte") { verifyPage = 0; loadMyAccountsForVerify(); }
-    if (name === "deposit") { document.getElementById("depositStep1").style.display = "block"; document.getElementById("depositStep2").style.display = "none"; updateDepositEstimate(); }
+    if (name === "deposit") {
+      document.getElementById("depositStep1").style.display = "block";
+      document.getElementById("depositStep2").style.display = "none";
+      updateDepositEstimate();
+    }
     if (name === "depositHistory") loadDepositHistory();
     if (name === "withdrawHistory") loadWithdrawHistory();
     if (name === "adminDeposits") loadAdminDeposits();
@@ -656,7 +611,7 @@
   function showAdminDeposits() { showSection("adminDeposits"); }
   function showAdminWithdraws() { showSection("adminWithdraws"); }
 
-  // Helpers API
+  // API
   async function api(path, method="GET", body=null) {
     const headers = {"Content-Type":"application/json"};
     if (auth?.token) headers["Authorization"] = "Bearer " + auth.token;
@@ -679,6 +634,9 @@
         const el = document.getElementById(id);
         if (el) el.classList.toggle("disabled", !ok);
       });
+      if (!ok) {
+        setMessage("dashboardMessage","Vous devez avoir au moins 20 coins pour ces actions.","error");
+      }
     } catch(e) { console.log(e); }
   }
 
@@ -729,7 +687,7 @@
   }
 
   function logoutUser() {
-    auth = null; me = null; currentTask = null; selectedAccountId = null;
+    auth = null; me=null; currentTask=null; selectedAccountId=null;
     localStorage.removeItem("auth");
     showAuthPage(); showLogin();
     setMessage("authMessage","","");
@@ -739,19 +697,22 @@
   async function addTaskAccount() {
     if (!me) await updateMe();
     if (!me) return;
-    if (Number(me.balance_coins) < 20) { setMessage("addAccountMessage","Minimum 20 Coins requis.","error"); return; }
+    if (Number(me.balance_coins) < 20) {
+      setMessage("addAccountMessage","Minimum 20 Coins requis.","error");
+      return;
+    }
     const profile_link = document.getElementById("accProfileLink").value.trim();
     const cookies_string = document.getElementById("accCookies").value.trim();
     if (!profile_link || !cookies_string) return setMessage("addAccountMessage","Remplis tous les champs.","error");
     try {
       setMessage("addAccountMessage",'<span class="loader"></span>Vérification...', "");
-      const data = await api("/task_account/add","POST",{profile_link, cookies_string});
+      const data = await api("/task_account/add","POST",{profile_link,cookies_string});
       setMessage("addAccountMessage", data.message || "OK", "success");
       await updateMe();
     } catch(e) { setMessage("addAccountMessage", e.message, "error"); }
   }
 
-  // Work tasks
+  // Work
   async function loadAccountsForWork() {
     selectedAccountId = null; currentTask = null;
     document.getElementById("currentTaskArea").style.display = "none";
@@ -841,7 +802,7 @@
       const p = new URL(s);
       const parts = p.pathname.split("/").filter(x => x);
       if (parts.length && !parts[0].startsWith("@")) {
-        preview.innerHTML = `Sera enregistré : <strong>https://www.facebook.com/@${parts[0]}</strong>`;
+        preview.innerHTML = `Sera enregistré comme : <strong>https://www.facebook.com/@${parts[0]}</strong>`;
       } else preview.innerHTML = "";
     } catch { preview.innerHTML = ""; }
   }
@@ -942,6 +903,7 @@
     } catch(e) { setMessage("swapMessage", e.message, "error"); }
   }
 
+  // Histories
   async function loadDepositHistory() {
     const list = document.getElementById("depositHistoryList");
     list.innerHTML = "Chargement...";
