@@ -121,13 +121,21 @@
     .status-badge.verified{background:#2ecc71;color:#fff}
     .status-badge.pending{background:#f1c40f;color:#000}
     .status-badge.rejected{background:#e74c3c;color:#fff}
+
+    .global-stats{
+      display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;
+      font-size:12px; opacity:0.9; background:rgba(255,255,255,0.08); padding:6px 10px; border-radius:10px;
+    }
+    .global-stats span{margin-right:12px;}
+    .global-stats a{color:#ffd700; text-decoration:underline;}
+
     @keyframes spin{to{transform:rotate(360deg)}}
     @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Menu hamburger (visible pour tous) -->
+    <!-- Menu hamburger -->
     <div id="adminMenu" class="admin-menu">
       <button class="small-btn" onclick="showAccountInfo()">Infos compte</button>
       <button class="small-btn" onclick="showReferral()">Parrainage</button>
@@ -135,6 +143,7 @@
       <button class="small-btn" onclick="showWithdrawHistory()">Withdraw history</button>
       <button class="small-btn" onclick="showVerifyAccount()">Vérifier compte</button>
       <button class="small-btn" onclick="showVipCodes()">Code VIP</button>
+      <button class="small-btn" onclick="showManageAccounts()">Hide/Unhide comptes</button>
 
       <div id="adminOnlyMenu" style="display:none; border-top:1px solid rgba(255,255,255,.18); padding-top:6px;">
         <button class="small-btn" onclick="showAdminCredit()">Créditer Coins/Ar</button>
@@ -145,7 +154,6 @@
         <button class="small-btn" onclick="showAdminWithdraws()">Approve Withdraw</button>
         <button class="small-btn" onclick="showAdminVerifyAccounts()">Verify Accounts</button>
       </div>
-
       <button class="small-btn" onclick="logoutUser()">Déconnexion</button>
     </div>
 
@@ -156,22 +164,18 @@
         <button id="loginTab" class="active" onclick="showLogin()">Sign in</button>
         <button id="registerTab" class="inactive" onclick="showRegister()">Sign up</button>
       </div>
-
-      <!-- Login form -->
       <div id="loginForm" class="form active">
         <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="ton@email.com" /></div>
         <div class="field"><label>Mot de passe</label><input type="password" id="loginPassword" placeholder="********" /></div>
         <button class="submit-btn" onclick="loginUser()">Login</button>
         <div class="small-text" style="cursor:pointer;text-decoration:underline" onclick="showForgotPassword()">Mot de passe oublié ?</div>
       </div>
-
-      <!-- Forgot password flow -->
       <div id="forgotPasswordForm" class="form" style="display:none;">
         <div class="field"><label>Email</label><input type="email" id="forgotEmail" placeholder="ton@email.com" /></div>
         <button class="submit-btn" onclick="requestResetCode()">Get Code</button>
         <div id="forgotMsg" class="message"></div>
         <div id="codeInputArea" style="display:none; margin-top:10px;">
-          <div class="field"><label>Code reçu par email (vérifiez les spams)</label><input type="text" id="resetCode" placeholder="123456" /></div>
+          <div class="field"><label>Code reçu par email</label><input type="text" id="resetCode" placeholder="123456" /></div>
           <button class="submit-btn" onclick="checkResetCode()">Check</button>
           <div id="codeCheckMsg" class="message"></div>
         </div>
@@ -182,8 +186,6 @@
         </div>
         <div class="small-text" style="cursor:pointer;text-decoration:underline" onclick="backToLogin()">Retour à la connexion</div>
       </div>
-
-      <!-- Register form -->
       <div id="registerForm" class="form">
         <div class="field"><label>Email</label><input type="email" id="registerEmail" placeholder="ton@email.com" /></div>
         <div class="field"><label>Mot de passe</label><input type="password" id="registerPassword" placeholder="Créer un mot de passe" /></div>
@@ -195,6 +197,12 @@
 
     <!-- Dashboard Page -->
     <div id="dashboardPage" class="page">
+      <div class="global-stats" id="globalStatsBar">
+        <span>🏆 Gagnés: <strong id="globalAr">0</strong> Ar</span>
+        <span>✅ Tâches: <strong id="globalTasks">0</strong></span>
+        <span>👥 Comptes: <strong id="globalAccounts">0</strong></span>
+        <a href="https://www.facebook.com/myalarryy" target="_blank">Support</a>
+      </div>
       <div class="top-bar">
         <div class="balance">
           <div><strong>Balance:</strong> <span id="balanceCoins">0</span> Coins • <span id="balanceAr">0</span> Ar</div>
@@ -224,7 +232,7 @@
 
       <!-- Sections dynamiques -->
       <div id="sectionsArea" class="section-area">
-        <!-- Add Task Account (identique) -->
+        <!-- Add Task Account -->
         <div id="sectionAddTaskAccount" class="card" style="display:none;">
           <h2>Add Task Account</h2>
           <p style="font-size:12px;opacity:0.9;">Entrez l'URL du profil Facebook et les cookies du compte.</p>
@@ -250,10 +258,8 @@
             <button id="workTabTasks" class="active" onclick="switchWorkTab('tasks')">Tasks (follow, like, comment)</button>
             <button id="workTabShares" class="inactive" onclick="switchWorkTab('shares')">Share Tasks</button>
           </div>
-
-          <!-- Work standard -->
           <div id="workTasksArea">
-            <p style="font-size:12px;opacity:0.9;">Choisissez un compte task, puis vérifiez des tâches. Une tâche ne peut être validée qu'une seule fois par compte.</p>
+            <p style="font-size:12px;opacity:0.9;">Choisissez un compte task non masqué, puis vérifiez des tâches. Une tâche ne peut être validée qu'une seule fois par compte.</p>
             <button class="small-btn" onclick="loadAccountsForWork()">Charger comptes task</button>
             <div id="accountsForWork" class="accounts-list"></div>
             <div id="currentTaskArea" style="margin-top:8px; display:none;">
@@ -266,10 +272,8 @@
               <div id="workerMessage" class="message"></div>
             </div>
           </div>
-
-          <!-- Work shares -->
           <div id="workSharesArea" style="display:none;">
-            <p style="font-size:12px;opacity:0.9;">Choisissez un compte share, puis validez les partages demandés.</p>
+            <p style="font-size:12px;opacity:0.9;">Choisissez un compte share non masqué, puis validez les partages demandés.</p>
             <button class="small-btn" onclick="loadShareAccountsForWork()">Charger comptes share</button>
             <div id="shareAccountsForWork" class="accounts-list"></div>
             <div id="currentShareTaskArea" style="margin-top:8px; display:none;">
@@ -338,7 +342,6 @@
             <button id="commentShareTabComment" class="active" onclick="switchCommentShareTab('comment')">GET COMMENT</button>
             <button id="commentShareTabShare" class="inactive" onclick="switchCommentShareTab('share')">GET SHARE</button>
           </div>
-
           <div id="commentArea">
             <p style="font-size:12px;opacity:0.9;">2 coins / commentaire (max 1). Minimum 20 coins requis. Liens post, story ou photo acceptés (pas de profil, reel, share).</p>
             <div class="warning-text">⚠️ Le post doit être public pour que les commentaires soient visibles et vérifiés.</div>
@@ -348,7 +351,6 @@
             <button class="submit-btn" onclick="createCommentOrder()">Add COMMENT Order</button>
             <div id="gcMessage" class="message"></div>
           </div>
-
           <div id="shareArea" style="display:none;">
             <p style="font-size:12px;opacity:0.9;">2 coins / partage. Minimum 20 coins requis. Lien du post à partager (doit être public).</p>
             <div class="warning-text">⚠️ Le post doit être public pour que les partages soient vérifiables.</div>
@@ -399,7 +401,7 @@
         <!-- VIP Task -->
         <div id="sectionVip" class="card" style="display:none;">
           <h2>VIP Task</h2>
-          <p style="font-size:12px;opacity:0.9;">Clicker sur <b>Buy</b> pour acheter un code VIP pour 500 Ar. Donnez le code à quelqu'un qui fera un dépôt, vous recevrez 900 Ar et lui 100 Ar une fois le dépôt approuvé. Clicker sur <b>Activer code VIP</b> pour utiliser un code reçu.</p>
+          <p style="font-size:12px;opacity:0.9;">Cliquez sur <b>Buy</b> pour acheter un code VIP pour 500 Ar. Donnez le code à quelqu'un qui fera un dépôt, vous recevrez 900 Ar et lui 100 Ar une fois le dépôt approuvé. Cliquez sur <b>Activer code VIP</b> pour utiliser un code reçu.</p>
           <div style="display:flex;gap:8px;margin-top:8px;">
             <button class="small-btn" style="flex:1;" onclick="buyVip()">Buy (500 Ar)</button>
             <button class="small-btn" style="flex:1;" onclick="showVipActivate()">Activer code VIP</button>
@@ -434,7 +436,24 @@
           <div id="vipCodesMsg" class="message"></div>
         </div>
 
-        <!-- Admin sections (identiques, avec noms de destinataire dans withdraw) -->
+        <!-- Manage accounts (Hide/Unhide) -->
+        <div id="sectionManageAccounts" class="card" style="display:none;">
+          <h2>Hide / Unhide comptes</h2>
+          <div class="tabs" style="margin-bottom:8px;">
+            <button id="manageTabTask" class="active" onclick="switchManageTab('task')">Task</button>
+            <button id="manageTabShare" class="inactive" onclick="switchManageTab('share')">Share</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+            <button class="small-btn" onclick="managePage=0; loadManageAccounts()">Refresh</button>
+            <button class="small-btn" onclick="if(managePage>0){managePage--;loadManageAccounts()}">Prev</button>
+            <button class="small-btn" onclick="managePage++;loadManageAccounts()">Next</button>
+            <span style="font-size:12px;">Page: <span id="managePageLabel">0</span></span>
+          </div>
+          <div id="manageAccountsList" class="tasks-log"></div>
+          <div id="manageAccountsMsg" class="message"></div>
+        </div>
+
+        <!-- Admin sections -->
         <div id="sectionAdminCredit" class="card" style="display:none;">
           <h2>Admin: Créditer Coins/Ar</h2>
           <div class="field"><label>Email</label><input type="email" id="admEmail" /></div>
@@ -525,7 +544,8 @@
   </div>
 
 <script>
-  const API_URL = "https://web-production-0a511.up.railway.app"; // À remplacer par l'URL réelle
+  const API_URL = "https://web-production-0a511.up.railway.app"; // À adapter
+  const BASE_URL = window.location.origin + "/Takers/"; // Base pour les liens de parrainage
 
   let auth = JSON.parse(localStorage.getItem("auth") || "null");
   let me = null;
@@ -535,9 +555,9 @@
   let currentShareTask = null;
   let ordersPage = 0, adminDepPage = 0, adminWdPage = 0, usersPage = 0;
   let verifyPage = 0, adminVerifyPage = 0;
+  let managePage = 0, manageType = "task";
   let resetEmail = "";
 
-  // Mapping des réactions
   const reactionMap = {
     like: { emoji: "👍", label: "J'aime" },
     love: { emoji: "❤️", label: "J'adore" },
@@ -601,6 +621,7 @@
     document.getElementById("userEmailLabel").textContent = auth?.email || "";
     toggleAdminUI();
     updateMe();
+    loadGlobalStats();
   }
 
   function toggleAdminUI() {
@@ -622,7 +643,7 @@
       "AddTaskAccount","AddShareAccount","Work","OrderStatus","DepositHistory","WithdrawHistory","Referral",
       "AdminDeposits","AdminWithdraws","AdminCredit","AdminDeduct","AdminBan","AdminUsers",
       "GetFollower","GetLike","GetCommentShare","Deposit","Withdraw","Swap",
-      "VerifyAccount","AdminVerifyAccounts","Vip","VipCodes"
+      "VerifyAccount","AdminVerifyAccounts","Vip","VipCodes","ManageAccounts"
     ];
     allSections.forEach(s => {
       const el = document.getElementById("section" + s);
@@ -649,6 +670,7 @@
     if (name === "vip") { document.getElementById("vipActivateArea").style.display = "none"; }
     if (name === "vipCodes") loadVipCodes();
     if (name === "getCommentShare") switchCommentShareTab('comment');
+    if (name === "manageAccounts") { switchManageTab('task'); loadManageAccounts(); }
   }
 
   function showAccountInfo() {
@@ -662,6 +684,7 @@
   function showWithdrawHistory(){ showSection("withdrawHistory"); }
   function showVerifyAccount(){ showSection("verifyAccount"); }
   function showVipCodes(){ showSection("vipCodes"); }
+  function showManageAccounts(){ showSection("manageAccounts"); }
   function showAdminCredit(){ showSection("adminCredit"); }
   function showAdminDeduct(){ showSection("adminDeduct"); }
   function showAdminBan(){ showSection("adminBan"); }
@@ -670,7 +693,6 @@
   function showAdminWithdraws(){ showSection("adminWithdraws"); }
   function showAdminVerifyAccounts(){ showSection("adminVerifyAccounts"); }
 
-  // API helper
   async function api(path, method="GET", body=null) {
     const headers = {"Content-Type":"application/json"};
     if (auth?.token) headers["Authorization"] = "Bearer " + auth.token;
@@ -682,7 +704,6 @@
     return j;
   }
 
-  // Mise à jour du solde
   async function updateMe() {
     if (!auth?.token) return;
     try {
@@ -702,7 +723,9 @@
 
   function updateReferralLink() {
     const linkInput = document.getElementById("referralLink");
-    if (linkInput && me?.id) linkInput.value = window.location.origin + "/register?ref=" + me.id;
+    if (linkInput && me?.id) {
+      linkInput.value = BASE_URL + "?ref=" + me.id;
+    }
   }
 
   async function loadReferralCount() {
@@ -719,7 +742,25 @@
     setMessage("referralMsg", "Lien copié !", "success");
   }
 
-  // Auth
+  async function loadGlobalStats() {
+    try {
+      const data = await api("/stats", "GET");
+      document.getElementById("globalAr").textContent = (data.total_ar_gagnes || 0).toLocaleString();
+      document.getElementById("globalTasks").textContent = (data.total_tasks_completed || 0).toLocaleString();
+      document.getElementById("globalAccounts").textContent = (data.total_comptes || 0).toLocaleString();
+    } catch(e) { /* silencieux */ }
+  }
+
+  function checkRefParam() {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get("ref");
+    if (ref) {
+      const refInput = document.getElementById("registerRef");
+      if (refInput) refInput.value = ref;
+    }
+  }
+
+  // Auth functions
   async function registerUser() {
     const email = document.getElementById("registerEmail").value.trim();
     const password = document.getElementById("registerPassword").value.trim();
@@ -756,7 +797,6 @@
     setMessage("authMessage","");
   }
 
-  // Password reset
   async function requestResetCode() {
     const email = document.getElementById("forgotEmail").value.trim();
     if (!email) return setMessage("forgotMsg","Email requis.","error");
@@ -789,7 +829,7 @@
     } catch(e) { setMessage("newPassMsg", e.message, "error"); }
   }
 
-  // ADD TASK ACCOUNT
+  // ADD ACCOUNTS
   async function addTaskAccount() {
     if (!me) await updateMe();
     const profile_link = document.getElementById("accProfileLink").value.trim();
@@ -800,10 +840,10 @@
       const data = await api("/task_account/add","POST",{profile_link,cookies_string});
       setMessage("addAccountMessage", data.message || "OK", "success");
       await updateMe();
+      loadGlobalStats();
     } catch(e) { setMessage("addAccountMessage", e.message, "error"); }
   }
 
-  // ADD SHARE ACCOUNT
   async function addShareAccount() {
     if (!me) await updateMe();
     const profile_link = document.getElementById("shareProfileLink").value.trim();
@@ -813,6 +853,7 @@
       const data = await api("/share_account/add","POST",{profile_link});
       setMessage("shareAccountMessage", data.message || "Compte Share ajouté.", "success");
       await updateMe();
+      loadGlobalStats();
     } catch(e) { setMessage("shareAccountMessage", e.message, "error"); }
   }
 
@@ -825,8 +866,9 @@
     area.innerHTML = "Chargement...";
     try {
       const data = await api("/task_account/list","GET");
-      const accounts = data.accounts || [];
-      if (!accounts.length){ area.innerHTML = "<div>Aucun compte TASK.</div>"; return; }
+      let accounts = data.accounts || [];
+      accounts = accounts.filter(a => !a.hidden);
+      if (!accounts.length){ area.innerHTML = "<div>Aucun compte TASK disponible.</div>"; return; }
       area.innerHTML = accounts.map(a => `
         <div class="account-item">
           <div><strong>${(a.display_name || a.profile_link)}</strong><br><span style="font-size:12px;opacity:0.8;">${a.profile_link}</span></div>
@@ -893,6 +935,7 @@
       const data = await api("/worker/verify_task","POST",{account_id: selectedAccountId, task_id: currentTask.task_id});
       setMessage("workerMessage", data.message || "OK", data.success ? "success" : "error");
       await updateMe();
+      loadGlobalStats();
       if (data.success || data.message !== "Cette tâche a déjà été vérifiée pour ce compte.") {
         await loadNextTask();
       }
@@ -926,8 +969,9 @@
     area.innerHTML = "Chargement...";
     try {
       const data = await api("/share_account/list","GET");
-      const accounts = data.accounts || [];
-      if (!accounts.length){ area.innerHTML = "<div>Aucun compte Share.</div>"; return; }
+      let accounts = data.accounts || [];
+      accounts = accounts.filter(a => !a.hidden);
+      if (!accounts.length){ area.innerHTML = "<div>Aucun compte Share disponible.</div>"; return; }
       area.innerHTML = accounts.map(a => `
         <div class="account-item">
           <div><strong>${(a.display_name || a.profile_link)}</strong> (${a.followers} followers)</div>
@@ -976,6 +1020,7 @@
       });
       setMessage("shareWorkerMessage", data.message || "OK", data.success ? "success" : "error");
       await updateMe();
+      loadGlobalStats();
       if (data.success) {
         document.getElementById("shareVerificationLink").value = "";
         await loadNextShareTask();
@@ -1085,7 +1130,7 @@
     } catch(e){ list.innerHTML = ""; setMessage("ordersMsg", e.message, "error"); }
   }
 
-  // DEPOSIT
+  // DEPOSIT / WITHDRAW / SWAP / HISTORY
   function updateDepositEstimate() {
     const coins = parseFloat(document.getElementById("depCoins").value) || 0;
     const ar = coins * 1.5;
@@ -1112,7 +1157,6 @@
     } catch(e){ setMessage("depMessage", e.message, "error"); }
   }
 
-  // WITHDRAW / SWAP / HISTORY
   async function createWithdraw(){
     const amount_ar = parseFloat(document.getElementById("wdAmount").value);
     const method = document.getElementById("wdMethod").value;
@@ -1238,6 +1282,43 @@
     } catch(e) { setMessage("vipCodesMsg", e.message, "error"); }
   }
 
+  // MANAGE ACCOUNTS (HIDE/UNHIDE)
+  function switchManageTab(type) {
+    manageType = type;
+    document.getElementById("manageTabTask").className = type === "task" ? "active" : "inactive";
+    document.getElementById("manageTabShare").className = type === "share" ? "active" : "inactive";
+    managePage = 0;
+    loadManageAccounts();
+  }
+
+  async function loadManageAccounts() {
+    const list = document.getElementById("manageAccountsList");
+    list.innerHTML = "Chargement...";
+    document.getElementById("managePageLabel").textContent = managePage;
+    try {
+      const data = await api(`/account/manage/${manageType}?page=${managePage}&page_size=30`, "GET");
+      const accounts = data.accounts || [];
+      if (!accounts.length) { list.innerHTML = "<div>Aucun compte.</div>"; return; }
+      list.innerHTML = accounts.map(a => `
+        <div class="account-item">
+          <div style="flex:1;"><strong>${a.display_name || a.profile_link}</strong><br><span style="font-size:12px;">${a.profile_link}</span></div>
+          <button class="small-btn" onclick="toggleHidden('${a.id}')">${a.hidden ? "Unhide" : "Hide"}</button>
+        </div>`).join("");
+      setMessage("manageAccountsMsg", "");
+    } catch(e) { list.innerHTML = ""; setMessage("manageAccountsMsg", e.message, "error"); }
+  }
+
+  async function toggleHidden(accountId) {
+    try {
+      const data = await api("/account/toggle_hidden", "POST", { account_id: accountId });
+      setMessage("manageAccountsMsg", data.message, "success");
+      loadManageAccounts();
+      // Rafraîchir les listes de travail si nécessaire
+      if (manageType === "task") loadAccountsForWork();
+      else loadShareAccountsForWork();
+    } catch(e) { setMessage("manageAccountsMsg", e.message, "error"); }
+  }
+
   // ADMIN functions
   async function adminCredit(){
     const email = document.getElementById("admEmail").value.trim().toLowerCase();
@@ -1351,6 +1432,7 @@
 
   // INIT
   window.addEventListener("load", async () => {
+    checkRefParam(); // pré-remplir parrainage si ref dans l'URL
     if (auth?.token) {
       showDashboard();
     } else {
