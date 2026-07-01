@@ -181,13 +181,11 @@
     <!-- Dashboard Page -->
     <div id="dashboardPage" class="page">
       <div class="global-stats" id="globalStatsBar">
+        <div>🏆 Gagnés: <strong id="globalAr">0</strong> Ar</div>
+        <div>✅ Tâches: <strong id="globalTasks">0</strong></div>
+        <div>👥 Comptes: <strong id="globalAccounts">0</strong></div>
         <div>
-          <span>🏆 Gagnés: <strong id="globalAr">0</strong> Ar</span>
-          <span>✅ Tâches: <strong id="globalTasks">0</strong></span>
-          <span>👥 Comptes: <strong id="globalAccounts">0</strong></span>
-          <button class="small-btn" onclick="location.reload()" style="margin-left:8px;">🔄</button>
-        </div>
-        <div>
+          <button class="small-btn" onclick="location.reload()" style="margin-right:8px;">🔄</button>
           <a href="https://www.facebook.com/myalarryy" target="_blank">Support</a>
           <a href="https://www.facebook.com/myalarryy" target="_blank">Chat</a>
           <a href="https://www.facebook.com/myalarryy" target="_blank">Tutoriel</a>
@@ -558,7 +556,7 @@
     sad: { emoji: "😢", label: "Triste" }
   };
 
-  // Échappement HTML pour prévenir XSS
+  // Échappement HTML
   function sanitizeHTML(str) {
     const div = document.createElement('div');
     div.textContent = str;
@@ -581,6 +579,7 @@
     localStorage.removeItem("auth");
   }
 
+  // Fonction API avec refresh
   async function api(path, method="GET", body=null, retry=true) {
     const headers = {"Content-Type":"application/json"};
     const token = getAccessToken();
@@ -616,13 +615,22 @@
     } catch(e) { clearAuth(); showAuthPage(); return false; }
   }
 
-  // UI Helpers
-  function setMessage(id, text, type = "") {
+  // Affichage des messages avec possibilité de HTML interne (pour les loaders)
+  function setMessage(id, text, type = "", raw = false) {
     const el = document.getElementById(id);
     if (!el) return;
     el.className = "message " + type;
-    // On échappe tout sauf les <br> autorisés
-    el.innerHTML = sanitizeHTML(text).replace(/&lt;br&gt;/g, '<br>');
+    if (raw) {
+      el.innerHTML = text;
+    } else {
+      // Échapper sauf les <br> autorisés
+      el.innerHTML = sanitizeHTML(text).replace(/&lt;br&gt;/g, '<br>');
+    }
+  }
+
+  // Affiche un loader avec du texte optionnel
+  function showLoader(id, text = "") {
+    setMessage(id, '<span class="loader"></span> ' + sanitizeHTML(text), "", true);
   }
 
   function showLogin() {
@@ -659,12 +667,10 @@
   }
 
   function backToLogin() { showLogin(); }
-
   function showAuthPage() {
     document.getElementById("authPage").classList.add("active");
     document.getElementById("dashboardPage").classList.remove("active");
   }
-
   function showDashboard() {
     document.getElementById("authPage").classList.remove("active");
     document.getElementById("dashboardPage").classList.add("active");
@@ -673,16 +679,13 @@
     updateMe();
     loadGlobalStats();
   }
-
   function toggleAdminUI() {
     document.getElementById("hamburgerWrap").style.display = "block";
     document.getElementById("adminOnlyMenu").style.display = (auth && auth.is_admin) ? "block" : "none";
   }
-
   function toggleAdminMenu() {
     document.getElementById("adminMenu").classList.toggle("show");
   }
-
   function hideAdminMenu() {
     document.getElementById("adminMenu").classList.remove("show");
   }
@@ -728,7 +731,6 @@
     if (!me) return;
     setMessage("dashboardMessage", `Email: ${sanitizeHTML(me.email)}<br>Coins: ${Number(me.balance_coins).toFixed(2)} — Ar: ${Math.floor(Number(me.balance_ar))}`, "success");
   }
-
   function showReferral(){ showSection("referral"); }
   function showDepositHistory(){ showSection("depositHistory"); }
   function showWithdrawHistory(){ showSection("withdrawHistory"); }
@@ -763,21 +765,18 @@
     const linkInput = document.getElementById("referralLink");
     if (linkInput && me?.id) linkInput.value = BASE_URL + "?ref=" + me.id;
   }
-
   async function loadReferralCount() {
     try {
       const data = await api("/referral/info", "GET");
       document.getElementById("refCount").textContent = data.total_referrals || 0;
     } catch(e) {}
   }
-
   function copyReferral() {
     const linkInput = document.getElementById("referralLink");
     linkInput.select();
     document.execCommand("copy");
     setMessage("referralMsg", "Lien copié !", "success");
   }
-
   async function loadGlobalStats() {
     try {
       const data = await api("/stats", "GET");
@@ -786,7 +785,6 @@
       document.getElementById("globalAccounts").textContent = (data.total_comptes || 0).toLocaleString();
     } catch(e) {}
   }
-
   function checkRefParam() {
     const params = new URLSearchParams(window.location.search);
     const ref = params.get("ref");
@@ -803,8 +801,8 @@
     const ref = document.getElementById("registerRef").value.trim();
     if (!email || !password) return setMessage("authMessage","Remplis tous les champs.","error");
     if (!email.endsWith("@gmail.com")) return setMessage("authMessage","Seules les adresses Gmail (@gmail.com) sont acceptées.","error");
+    showLoader("authMessage", "Inscription...");
     try {
-      setMessage("authMessage",'<span class="loader"></span>Inscription...', "");
       const data = await fetch(API_URL + "/register", {
         method: "POST",
         headers: {"Content-Type":"application/json"},
@@ -821,8 +819,8 @@
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value.trim();
     if (!email || !password) return setMessage("authMessage","Remplis tous les champs.","error");
+    showLoader("authMessage", "Connexion...");
     try {
-      setMessage("authMessage",'<span class="loader"></span>Connexion...', "");
       const data = await fetch(API_URL + "/login", {
         method: "POST",
         headers: {"Content-Type":"application/json"},
@@ -849,8 +847,8 @@
   async function requestResetCode() {
     const email = document.getElementById("forgotEmail").value.trim();
     if (!email) return setMessage("forgotMsg","Email requis.","error");
+    showLoader("forgotMsg", "Envoi...");
     try {
-      setMessage("forgotMsg",'<span class="loader"></span>Envoi...', "");
       await api("/auth/forgot_password","POST",{email});
       setMessage("forgotMsg","Code envoyé à l'email (vérifiez les spams).","success");
       resetEmail = email;
@@ -870,10 +868,10 @@
     const newPassword = document.getElementById("newPassword").value.trim();
     if (!code || !newPassword) return setMessage("newPassMsg","Code et nouveau mot de passe requis.","error");
     if (newPassword.length < 6) return setMessage("newPassMsg","Mot de passe trop court (min 6).","error");
+    showLoader("newPassMsg", "Mise à jour...");
     try {
-      setMessage("newPassMsg",'<span class="loader"></span>Mise à jour...', "");
       const data = await api("/auth/reset_password","POST",{email: resetEmail, code, new_password: newPassword});
-      setMessage("newPassMsg", sanitizeHTML(data.message), "success");
+      setMessage("newPassMsg", data.message, "success");
       setTimeout(() => { backToLogin(); setMessage("authMessage","Mot de passe modifié, connectez-vous.","success"); }, 2000);
     } catch(e) { setMessage("newPassMsg", sanitizeHTML(e.message), "error"); }
   }
@@ -884,10 +882,10 @@
     const profile_link = document.getElementById("accProfileLink").value.trim();
     const cookies_string = document.getElementById("accCookies").value.trim();
     if (!profile_link || !cookies_string) return setMessage("addAccountMessage","Remplis tous les champs.","error");
+    showLoader("addAccountMessage", "Vérification...");
     try {
-      setMessage("addAccountMessage",'<span class="loader"></span>Vérification...', "");
       const data = await api("/task_account/add","POST",{profile_link,cookies_string});
-      setMessage("addAccountMessage", sanitizeHTML(data.message || "OK"), "success");
+      setMessage("addAccountMessage", data.message || "OK", "success");
       await updateMe();
       loadGlobalStats();
     } catch(e) { setMessage("addAccountMessage", sanitizeHTML(e.message), "error"); }
@@ -897,10 +895,10 @@
     if (!me) await updateMe();
     const profile_link = document.getElementById("shareProfileLink").value.trim();
     if (!profile_link) return setMessage("shareAccountMessage","Lien du profil requis.","error");
+    showLoader("shareAccountMessage", "Vérification...");
     try {
-      setMessage("shareAccountMessage",'<span class="loader"></span>Vérification...', "");
       const data = await api("/share_account/add","POST",{profile_link});
-      setMessage("shareAccountMessage", sanitizeHTML(data.message || "Compte Share ajouté."), "success");
+      setMessage("shareAccountMessage", data.message || "Compte Share ajouté.", "success");
       await updateMe();
       loadGlobalStats();
     } catch(e) { setMessage("shareAccountMessage", sanitizeHTML(e.message), "error"); }
@@ -929,7 +927,7 @@
   async function selectAccountForWork(accId){
     selectedAccountId = accId;
     document.getElementById("currentTaskArea").style.display = "block";
-    setMessage("workerMessage", "Chargement tâche...", "");
+    showLoader("workerMessage", "Chargement tâche...");
     await loadNextTask();
   }
 
@@ -979,10 +977,10 @@
 
   async function verifyCurrentTask(){
     if (!selectedAccountId || !currentTask?.task_id) return;
-    setMessage("workerMessage", '<span class="loader"></span>Vérification...', "");
+    showLoader("workerMessage", "Vérification...");
     try {
       const data = await api("/worker/verify_task","POST",{account_id: selectedAccountId, task_id: currentTask.task_id});
-      setMessage("workerMessage", sanitizeHTML(data.message || "OK"), data.success ? "success" : "error");
+      setMessage("workerMessage", data.message || "OK", data.success ? "success" : "error");
       await updateMe();
       loadGlobalStats();
       if (data.success || data.message !== "Cette tâche a déjà été vérifiée pour ce compte.") {
@@ -1032,7 +1030,7 @@
   async function selectShareAccountForWork(accId) {
     selectedShareAccountId = accId;
     document.getElementById("currentShareTaskArea").style.display = "block";
-    setMessage("shareWorkerMessage", "Chargement tâche...", "");
+    showLoader("shareWorkerMessage", "Chargement tâche...");
     await loadNextShareTask();
   }
 
@@ -1060,14 +1058,14 @@
     if (!selectedShareAccountId || !currentShareTask?.task_id) return;
     const verificationLink = document.getElementById("shareVerificationLink").value.trim();
     if (!verificationLink) return setMessage("shareWorkerMessage", "Entrez le lien du post partagé.", "error");
-    setMessage("shareWorkerMessage", '<span class="loader"></span>Vérification...', "");
+    showLoader("shareWorkerMessage", "Vérification...");
     try {
       const data = await api("/worker/share_verify_task","POST",{
         account_id: selectedShareAccountId,
         task_id: currentShareTask.task_id,
         verification_link: verificationLink
       });
-      setMessage("shareWorkerMessage", sanitizeHTML(data.message || "OK"), data.success ? "success" : "error");
+      setMessage("shareWorkerMessage", data.message || "OK", data.success ? "success" : "error");
       await updateMe();
       loadGlobalStats();
       if (data.success) {
@@ -1104,10 +1102,10 @@
     const link = document.getElementById("gfProfileLink").value.trim();
     const target = parseInt(document.getElementById("gfTarget").value || "0", 10);
     if (!link || !target) return setMessage("gfMessage","Remplis tous les champs.","error");
+    showLoader("gfMessage", "Création...");
     try {
-      setMessage("gfMessage", '<span class="loader"></span>Création...', "");
       const data = await api("/tasks/create_follow","POST",{profile_link: link, target});
-      setMessage("gfMessage", sanitizeHTML(data.message || "OK"), "success");
+      setMessage("gfMessage", data.message || "OK", "success");
       await updateMe();
     } catch(e){ setMessage("gfMessage", sanitizeHTML(e.message), "error"); }
   }
@@ -1117,10 +1115,10 @@
     const reaction_key = document.getElementById("glReaction").value;
     const target = parseInt(document.getElementById("glTarget").value || "0", 10);
     if (!link || !reaction_key || !target) return setMessage("glMessage","Remplis tous les champs.","error");
+    showLoader("glMessage", "Création...");
     try {
-      setMessage("glMessage", '<span class="loader"></span>Création...', "");
       const data = await api("/tasks/create_like","POST",{link, reaction_key, target});
-      setMessage("glMessage", sanitizeHTML(data.message || "OK"), "success");
+      setMessage("glMessage", data.message || "OK", "success");
       await updateMe();
     } catch(e){ setMessage("glMessage", sanitizeHTML(e.message), "error"); }
   }
@@ -1129,10 +1127,10 @@
     const link = document.getElementById("gcLink").value.trim();
     const comment_text = document.getElementById("gcText").value.trim();
     if (!link || !comment_text) return setMessage("gcMessage","Remplis tous les champs.","error");
+    showLoader("gcMessage", "Création...");
     try {
-      setMessage("gcMessage", '<span class="loader"></span>Création...', "");
       const data = await api("/tasks/create_comment","POST",{link, comment_text, target: 1});
-      setMessage("gcMessage", sanitizeHTML(data.message || "OK"), "success");
+      setMessage("gcMessage", data.message || "OK", "success");
       await updateMe();
     } catch(e){ setMessage("gcMessage", sanitizeHTML(e.message), "error"); }
   }
@@ -1141,10 +1139,10 @@
     const link = document.getElementById("gsLink").value.trim();
     const target = parseInt(document.getElementById("gsTarget").value || "0", 10);
     if (!link || !target) return setMessage("gsMessage","Remplis tous les champs.","error");
+    showLoader("gsMessage", "Création...");
     try {
-      setMessage("gsMessage", '<span class="loader"></span>Création...', "");
       const data = await api("/tasks/create_share","POST",{link, target});
-      setMessage("gsMessage", sanitizeHTML(data.message || "OK"), "success");
+      setMessage("gsMessage", data.message || "OK", "success");
       await updateMe();
     } catch(e){ setMessage("gsMessage", sanitizeHTML(e.message), "error"); }
   }
@@ -1185,7 +1183,6 @@
     const ar = coins * 1.5;
     document.getElementById("depEstimate").textContent = `Estimation : ${ar} Ar (1 coin = 1.5 Ar)`;
   }
-
   function depositNext() {
     const coins = parseFloat(document.getElementById("depCoins").value);
     if (!coins || coins < 2000) { setMessage("depMessage", "Minimum 2000 coins.", "error"); return; }
@@ -1194,43 +1191,39 @@
     document.getElementById("depositStep1").style.display = "none";
     document.getElementById("depositStep2").style.display = "block";
   }
-
   async function createDeposit(){
     const coins = parseFloat(document.getElementById("depCoins").value);
     const reference = document.getElementById("depRef").value.trim();
     if (!coins || coins < 2000) return setMessage("depMessage","Montant invalide","error");
+    showLoader("depMessage", "Envoi...");
     try {
-      setMessage("depMessage", '<span class="loader"></span>Envoi...', "");
       const data = await api("/wallet/deposit","POST",{coins, reference});
-      setMessage("depMessage", sanitizeHTML(data.message + " ID: " + data.request_id), "success");
+      setMessage("depMessage", data.message + " ID: " + data.request_id, "success");
     } catch(e){ setMessage("depMessage", sanitizeHTML(e.message), "error"); }
   }
-
   async function createWithdraw(){
     const amount_ar = parseFloat(document.getElementById("wdAmount").value);
     const method = document.getElementById("wdMethod").value;
     const account = document.getElementById("wdAccount").value.trim();
     const recipient_name = document.getElementById("wdName").value.trim();
     if (!amount_ar || amount_ar<5000 || !account || !recipient_name) return setMessage("wdMessage","Champs invalides","error");
+    showLoader("wdMessage", "Envoi...");
     try {
-      setMessage("wdMessage", '<span class="loader"></span>Envoi...', "");
       const data = await api("/wallet/withdraw","POST",{amount_ar, method, account, recipient_name});
-      setMessage("wdMessage", sanitizeHTML(data.message + " ID: " + data.request_id), "success");
+      setMessage("wdMessage", data.message + " ID: " + data.request_id, "success");
       await updateMe();
     } catch(e){ setMessage("wdMessage", sanitizeHTML(e.message), "error"); }
   }
-
   async function doSwap(){
     const amount_ar = parseFloat(document.getElementById("swapAmount").value);
     if (!amount_ar || amount_ar<=0) return setMessage("swapMessage","Montant invalide","error");
+    showLoader("swapMessage", "Swap...");
     try {
-      setMessage("swapMessage", '<span class="loader"></span>Swap...', "");
       const data = await api("/wallet/swap","POST",{amount_ar});
-      setMessage("swapMessage", sanitizeHTML(data.message + ` (+${data.received_coins} coins)`), "success");
+      setMessage("swapMessage", data.message + ` (+${data.received_coins} coins)`, "success");
       await updateMe();
     } catch(e){ setMessage("swapMessage", sanitizeHTML(e.message), "error"); }
   }
-
   async function loadDepositHistory() {
     const list = document.getElementById("depositHistoryList");
     list.innerHTML = "Loading...";
@@ -1241,7 +1234,6 @@
         <div class="task-item"><div><b>${sanitizeHTML(x.status)}</b> — ${x.created_at}<br>Coins: ${x.coins} | Ar: ${x.amount_ar} | Ref: ${sanitizeHTML(x.reference||"")}</div></div>`).join("") : "<div>No history</div>";
     } catch(e){ list.innerHTML=""; setMessage("depositHistoryMsg", sanitizeHTML(e.message), "error"); }
   }
-
   async function loadWithdrawHistory() {
     const list = document.getElementById("withdrawHistoryList");
     list.innerHTML = "Loading...";
@@ -1266,11 +1258,9 @@
         const status = a.verification_status;
         let statusHtml = "";
         let buttonHtml = "";
-        if (status === "verified") {
-          statusHtml = `<span class="status-badge verified">vérifié 🟢</span>`;
-        } else if (status === "pending") {
-          statusHtml = `<span class="status-badge pending">en attente</span>`;
-        } else if (status === "rejected") {
+        if (status === "verified") statusHtml = `<span class="status-badge verified">vérifié 🟢</span>`;
+        else if (status === "pending") statusHtml = `<span class="status-badge pending">en attente</span>`;
+        else if (status === "rejected") {
           statusHtml = `<span class="status-badge rejected">rejeté</span>`;
           buttonHtml = `<button class="small-btn" onclick="requestVerification('${a.id}')">Retry get verified</button>`;
         } else {
@@ -1282,12 +1272,11 @@
       setMessage("verifyMsg", "", "");
     } catch(e) { list.innerHTML = ""; setMessage("verifyMsg", sanitizeHTML(e.message), "error"); }
   }
-
   async function requestVerification(accountId) {
+    showLoader("verifyMsg", "Envoi...");
     try {
-      setMessage("verifyMsg", '<span class="loader"></span>Envoi...', "");
       const data = await api("/task_account/request_verification", "POST", { account_id: accountId });
-      setMessage("verifyMsg", sanitizeHTML(data.message || "Demande envoyée"), "success");
+      setMessage("verifyMsg", data.message || "Demande envoyée", "success");
       await loadVerifyAccounts();
     } catch(e) { setMessage("verifyMsg", sanitizeHTML(e.message), "error"); }
   }
@@ -1298,25 +1287,26 @@
     if (!me) return;
     const confirmBuy = confirm("Acheter un code VIP pour 500 Ar ?");
     if (!confirmBuy) return;
+    showLoader("vipMessage", "Achat...");
     try {
-      setMessage("vipMessage", '<span class="loader"></span>Achat...', "");
       const data = await api("/vip/buy", "POST");
-      setMessage("vipMessage", sanitizeHTML(data.message + " Code : " + data.code), "success");
+      setMessage("vipMessage", data.message + " Code : " + data.code, "success");
       await updateMe();
     } catch(e) { setMessage("vipMessage", sanitizeHTML(e.message), "error"); }
   }
-
   async function activateVip() {
     const code = document.getElementById("vipCode").value.trim();
     if (!code) return setMessage("vipMessage", "Entrez un code.", "error");
+    showLoader("vipMessage", "Activation...");
     try {
-      setMessage("vipMessage", '<span class="loader"></span>Activation...', "");
       const data = await api("/vip/activate", "POST", { code });
-      setMessage("vipMessage", sanitizeHTML(data.message), "success");
+      setMessage("vipMessage", data.message, "success");
       document.getElementById("vipCode").value = "";
     } catch(e) { setMessage("vipMessage", sanitizeHTML(e.message), "error"); }
   }
-
+  function showVipActivate() {
+    document.getElementById("vipActivateArea").style.display = "block";
+  }
   async function loadVipCodes() {
     try {
       const data = await api("/vip/my_codes","GET");
@@ -1339,7 +1329,6 @@
     managePage = 0;
     loadManageAccounts();
   }
-
   async function loadManageAccounts() {
     const list = document.getElementById("manageAccountsList");
     list.innerHTML = "Chargement...";
@@ -1356,11 +1345,10 @@
       setMessage("manageAccountsMsg", "");
     } catch(e) { list.innerHTML = ""; setMessage("manageAccountsMsg", sanitizeHTML(e.message), "error"); }
   }
-
   async function toggleHidden(accountId) {
     try {
       const data = await api("/account/toggle_hidden", "POST", { account_id: accountId });
-      setMessage("manageAccountsMsg", sanitizeHTML(data.message), "success");
+      setMessage("manageAccountsMsg", data.message, "success");
       loadManageAccounts();
       if (manageType === "task") loadAccountsForWork();
       else loadShareAccountsForWork();
@@ -1373,36 +1361,33 @@
     const coins = parseFloat(document.getElementById("admCoins").value)||0;
     const ar = parseFloat(document.getElementById("admAr").value)||0;
     if (!email) return setMessage("admMessage","Email obligatoire","error");
+    showLoader("admMessage", "...");
     try {
-      setMessage("admMessage", '<span class="loader"></span>...', "");
       const data = await api("/admin/credit","POST",{email, coins, ar});
-      setMessage("admMessage", sanitizeHTML(data.message), "success");
+      setMessage("admMessage", data.message, "success");
     } catch(e){ setMessage("admMessage", sanitizeHTML(e.message), "error"); }
   }
-
   async function adminDeduct(){
     const email = document.getElementById("deductEmail").value.trim().toLowerCase();
     const coins = parseFloat(document.getElementById("deductCoins").value)||0;
     const ar = parseFloat(document.getElementById("deductAr").value)||0;
     if (!email) return setMessage("deductMessage","Email obligatoire","error");
+    showLoader("deductMessage", "...");
     try {
-      setMessage("deductMessage", '<span class="loader"></span>...', "");
       const data = await api("/admin/deduct","POST",{email, coins, ar});
-      setMessage("deductMessage", sanitizeHTML(data.message), "success");
+      setMessage("deductMessage", data.message, "success");
     } catch(e){ setMessage("deductMessage", sanitizeHTML(e.message), "error"); }
   }
-
   async function adminBan(){
     const email = document.getElementById("banEmail").value.trim().toLowerCase();
     const action = document.getElementById("banAction").value;
     if (!email) return setMessage("banMessage","Email obligatoire","error");
+    showLoader("banMessage", "...");
     try {
-      setMessage("banMessage", '<span class="loader"></span>...', "");
       const data = await api("/admin/ban","POST",{email, action});
-      setMessage("banMessage", sanitizeHTML(data.message), "success");
+      setMessage("banMessage", data.message, "success");
     } catch(e){ setMessage("banMessage", sanitizeHTML(e.message), "error"); }
   }
-
   async function loadAdminUsers(){
     const search = document.getElementById("userSearch").value.trim();
     document.getElementById("usersPageLabel").textContent = usersPage;
@@ -1416,7 +1401,6 @@
         <div class="task-item"><div><b>${sanitizeHTML(u.email)}</b> — Coins: ${u.balance_coins} Ar: ${u.balance_ar} ${u.banned ? " [BANNI]" : ""} ${u.suspended_until ? " [SUSPENDU]" : ""}<div class="meta">ID: ${u.id}</div></div></div>`).join("");
     } catch(e){ list.innerHTML=""; setMessage("adminUsersMsg", sanitizeHTML(e.message), "error"); }
   }
-
   async function loadAdminDeposits(){
     document.getElementById("adminDepPageLabel").textContent = adminDepPage;
     const list = document.getElementById("adminDepositsList");
@@ -1430,12 +1414,10 @@
         <button class="small-btn" onclick="handleDeposit('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleDeposit('${x.id}','reject')">Reject</button></div></div>`).join("");
     } catch(e){ list.innerHTML=""; setMessage("adminDepositsMsg", sanitizeHTML(e.message), "error"); }
   }
-
   async function handleDeposit(id, action){
     try { await api("/admin/deposits/handle","POST",{request_id:id, action}); loadAdminDeposits(); }
     catch(e){ setMessage("adminDepositsMsg", sanitizeHTML(e.message), "error"); }
   }
-
   async function loadAdminWithdraws(){
     document.getElementById("adminWdPageLabel").textContent = adminWdPage;
     const list = document.getElementById("adminWithdrawsList");
@@ -1449,12 +1431,10 @@
         <button class="small-btn" onclick="handleWithdraw('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','reject')">Reject</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','return')">Return</button></div></div>`).join("");
     } catch(e){ list.innerHTML=""; setMessage("adminWithdrawsMsg", sanitizeHTML(e.message), "error"); }
   }
-
   async function handleWithdraw(id, action){
     try { await api("/admin/withdraws/handle","POST",{request_id:id, action}); loadAdminWithdraws(); }
     catch(e){ setMessage("adminWithdrawsMsg", sanitizeHTML(e.message), "error"); }
   }
-
   async function loadAdminVerifyAccounts() {
     document.getElementById("adminVerifyPageLabel").textContent = adminVerifyPage;
     const list = document.getElementById("adminVerifyList");
@@ -1469,7 +1449,6 @@
       setMessage("adminVerifyMsg", "");
     } catch(e) { list.innerHTML = ""; setMessage("adminVerifyMsg", sanitizeHTML(e.message), "error"); }
   }
-
   async function handleAdminVerify(accountId, action) {
     try {
       await api("/admin/verify_accounts/handle", "POST", { account_id: accountId, action });
@@ -1490,4 +1469,4 @@
   });
 </script>
 </body>
-</html>
+  </html>
