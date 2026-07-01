@@ -4,44 +4,120 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TASKER MG 🇲🇬</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://web-production-0a511.up.railway.app; style-src 'self' 'unsafe-inline'; connect-src 'self' https://web-production-0a511.up.railway.app; frame-ancestors 'none';">
   <style>
     *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-    body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ff512f,#dd2476,#7f00ff);padding:20px;color:white}
-    .container{width:100%;max-width:680px;background:rgba(0,0,0,.35);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);border-radius:24px;padding:18px 18px 22px;box-shadow:0 20px 40px rgba(0,0,0,.35);position:relative}
-    .page{display:none;animation:fadeIn .25s ease}.page.active{display:block}
-    .title{text-align:center;margin-bottom:18px}.title h1{font-size:26px;margin-bottom:4px}.title p{font-size:14px;opacity:.9}
-    .tabs{display:flex;gap:10px;margin:10px 0 16px}.tabs button,.submit-btn,.secondary-btn,.feature-btn,.small-btn{border:none;border-radius:14px;cursor:pointer;font-size:14px;font-weight:bold;transition:.25s}
-    .tabs button{flex:1;padding:11px}.tabs button.active{background:#fff;color:#7f00ff}.tabs button.inactive{background:rgba(255,255,255,.18);color:#fff}
-    .form{display:none;animation:fadeIn .25s ease}.form.active{display:block}
-    .field{margin-bottom:10px}.field label{display:block;margin-bottom:5px;font-size:13px;font-weight:bold}
-    .field input,.field textarea,.field select{width:100%;padding:11px 12px;border:none;border-radius:12px;outline:none;font-size:14px;background:rgba(255,255,255,.92);color:#222}
-    .field textarea{resize:vertical;min-height:70px}.field input:focus,.field textarea:focus,.field select:focus{border:2px solid #ffd700}
+    body{
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,#ff512f,#dd2476,#7f00ff);
+      padding:20px;color:white;
+    }
+    .container{
+      width:100%;max-width:680px;background:rgba(0,0,0,.35);
+      backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,.2);
+      border-radius:24px;padding:18px 18px 22px;
+      box-shadow:0 20px 40px rgba(0,0,0,.35);
+      position:relative;
+    }
+    .page{display:none;animation:fadeIn .25s ease}
+    .page.active{display:block}
+    .title{text-align:center;margin-bottom:18px}
+    .title h1{font-size:26px;margin-bottom:4px}
+    .title p{font-size:14px;opacity:.9}
+    .tabs{display:flex;gap:10px;margin:10px 0 16px}
+    .tabs button,.submit-btn,.secondary-btn,.feature-btn,.small-btn{
+      border:none;border-radius:14px;cursor:pointer;font-size:14px;font-weight:bold;transition:.25s;
+    }
+    .tabs button{flex:1;padding:11px}
+    .tabs button.active{background:#fff;color:#7f00ff}
+    .tabs button.inactive{background:rgba(255,255,255,.18);color:#fff}
+    .form{display:none;animation:fadeIn .25s ease}
+    .form.active{display:block}
+    .field{margin-bottom:10px}
+    .field label{display:block;margin-bottom:5px;font-size:13px;font-weight:bold}
+    .field input,.field textarea,.field select{
+      width:100%;padding:11px 12px;border:none;border-radius:12px;outline:none;
+      font-size:14px;background:rgba(255,255,255,.92);color:#222;
+    }
+    .field textarea{resize:vertical;min-height:70px}
+    .field input:focus,.field textarea:focus,.field select:focus{border:2px solid #ffd700}
     .submit-btn{width:100%;padding:11px;margin-top:8px;background:linear-gradient(90deg,#00c6ff,#0072ff);color:#fff}
     .feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
-    .feature-btn{padding:11px;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.22)}.feature-btn.disabled{opacity:.4;cursor:not-allowed}
+    .feature-btn{padding:11px;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.22)}
+    .feature-btn.disabled{opacity:.4;cursor:not-allowed}
     .submit-btn:hover,.secondary-btn:hover,.feature-btn:hover,.small-btn:hover{transform:scale(1.03)}
     .secondary-btn{padding:10px 12px;background:rgba(255,255,255,.16);color:#fff}
-    .small-btn{padding:6px 10px;font-size:12px;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:10px}
+    .small-btn{
+      padding:6px 10px;font-size:12px;background:rgba(255,255,255,.14);color:#fff;
+      border:1px solid rgba(255,255,255,.25);border-radius:10px;
+    }
     .small-text{text-align:center;margin-top:10px;font-size:13px;opacity:.95}
-    .message{text-align:center;margin-top:10px;min-height:22px;font-size:13px}.success{color:#b7ffb7;font-weight:bold}.error{color:#ffd1d1;font-weight:bold}
-    .card{margin-top:8px;padding:10px 12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:16px}.card h2{font-size:17px;margin-bottom:4px}.card p{font-size:13px;line-height:1.5;opacity:.95}
-    .warning-text{background:rgba(255,193,7,0.2);color:#ffc107;padding:6px 10px;border-radius:8px;margin-bottom:8px;font-size:13px;font-weight:bold}
-    .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.balance{font-size:13px;opacity:.95}.balance strong{font-size:15px}
-    .hamburger{width:28px;height:24px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between}.hamburger span{height:3px;border-radius:999px;background:white}
-    .admin-menu{position:absolute;top:40px;right:18px;background:rgba(0,0,0,.85);border-radius:12px;border:1px solid rgba(255,255,255,.25);padding:8px;display:none;flex-direction:column;gap:6px;z-index:10;width:230px}.admin-menu.show{display:flex}
-    .section-title{font-size:14px;margin-top:12px;margin-bottom:4px;font-weight:bold}.section-area{margin-top:4px}
-    .accounts-list,.tasks-log{margin-top:6px;max-height:220px;overflow-y:auto;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.03);padding:6px;font-size:13px}
-    .account-item,.task-item{padding:6px;border-radius:8px;background:rgba(255,255,255,.08);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;gap:8px}
-    .task-item .meta{font-size:12px;opacity:.9}a.link{color:#fff;text-decoration:underline;word-break:break-all}
-    .copy-btn{background:rgba(255,255,255,.2);border:none;border-radius:6px;padding:2px 8px;font-size:12px;cursor:pointer;color:white;margin-left:6px}.copy-btn:hover{background:rgba(255,255,255,.4)}
-    .loader{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:white;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px}
-    .status-badge{font-size:12px;padding:2px 8px;border-radius:20px;margin-left:8px;background:rgba(255,255,255,.2)}.status-badge.verified{background:#2ecc71;color:#fff}.status-badge.pending{background:#f1c40f;color:#000}.status-badge.rejected{background:#e74c3c;color:#fff}
-    .global-stats{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;font-size:12px;opacity:0.9;background:rgba(255,255,255,0.08);padding:6px 10px;border-radius:10px}.global-stats div{display:flex;gap:12px;flex-wrap:wrap}.global-stats a{color:#ffd700;text-decoration:underline;margin-right:8px}
-    @keyframes spin{to{transform:rotate(360deg)}}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .message{text-align:center;margin-top:10px;min-height:22px;font-size:13px}
+    .success{color:#b7ffb7;font-weight:bold}
+    .error{color:#ffd1d1;font-weight:bold}
+    .card{margin-top:8px;padding:10px 12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:16px}
+    .card h2{font-size:17px;margin-bottom:4px}
+    .card p{font-size:13px;line-height:1.5;opacity:.95}
+    .warning-text{
+      background: rgba(255,193,7,0.2); color: #ffc107; padding:6px 10px;
+      border-radius:8px; margin-bottom:8px; font-size:13px; font-weight:bold;
+    }
+    .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+    .balance{font-size:13px;opacity:.95}
+    .balance strong{font-size:15px}
+    .hamburger{width:28px;height:24px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between}
+    .hamburger span{height:3px;border-radius:999px;background:white}
+    .admin-menu{
+      position:absolute;top:40px;right:18px;background:rgba(0,0,0,.85);
+      border-radius:12px;border:1px solid rgba(255,255,255,.25);padding:8px;
+      display:none;flex-direction:column;gap:6px;z-index:10;
+      width: 230px;
+    }
+    .admin-menu.show{display:flex}
+    .section-title{font-size:14px;margin-top:12px;margin-bottom:4px;font-weight:bold}
+    .section-area{margin-top:4px}
+    .accounts-list,.tasks-log{
+      margin-top:6px;max-height:220px;overflow-y:auto;border-radius:10px;
+      border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.03);
+      padding:6px;font-size:13px;
+    }
+    .account-item,.task-item{
+      padding:6px;border-radius:8px;background:rgba(255,255,255,.08);
+      margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;gap:8px;
+    }
+    .task-item .meta{font-size:12px;opacity:.9}
+    a.link{color:#fff;text-decoration:underline;word-break:break-all}
+    .copy-btn{
+      background:rgba(255,255,255,.2);border:none;border-radius:6px;padding:2px 8px;
+      font-size:12px;cursor:pointer;color:white;margin-left:6px;
+    }
+    .copy-btn:hover{background:rgba(255,255,255,.4)}
+    .loader{
+      display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.35);
+      border-top-color:white;border-radius:50%;animation:spin .8s linear infinite;
+      vertical-align:middle;margin-right:8px;
+    }
+    .status-badge{
+      font-size:12px;padding:2px 8px;border-radius:20px;margin-left:8px;
+      background:rgba(255,255,255,.2);
+    }
+    .status-badge.verified{background:#2ecc71;color:#fff}
+    .status-badge.pending{background:#f1c40f;color:#000}
+    .status-badge.rejected{background:#e74c3c;color:#fff}
+    .global-stats{
+      display:flex; flex-direction: column; gap:4px; margin-bottom:10px;
+      font-size:12px; opacity:0.9; background:rgba(255,255,255,0.08); padding:6px 10px; border-radius:10px;
+    }
+    .global-stats div{display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
+    .global-stats a{color:#ffd700; text-decoration:underline; margin-right:8px;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   </style>
 </head>
 <body>
   <div class="container">
+    <!-- Menu hamburger -->
     <div id="adminMenu" class="admin-menu">
       <button class="small-btn" onclick="showAccountInfo()">Infos compte</button>
       <button class="small-btn" onclick="showReferral()">Parrainage</button>
@@ -50,6 +126,7 @@
       <button class="small-btn" onclick="showVerifyAccount()">Vérifier compte</button>
       <button class="small-btn" onclick="showVipCodes()">Code VIP</button>
       <button class="small-btn" onclick="showManageAccounts()">Hide/Unhide comptes</button>
+
       <div id="adminOnlyMenu" style="display:none; border-top:1px solid rgba(255,255,255,.18); padding-top:6px;">
         <button class="small-btn" onclick="showAdminCredit()">Créditer Coins/Ar</button>
         <button class="small-btn" onclick="showAdminDeduct()">Déduire Coins/Ar</button>
@@ -61,6 +138,8 @@
       </div>
       <button class="small-btn" onclick="logoutUser()">Déconnexion</button>
     </div>
+
+    <!-- Auth Page -->
     <div id="authPage" class="page active">
       <div class="title"><h1>MG TASKER 🇲🇬</h1><p>Connecte-toi ou crée un compte</p></div>
       <div class="tabs">
@@ -90,18 +169,24 @@
         <div class="small-text" style="cursor:pointer;text-decoration:underline" onclick="backToLogin()">Retour à la connexion</div>
       </div>
       <div id="registerForm" class="form">
-        <div class="field"><label>Email</label><input type="email" id="registerEmail" placeholder="ton@email.com" /></div>
+        <div class="field"><label>Email</label><input type="email" id="registerEmail" placeholder="ton@gmail.com" /></div>
         <div class="field"><label>Mot de passe</label><input type="password" id="registerPassword" placeholder="Créer un mot de passe" /></div>
         <div class="field"><label>Code de parrainage (optionnel)</label><input type="text" id="registerRef" placeholder="ID du parrain" /></div>
         <button class="submit-btn" onclick="registerUser()">Register</button>
+        <div class="small-text">Seules les adresses Gmail (@gmail.com) sont acceptées.</div>
       </div>
       <div id="authMessage" class="message"></div>
     </div>
+
+    <!-- Dashboard Page -->
     <div id="dashboardPage" class="page">
       <div class="global-stats" id="globalStatsBar">
-        <div><span>🏆 Gagnés: <strong id="globalAr">0</strong> Ar</span></div>
-        <div><span>✅ Tâches: <strong id="globalTasks">0</strong></span></div>
-        <div><span>👥 Comptes: <strong id="globalAccounts">0</strong></span></div>
+        <div>
+          <span>🏆 Gagnés: <strong id="globalAr">0</strong> Ar</span>
+          <span>✅ Tâches: <strong id="globalTasks">0</strong></span>
+          <span>👥 Comptes: <strong id="globalAccounts">0</strong></span>
+          <button class="small-btn" onclick="location.reload()" style="margin-left:8px;">🔄</button>
+        </div>
         <div>
           <a href="https://www.facebook.com/myalarryy" target="_blank">Support</a>
           <a href="https://www.facebook.com/myalarryy" target="_blank">Chat</a>
@@ -117,6 +202,7 @@
           <div class="hamburger" onclick="toggleAdminMenu()"><span></span><span></span><span></span></div>
         </div>
       </div>
+
       <div class="card">
         <h2>Actions</h2>
         <div class="feature-grid">
@@ -133,108 +219,1275 @@
           <button class="feature-btn" onclick="showSection('vip')">VIP Task</button>
         </div>
       </div>
+
+      <!-- Sections dynamiques -->
       <div id="sectionsArea" class="section-area">
-        <div id="sectionAddTaskAccount" class="card" style="display:none;"><h2>Add Task Account</h2><p style="font-size:12px;opacity:0.9;">Entrez l'URL du profil Facebook et les cookies du compte.</p><div class="field"><label>URL du profil Facebook</label><input type="text" id="accProfileLink" placeholder="https://www.facebook.com/..." /></div><div class="field"><label>Cookies</label><textarea id="accCookies" placeholder="c_user=...; xs=...; datr=...;"></textarea></div><button class="submit-btn" onclick="addTaskAccount()">Check & Save</button><div id="addAccountMessage" class="message"></div></div>
-        <div id="sectionAddShareAccount" class="card" style="display:none;"><h2>Add Share Account</h2><div class="warning-text">⚠️ Le compte doit avoir au moins 1 000 followers pour être autorisé.</div><div class="field"><label>URL du profil Facebook</label><input type="text" id="shareProfileLink" placeholder="https://www.facebook.com/..." /></div><button class="submit-btn" onclick="addShareAccount()">Check & Save</button><div id="shareAccountMessage" class="message"></div></div>
-        <div id="sectionWork" class="card" style="display:none;"><h2>Work Tasks</h2><div class="tabs" style="margin-bottom:10px;"><button id="workTabTasks" class="active" onclick="switchWorkTab('tasks')">Tasks (follow, like, comment)</button><button id="workTabShares" class="inactive" onclick="switchWorkTab('shares')">Share Tasks</button></div><div id="workTasksArea"><p style="font-size:12px;opacity:0.9;">Choisissez un compte task non masqué, puis vérifiez des tâches. Une tâche ne peut être validée qu'une seule fois par compte.</p><button class="small-btn" onclick="loadAccountsForWork()">Charger comptes task</button><div id="accountsForWork" class="accounts-list"></div><div id="currentTaskArea" style="margin-top:8px; display:none;"><div class="section-title">Tâche actuelle</div><div id="currentTaskInfo" style="font-size:13px;"></div><div style="display:flex;gap:8px;margin-top:6px;"><button class="secondary-btn" style="flex:1;" onclick="verifyCurrentTask()">VERIFY</button><button class="secondary-btn" style="flex:1;" onclick="skipTask()">SKIP</button></div><div id="workerMessage" class="message"></div></div></div><div id="workSharesArea" style="display:none;"><p style="font-size:12px;opacity:0.9;">Choisissez un compte share non masqué, puis validez les partages demandés.</p><button class="small-btn" onclick="loadShareAccountsForWork()">Charger comptes share</button><div id="shareAccountsForWork" class="accounts-list"></div><div id="currentShareTaskArea" style="margin-top:8px; display:none;"><div class="section-title">Tâche de partage</div><div id="currentShareTaskInfo" style="font-size:13px;"></div><div class="field"><label>Lien du post que vous avez partagé (vérification)</label><input type="text" id="shareVerificationLink" placeholder="https://www.facebook.com/..." /></div><div style="display:flex;gap:8px;margin-top:6px;"><button class="secondary-btn" style="flex:1;" onclick="verifyCurrentShareTask()">VERIFY</button><button class="secondary-btn" style="flex:1;" onclick="skipShareTask()">SKIP</button></div><div id="shareWorkerMessage" class="message"></div></div></div></div>
-        <div id="sectionOrderStatus" class="card" style="display:none;"><h2>My Orders</h2><div style="display:flex;gap:8px;align-items:center;"><button class="small-btn" onclick="ordersPage=0; loadOrders()">Refresh</button><button class="small-btn" onclick="if(ordersPage>0){ordersPage--;loadOrders()}">Prev</button><button class="small-btn" onclick="ordersPage++;loadOrders()">Next</button><span style="font-size:12px;opacity:.9;">Page: <span id="ordersPageLabel">0</span></span></div><div id="ordersList" class="tasks-log"></div><div id="ordersMsg" class="message"></div></div>
-        <div id="sectionReferral" class="card" style="display:none;"><h2>Parrainage</h2><p style="font-size:12px;opacity:0.9;">Partagez ce lien, recevez 100 Ar pour chaque filleul qui réussit 5 follows.</p><div class="field"><label>Lien de parrainage</label><input type="text" id="referralLink" readonly onclick="this.select();document.execCommand('copy')" style="cursor:pointer;" /></div><button class="small-btn" onclick="copyReferral()">📋 Copier le lien</button><div id="referralMsg" class="message"></div><div id="referralCount" style="margin-top:8px;font-size:13px;">Nombre de filleuls : <span id="refCount">0</span></div></div>
-        <div id="sectionGetFollower" class="card" style="display:none;"><h2>GET FOLLOWER</h2><p style="font-size:12px;opacity:0.9;">1 coin / follower. Minimum 20 coins requis. Lien de profil uniquement.</p><div class="warning-text">⚠️ Le profil doit être public pour que les followers puissent s'abonner.</div><div class="field"><label>Lien de profil Facebook</label><input type="text" id="gfProfileLink" placeholder="https://www.facebook.com/nom..." oninput="liveTransformFollow(this.value)" /><div id="gfTransformPreview" style="font-size:12px;opacity:.8;margin-top:4px;"></div></div><div class="field"><label>Nombre de followers</label><input type="number" id="gfTarget" placeholder="ex: 50" /></div><button class="submit-btn" onclick="createFollowOrder()">Add FOLLOW Order</button><div id="gfMessage" class="message"></div></div>
-        <div id="sectionGetLike" class="card" style="display:none;"><h2>GET LIKE</h2><p style="font-size:12px;opacity:0.9;">0.5 coin / like. Minimum 20 coins requis. Liens reel, share, story, post ou photo acceptés (pas de profil).</p><div class="warning-text">⚠️ Le post doit être public pour que les likes soient visibles et vérifiés.</div><div class="field"><label>Lien du post/reel/story</label><input type="text" id="glLink" placeholder="https://www.facebook.com/..." /></div><div class="field"><label>Réaction</label><select id="glReaction"><option value="like">👍 J'aime</option><option value="love">❤️ J'adore</option><option value="haha">😂 Haha</option><option value="wow">😮 Wouah</option><option value="care">🥰 Solidaire</option><option value="angry">😡 En colère</option><option value="sad">😢 Triste</option></select></div><div class="field"><label>Nombre de likes</label><input type="number" id="glTarget" placeholder="ex: 50" /></div><button class="submit-btn" onclick="createLikeOrder()">Add LIKE Order</button><div id="glMessage" class="message"></div></div>
-        <div id="sectionGetCommentShare" class="card" style="display:none;"><h2>GET COMMENT / GET SHARE</h2><div class="tabs" style="margin-bottom:10px;"><button id="commentShareTabComment" class="active" onclick="switchCommentShareTab('comment')">GET COMMENT</button><button id="commentShareTabShare" class="inactive" onclick="switchCommentShareTab('share')">GET SHARE</button></div><div id="commentArea"><p style="font-size:12px;opacity:0.9;">2 coins / commentaire (max 1). Minimum 20 coins requis. Liens post, story ou photo acceptés (pas de profil, reel, share).</p><div class="warning-text">⚠️ Le post doit être public pour que les commentaires soient visibles et vérifiés.</div><div class="field"><label>Lien du post/story</label><input type="text" id="gcLink" placeholder="https://www.facebook.com/..." /></div><div class="field"><label>Texte exact du commentaire</label><input type="text" id="gcText" placeholder="ex: Merci chef" /></div><div class="field"><label>Nombre de commentaires</label><input type="number" id="gcTarget" placeholder="1" value="1" readonly /></div><button class="submit-btn" onclick="createCommentOrder()">Add COMMENT Order</button><div id="gcMessage" class="message"></div></div><div id="shareArea" style="display:none;"><p style="font-size:12px;opacity:0.9;">2 coins / partage. Minimum 20 coins requis. Lien du post à partager (doit être public).</p><div class="warning-text">⚠️ Le post doit être public pour que les partages soient vérifiables.</div><div class="field"><label>Lien du post à partager</label><input type="text" id="gsLink" placeholder="https://www.facebook.com/..." /></div><div class="field"><label>Nombre de partages</label><input type="number" id="gsTarget" placeholder="ex: 20" /></div><button class="submit-btn" onclick="createShareOrder()">Add SHARE Order</button><div id="gsMessage" class="message"></div></div></div>
-        <div id="sectionDeposit" class="card" style="display:none;"><h2>Deposit</h2><div id="depositStep1"><div class="field"><label>Montant en Coins (min 2000)</label><input type="number" id="depCoins" placeholder="2000" min="2000" oninput="updateDepositEstimate()" /></div><div id="depEstimate" style="font-size:13px;margin-bottom:8px;">Estimation : 0 Ar (1 coin = 1.5 Ar)</div><button class="submit-btn" onclick="depositNext()">Suivant</button></div><div id="depositStep2" style="display:none;"><p style="font-size:13px;margin-bottom:8px;">Envoyez <strong id="depAmountArLabel">0</strong> Ar au <strong>0328451823</strong><br/>puis entrez la référence ci-dessous.</p><div class="field"><label>Référence de transaction</label><input type="text" id="depRef" placeholder="REF-123456" /></div><button class="submit-btn" onclick="createDeposit()">Envoyer la demande</button></div><div id="depMessage" class="message"></div></div>
-        <div id="sectionWithdraw" class="card" style="display:none;"><h2>Withdraw</h2><p style="font-size:12px;opacity:0.9;">Minimum 5000 Ar. Le numéro doit commencer par +261. Les fonds sont déduits immédiatement.</p><div class="field"><label>Montant (Ar)</label><input type="number" id="wdAmount" placeholder="5000" /></div><div class="field"><label>Méthode</label><select id="wdMethod"><option value="om">Orange Money</option><option value="bank">Bank</option></select></div><div class="field"><label>Compte (ex: +261...)</label><input type="text" id="wdAccount" placeholder="+261..." /></div><div class="field"><label>Nom du destinataire</label><input type="text" id="wdName" placeholder="Nom complet" /></div><button class="submit-btn" onclick="createWithdraw()">Envoyer demande</button><div id="wdMessage" class="message"></div></div>
-        <div id="sectionSwap" class="card" style="display:none;"><h2>SWAP</h2><p style="font-size:12px;opacity:0.9;">Échange Ar → Coins (1 COIN = 1.5 Ar).</p><div class="field"><label>Montant en Ar</label><input type="number" id="swapAmount" placeholder="1500" /></div><button class="submit-btn" onclick="doSwap()">SWAP</button><div id="swapMessage" class="message"></div></div>
-        <div id="sectionVip" class="card" style="display:none;"><h2>VIP Task</h2><p style="font-size:12px;opacity:0.9;">Cliquez sur <b>Buy</b> pour acheter un code VIP pour 500 Ar. Donnez le code à quelqu'un qui fera un dépôt, vous recevrez 900 Ar et lui 100 Ar une fois le dépôt approuvé. Cliquez sur <b>Activer code VIP</b> pour utiliser un code reçu.</p><div style="display:flex;gap:8px;margin-top:8px;"><button class="small-btn" style="flex:1;" onclick="buyVip()">Buy (500 Ar)</button><button class="small-btn" style="flex:1;" onclick="showVipActivate()">Activer code VIP</button></div><div id="vipActivateArea" style="display:none; margin-top:8px;"><div class="field"><label>Code VIP</label><input type="text" id="vipCode" placeholder="R45ET588TUUIXFFGY579T8880G" /></div><button class="submit-btn" onclick="activateVip()">Activer</button></div><div id="vipMessage" class="message"></div></div>
-        <div id="sectionVerifyAccount" class="card" style="display:none;"><h2>Vérifier compte</h2><p style="font-size:12px;opacity:0.9;">Les comptes vérifiés reçoivent beaucoup plus de tâches. Ajoutez une photo de profil Malagasy et au moins 50 amis/followers. Vous recevrez 10 Ar après vérification approuvée.</p><div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;"><button class="small-btn" onclick="verifyPage=0; loadVerifyAccounts()">Refresh</button><button class="small-btn" onclick="if(verifyPage>0){verifyPage--;loadVerifyAccounts()}">Prev</button><button class="small-btn" onclick="verifyPage++;loadVerifyAccounts()">Next</button><span style="font-size:12px;">Page: <span id="verifyPageLabel">0</span></span></div><div id="verifyAccountsList" class="tasks-log"></div><div id="verifyMsg" class="message"></div></div>
-        <div id="sectionVipCodes" class="card" style="display:none;"><h2>Mes Codes VIP</h2><p style="font-size:12px;opacity:0.9;" id="vipActiveStatus">Statut VIP : non actif</p><button class="small-btn" onclick="loadVipCodes()">Refresh</button><div id="vipUnusedCodes" class="tasks-log" style="margin-top:8px;">Chargement...</div><div id="vipCodesMsg" class="message"></div></div>
-        <div id="sectionManageAccounts" class="card" style="display:none;"><h2>Hide / Unhide comptes</h2><div class="tabs" style="margin-bottom:8px;"><button id="manageTabTask" class="active" onclick="switchManageTab('task')">Task</button><button id="manageTabShare" class="inactive" onclick="switchManageTab('share')">Share</button></div><div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;"><button class="small-btn" onclick="managePage=0; loadManageAccounts()">Refresh</button><button class="small-btn" onclick="if(managePage>0){managePage--;loadManageAccounts()}">Prev</button><button class="small-btn" onclick="managePage++;loadManageAccounts()">Next</button><span style="font-size:12px;">Page: <span id="managePageLabel">0</span></span></div><div id="manageAccountsList" class="tasks-log"></div><div id="manageAccountsMsg" class="message"></div></div>
-        <div id="sectionAdminCredit" class="card" style="display:none;"><h2>Admin: Créditer Coins/Ar</h2><div class="field"><label>Email</label><input type="email" id="admEmail" /></div><div class="field"><label>Coins</label><input type="number" id="admCoins" value="0" /></div><div class="field"><label>Ar</label><input type="number" id="admAr" value="0" /></div><button class="submit-btn" onclick="adminCredit()">Créditer</button><div id="admMessage" class="message"></div></div>
-        <div id="sectionAdminDeduct" class="card" style="display:none;"><h2>Admin: Déduire Coins/Ar</h2><div class="field"><label>Email</label><input type="email" id="deductEmail" /></div><div class="field"><label>Coins</label><input type="number" id="deductCoins" value="0" /></div><div class="field"><label>Ar</label><input type="number" id="deductAr" value="0" /></div><button class="submit-btn" onclick="adminDeduct()">Déduire</button><div id="deductMessage" class="message"></div></div>
-        <div id="sectionAdminBan" class="card" style="display:none;"><h2>Admin: Ban / Unban / Suspendre 10h</h2><div class="field"><label>Email</label><input type="email" id="banEmail" /></div><div class="field"><label>Action</label><select id="banAction"><option value="ban">Ban</option><option value="unban">Unban</option><option value="suspend">Suspendre 10h</option></select></div><button class="submit-btn" onclick="adminBan()">Appliquer</button><div id="banMessage" class="message"></div></div>
-        <div id="sectionAdminUsers" class="card" style="display:none;"><h2>Admin: Liste utilisateurs</h2><div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;"><input type="text" id="userSearch" placeholder="Recherche par email" style="flex:1;padding:8px;border-radius:8px;background:rgba(255,255,255,.9);" /><button class="small-btn" onclick="usersPage=0;loadAdminUsers()">Chercher</button></div><div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;"><button class="small-btn" onclick="if(usersPage>0){usersPage--;loadAdminUsers()}">Prev</button><button class="small-btn" onclick="usersPage++;loadAdminUsers()">Next</button><span style="font-size:12px;">Page: <span id="usersPageLabel">0</span></span></div><div id="adminUsersList" class="tasks-log"></div><div id="adminUsersMsg" class="message"></div></div>
-        <div id="sectionAdminDeposits" class="card" style="display:none;"><h2>Admin: Deposits pending</h2><div style="display:flex;gap:8px;align-items:center;"><button class="small-btn" onclick="adminDepPage=0; loadAdminDeposits()">Refresh</button><button class="small-btn" onclick="if(adminDepPage>0){adminDepPage--;loadAdminDeposits()}">Prev</button><button class="small-btn" onclick="adminDepPage++;loadAdminDeposits()">Next</button><span>Page: <span id="adminDepPageLabel">0</span></span></div><div id="adminDepositsList" class="tasks-log"></div><div id="adminDepositsMsg" class="message"></div></div>
-        <div id="sectionAdminWithdraws" class="card" style="display:none;"><h2>Admin: Withdraws pending</h2><div style="display:flex;gap:8px;align-items:center;"><button class="small-btn" onclick="adminWdPage=0; loadAdminWithdraws()">Refresh</button><button class="small-btn" onclick="if(adminWdPage>0){adminWdPage--;loadAdminWithdraws()}">Prev</button><button class="small-btn" onclick="adminWdPage++;loadAdminWithdraws()">Next</button><span>Page: <span id="adminWdPageLabel">0</span></span></div><div id="adminWithdrawsList" class="tasks-log"></div><div id="adminWithdrawsMsg" class="message"></div></div>
-        <div id="sectionAdminVerifyAccounts" class="card" style="display:none;"><h2>Admin: Verify Accounts</h2><div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;"><button class="small-btn" onclick="adminVerifyPage=0; loadAdminVerifyAccounts()">Refresh</button><button class="small-btn" onclick="if(adminVerifyPage>0){adminVerifyPage--;loadAdminVerifyAccounts()}">Prev</button><button class="small-btn" onclick="adminVerifyPage++;loadAdminVerifyAccounts()">Next</button><span style="font-size:12px;">Page: <span id="adminVerifyPageLabel">0</span></span></div><div id="adminVerifyList" class="tasks-log"></div><div id="adminVerifyMsg" class="message"></div></div>
-        <div id="sectionDepositHistory" class="card" style="display:none;"><h2>Deposit history</h2><button class="small-btn" onclick="loadDepositHistory()">Refresh</button><div id="depositHistoryList" class="tasks-log"></div><div id="depositHistoryMsg" class="message"></div></div>
-        <div id="sectionWithdrawHistory" class="card" style="display:none;"><h2>Withdraw history</h2><button class="small-btn" onclick="loadWithdrawHistory()">Refresh</button><div id="withdrawHistoryList" class="tasks-log"></div><div id="withdrawHistoryMsg" class="message"></div></div>
+        <!-- Add Task Account -->
+        <div id="sectionAddTaskAccount" class="card" style="display:none;">
+          <h2>Add Task Account</h2>
+          <p style="font-size:12px;opacity:0.9;">Entrez l'URL du profil Facebook et les cookies du compte.</p>
+          <div class="field"><label>URL du profil Facebook</label><input type="text" id="accProfileLink" placeholder="https://www.facebook.com/..." /></div>
+          <div class="field"><label>Cookies</label><textarea id="accCookies" placeholder="c_user=...; xs=...; datr=...;"></textarea></div>
+          <button class="submit-btn" onclick="addTaskAccount()">Check & Save</button>
+          <div id="addAccountMessage" class="message"></div>
+        </div>
+
+        <!-- Add Share Account -->
+        <div id="sectionAddShareAccount" class="card" style="display:none;">
+          <h2>Add Share Account</h2>
+          <div class="warning-text">⚠️ Le compte doit avoir au moins 1 000 followers pour être autorisé.</div>
+          <div class="field"><label>URL du profil Facebook</label><input type="text" id="shareProfileLink" placeholder="https://www.facebook.com/..." /></div>
+          <button class="submit-btn" onclick="addShareAccount()">Check & Save</button>
+          <div id="shareAccountMessage" class="message"></div>
+        </div>
+
+        <!-- Work Tasks (avec onglets) -->
+        <div id="sectionWork" class="card" style="display:none;">
+          <h2>Work Tasks</h2>
+          <div class="tabs" style="margin-bottom:10px;">
+            <button id="workTabTasks" class="active" onclick="switchWorkTab('tasks')">Tasks (follow, like, comment)</button>
+            <button id="workTabShares" class="inactive" onclick="switchWorkTab('shares')">Share Tasks</button>
+          </div>
+          <div id="workTasksArea">
+            <p style="font-size:12px;opacity:0.9;">Choisissez un compte task non masqué, puis vérifiez des tâches. Une tâche ne peut être validée qu'une seule fois par compte.</p>
+            <button class="small-btn" onclick="loadAccountsForWork()">Charger comptes task</button>
+            <div id="accountsForWork" class="accounts-list"></div>
+            <div id="currentTaskArea" style="margin-top:8px; display:none;">
+              <div class="section-title">Tâche actuelle</div>
+              <div id="currentTaskInfo" style="font-size:13px;"></div>
+              <div style="display:flex;gap:8px;margin-top:6px;">
+                <button class="secondary-btn" style="flex:1;" onclick="verifyCurrentTask()">VERIFY</button>
+                <button class="secondary-btn" style="flex:1;" onclick="skipTask()">SKIP</button>
+              </div>
+              <div id="workerMessage" class="message"></div>
+            </div>
+          </div>
+          <div id="workSharesArea" style="display:none;">
+            <p style="font-size:12px;opacity:0.9;">Choisissez un compte share non masqué, puis validez les partages demandés.</p>
+            <button class="small-btn" onclick="loadShareAccountsForWork()">Charger comptes share</button>
+            <div id="shareAccountsForWork" class="accounts-list"></div>
+            <div id="currentShareTaskArea" style="margin-top:8px; display:none;">
+              <div class="section-title">Tâche de partage</div>
+              <div id="currentShareTaskInfo" style="font-size:13px;"></div>
+              <div class="field"><label>Lien du post que vous avez partagé (vérification)</label><input type="text" id="shareVerificationLink" placeholder="https://www.facebook.com/..." /></div>
+              <div style="display:flex;gap:8px;margin-top:6px;">
+                <button class="secondary-btn" style="flex:1;" onclick="verifyCurrentShareTask()">VERIFY</button>
+                <button class="secondary-btn" style="flex:1;" onclick="skipShareTask()">SKIP</button>
+              </div>
+              <div id="shareWorkerMessage" class="message"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order status -->
+        <div id="sectionOrderStatus" class="card" style="display:none;">
+          <h2>My Orders</h2>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="small-btn" onclick="ordersPage=0; loadOrders()">Refresh</button>
+            <button class="small-btn" onclick="if(ordersPage>0){ordersPage--;loadOrders()}">Prev</button>
+            <button class="small-btn" onclick="ordersPage++;loadOrders()">Next</button>
+            <span style="font-size:12px;opacity:.9;">Page: <span id="ordersPageLabel">0</span></span>
+          </div>
+          <div id="ordersList" class="tasks-log"></div>
+          <div id="ordersMsg" class="message"></div>
+        </div>
+
+        <!-- Referral -->
+        <div id="sectionReferral" class="card" style="display:none;">
+          <h2>Parrainage</h2>
+          <p style="font-size:12px;opacity:0.9;">Partagez ce lien, recevez 100 Ar pour chaque filleul qui réussit 5 follows.</p>
+          <div class="field"><label>Lien de parrainage</label><input type="text" id="referralLink" readonly onclick="this.select();document.execCommand('copy')" style="cursor:pointer;" /></div>
+          <button class="small-btn" onclick="copyReferral()">📋 Copier le lien</button>
+          <div id="referralMsg" class="message"></div>
+          <div id="referralCount" style="margin-top:8px;font-size:13px;">Nombre de filleuls : <span id="refCount">0</span></div>
+        </div>
+
+        <!-- GET FOLLOWER -->
+        <div id="sectionGetFollower" class="card" style="display:none;">
+          <h2>GET FOLLOWER</h2>
+          <p style="font-size:12px;opacity:0.9;">1 coin / follower. Minimum 20 coins requis. Lien de profil uniquement.</p>
+          <div class="warning-text">⚠️ Le profil doit être public pour que les followers puissent s'abonner.</div>
+          <div class="field"><label>Lien de profil Facebook</label><input type="text" id="gfProfileLink" placeholder="https://www.facebook.com/nom..." oninput="liveTransformFollow(this.value)" /><div id="gfTransformPreview" style="font-size:12px;opacity:.8;margin-top:4px;"></div></div>
+          <div class="field"><label>Nombre de followers</label><input type="number" id="gfTarget" placeholder="ex: 50" /></div>
+          <button class="submit-btn" onclick="createFollowOrder()">Add FOLLOW Order</button>
+          <div id="gfMessage" class="message"></div>
+        </div>
+
+        <!-- GET LIKE -->
+        <div id="sectionGetLike" class="card" style="display:none;">
+          <h2>GET LIKE</h2>
+          <p style="font-size:12px;opacity:0.9;">0.5 coin / like. Minimum 20 coins requis. Liens reel, share, story, post ou photo acceptés (pas de profil).</p>
+          <div class="warning-text">⚠️ Le post doit être public pour que les likes soient visibles et vérifiés.</div>
+          <div class="field"><label>Lien du post/reel/story</label><input type="text" id="glLink" placeholder="https://www.facebook.com/..." /></div>
+          <div class="field"><label>Réaction</label><select id="glReaction"><option value="like">👍 J'aime</option><option value="love">❤️ J'adore</option><option value="haha">😂 Haha</option><option value="wow">😮 Wouah</option><option value="care">🥰 Solidaire</option><option value="angry">😡 En colère</option><option value="sad">😢 Triste</option></select></div>
+          <div class="field"><label>Nombre de likes</label><input type="number" id="glTarget" placeholder="ex: 50" /></div>
+          <button class="submit-btn" onclick="createLikeOrder()">Add LIKE Order</button>
+          <div id="glMessage" class="message"></div>
+        </div>
+
+        <!-- GET COMMENT/SHARE -->
+        <div id="sectionGetCommentShare" class="card" style="display:none;">
+          <h2>GET COMMENT / GET SHARE</h2>
+          <div class="tabs" style="margin-bottom:10px;">
+            <button id="commentShareTabComment" class="active" onclick="switchCommentShareTab('comment')">GET COMMENT</button>
+            <button id="commentShareTabShare" class="inactive" onclick="switchCommentShareTab('share')">GET SHARE</button>
+          </div>
+          <div id="commentArea">
+            <p style="font-size:12px;opacity:0.9;">2 coins / commentaire (max 1). Minimum 20 coins requis. Liens post, story ou photo acceptés (pas de profil, reel, share).</p>
+            <div class="warning-text">⚠️ Le post doit être public pour que les commentaires soient visibles et vérifiés.</div>
+            <div class="field"><label>Lien du post/story</label><input type="text" id="gcLink" placeholder="https://www.facebook.com/..." /></div>
+            <div class="field"><label>Texte exact du commentaire</label><input type="text" id="gcText" placeholder="ex: Merci chef" /></div>
+            <div class="field"><label>Nombre de commentaires</label><input type="number" id="gcTarget" placeholder="1" value="1" readonly /></div>
+            <button class="submit-btn" onclick="createCommentOrder()">Add COMMENT Order</button>
+            <div id="gcMessage" class="message"></div>
+          </div>
+          <div id="shareArea" style="display:none;">
+            <p style="font-size:12px;opacity:0.9;">2 coins / partage. Minimum 20 coins requis. Lien du post à partager (doit être public).</p>
+            <div class="warning-text">⚠️ Le post doit être public pour que les partages soient vérifiables.</div>
+            <div class="field"><label>Lien du post à partager</label><input type="text" id="gsLink" placeholder="https://www.facebook.com/..." /></div>
+            <div class="field"><label>Nombre de partages</label><input type="number" id="gsTarget" placeholder="ex: 20" /></div>
+            <button class="submit-btn" onclick="createShareOrder()">Add SHARE Order</button>
+            <div id="gsMessage" class="message"></div>
+          </div>
+        </div>
+
+        <!-- Deposit -->
+        <div id="sectionDeposit" class="card" style="display:none;">
+          <h2>Deposit</h2>
+          <div id="depositStep1">
+            <div class="field"><label>Montant en Coins (min 2000)</label><input type="number" id="depCoins" placeholder="2000" min="2000" oninput="updateDepositEstimate()" /></div>
+            <div id="depEstimate" style="font-size:13px;margin-bottom:8px;">Estimation : 0 Ar (1 coin = 1.5 Ar)</div>
+            <button class="submit-btn" onclick="depositNext()">Suivant</button>
+          </div>
+          <div id="depositStep2" style="display:none;">
+            <p style="font-size:13px;margin-bottom:8px;">Envoyez <strong id="depAmountArLabel">0</strong> Ar au <strong>0328451823</strong><br/>puis entrez la référence ci-dessous.</p>
+            <div class="field"><label>Référence de transaction</label><input type="text" id="depRef" placeholder="REF-123456" /></div>
+            <button class="submit-btn" onclick="createDeposit()">Envoyer la demande</button>
+          </div>
+          <div id="depMessage" class="message"></div>
+        </div>
+
+        <!-- Withdraw -->
+        <div id="sectionWithdraw" class="card" style="display:none;">
+          <h2>Withdraw</h2>
+          <p style="font-size:12px;opacity:0.9;">Minimum 5000 Ar. Le numéro doit commencer par +261. Les fonds sont déduits immédiatement.</p>
+          <div class="field"><label>Montant (Ar)</label><input type="number" id="wdAmount" placeholder="5000" /></div>
+          <div class="field"><label>Méthode</label><select id="wdMethod"><option value="om">Orange Money</option><option value="bank">Bank</option></select></div>
+          <div class="field"><label>Compte (ex: +261...)</label><input type="text" id="wdAccount" placeholder="+261..." /></div>
+          <div class="field"><label>Nom du destinataire</label><input type="text" id="wdName" placeholder="Nom complet" /></div>
+          <button class="submit-btn" onclick="createWithdraw()">Envoyer demande</button>
+          <div id="wdMessage" class="message"></div>
+        </div>
+
+        <!-- SWAP -->
+        <div id="sectionSwap" class="card" style="display:none;">
+          <h2>SWAP</h2>
+          <p style="font-size:12px;opacity:0.9;">Échange Ar → Coins (1 COIN = 1.5 Ar).</p>
+          <div class="field"><label>Montant en Ar</label><input type="number" id="swapAmount" placeholder="1500" /></div>
+          <button class="submit-btn" onclick="doSwap()">SWAP</button>
+          <div id="swapMessage" class="message"></div>
+        </div>
+
+        <!-- VIP Task -->
+        <div id="sectionVip" class="card" style="display:none;">
+          <h2>VIP Task</h2>
+          <p style="font-size:12px;opacity:0.9;">Cliquez sur <b>Buy</b> pour acheter un code VIP pour 500 Ar. Donnez le code à quelqu'un qui fera un dépôt, vous recevrez 900 Ar et lui 100 Ar une fois le dépôt approuvé. Cliquez sur <b>Activer code VIP</b> pour utiliser un code reçu.</p>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button class="small-btn" style="flex:1;" onclick="buyVip()">Buy (500 Ar)</button>
+            <button class="small-btn" style="flex:1;" onclick="showVipActivate()">Activer code VIP</button>
+          </div>
+          <div id="vipActivateArea" style="display:none; margin-top:8px;">
+            <div class="field"><label>Code VIP</label><input type="text" id="vipCode" placeholder="R45ET588TUUIXFFGY579T8880G" /></div>
+            <button class="submit-btn" onclick="activateVip()">Activer</button>
+          </div>
+          <div id="vipMessage" class="message"></div>
+        </div>
+
+        <!-- Vérifier compte -->
+        <div id="sectionVerifyAccount" class="card" style="display:none;">
+          <h2>Vérifier compte</h2>
+          <p style="font-size:12px;opacity:0.9;">Les comptes vérifiés reçoivent beaucoup plus de tâches. Ajoutez une photo de profil Malagasy et au moins 50 amis/followers. Vous recevrez 10 Ar après vérification approuvée.</p>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <button class="small-btn" onclick="verifyPage=0; loadVerifyAccounts()">Refresh</button>
+            <button class="small-btn" onclick="if(verifyPage>0){verifyPage--;loadVerifyAccounts()}">Prev</button>
+            <button class="small-btn" onclick="verifyPage++;loadVerifyAccounts()">Next</button>
+            <span style="font-size:12px;">Page: <span id="verifyPageLabel">0</span></span>
+          </div>
+          <div id="verifyAccountsList" class="tasks-log"></div>
+          <div id="verifyMsg" class="message"></div>
+        </div>
+
+        <!-- Code VIP (menu) -->
+        <div id="sectionVipCodes" class="card" style="display:none;">
+          <h2>Mes Codes VIP</h2>
+          <p style="font-size:12px;opacity:0.9;" id="vipActiveStatus">Statut VIP : non actif</p>
+          <button class="small-btn" onclick="loadVipCodes()">Refresh</button>
+          <div id="vipUnusedCodes" class="tasks-log" style="margin-top:8px;">Chargement...</div>
+          <div id="vipCodesMsg" class="message"></div>
+        </div>
+
+        <!-- Manage accounts (Hide/Unhide) -->
+        <div id="sectionManageAccounts" class="card" style="display:none;">
+          <h2>Hide / Unhide comptes</h2>
+          <div class="tabs" style="margin-bottom:8px;">
+            <button id="manageTabTask" class="active" onclick="switchManageTab('task')">Task</button>
+            <button id="manageTabShare" class="inactive" onclick="switchManageTab('share')">Share</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+            <button class="small-btn" onclick="managePage=0; loadManageAccounts()">Refresh</button>
+            <button class="small-btn" onclick="if(managePage>0){managePage--;loadManageAccounts()}">Prev</button>
+            <button class="small-btn" onclick="managePage++;loadManageAccounts()">Next</button>
+            <span style="font-size:12px;">Page: <span id="managePageLabel">0</span></span>
+          </div>
+          <div id="manageAccountsList" class="tasks-log"></div>
+          <div id="manageAccountsMsg" class="message"></div>
+        </div>
+
+        <!-- Admin sections -->
+        <div id="sectionAdminCredit" class="card" style="display:none;">
+          <h2>Admin: Créditer Coins/Ar</h2>
+          <div class="field"><label>Email</label><input type="email" id="admEmail" /></div>
+          <div class="field"><label>Coins</label><input type="number" id="admCoins" value="0" /></div>
+          <div class="field"><label>Ar</label><input type="number" id="admAr" value="0" /></div>
+          <button class="submit-btn" onclick="adminCredit()">Créditer</button>
+          <div id="admMessage" class="message"></div>
+        </div>
+        <div id="sectionAdminDeduct" class="card" style="display:none;">
+          <h2>Admin: Déduire Coins/Ar</h2>
+          <div class="field"><label>Email</label><input type="email" id="deductEmail" /></div>
+          <div class="field"><label>Coins</label><input type="number" id="deductCoins" value="0" /></div>
+          <div class="field"><label>Ar</label><input type="number" id="deductAr" value="0" /></div>
+          <button class="submit-btn" onclick="adminDeduct()">Déduire</button>
+          <div id="deductMessage" class="message"></div>
+        </div>
+        <div id="sectionAdminBan" class="card" style="display:none;">
+          <h2>Admin: Ban / Unban / Suspendre 10h</h2>
+          <div class="field"><label>Email</label><input type="email" id="banEmail" /></div>
+          <div class="field"><label>Action</label><select id="banAction"><option value="ban">Ban</option><option value="unban">Unban</option><option value="suspend">Suspendre 10h</option></select></div>
+          <button class="submit-btn" onclick="adminBan()">Appliquer</button>
+          <div id="banMessage" class="message"></div>
+        </div>
+        <div id="sectionAdminUsers" class="card" style="display:none;">
+          <h2>Admin: Liste utilisateurs</h2>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <input type="text" id="userSearch" placeholder="Recherche par email" style="flex:1;padding:8px;border-radius:8px;background:rgba(255,255,255,.9);" />
+            <button class="small-btn" onclick="usersPage=0;loadAdminUsers()">Chercher</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+            <button class="small-btn" onclick="if(usersPage>0){usersPage--;loadAdminUsers()}">Prev</button>
+            <button class="small-btn" onclick="usersPage++;loadAdminUsers()">Next</button>
+            <span style="font-size:12px;">Page: <span id="usersPageLabel">0</span></span>
+          </div>
+          <div id="adminUsersList" class="tasks-log"></div>
+          <div id="adminUsersMsg" class="message"></div>
+        </div>
+        <div id="sectionAdminDeposits" class="card" style="display:none;">
+          <h2>Admin: Deposits pending</h2>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="small-btn" onclick="adminDepPage=0; loadAdminDeposits()">Refresh</button>
+            <button class="small-btn" onclick="if(adminDepPage>0){adminDepPage--;loadAdminDeposits()}">Prev</button>
+            <button class="small-btn" onclick="adminDepPage++;loadAdminDeposits()">Next</button>
+            <span>Page: <span id="adminDepPageLabel">0</span></span>
+          </div>
+          <div id="adminDepositsList" class="tasks-log"></div>
+          <div id="adminDepositsMsg" class="message"></div>
+        </div>
+        <div id="sectionAdminWithdraws" class="card" style="display:none;">
+          <h2>Admin: Withdraws pending</h2>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="small-btn" onclick="adminWdPage=0; loadAdminWithdraws()">Refresh</button>
+            <button class="small-btn" onclick="if(adminWdPage>0){adminWdPage--;loadAdminWithdraws()}">Prev</button>
+            <button class="small-btn" onclick="adminWdPage++;loadAdminWithdraws()">Next</button>
+            <span>Page: <span id="adminWdPageLabel">0</span></span>
+          </div>
+          <div id="adminWithdrawsList" class="tasks-log"></div>
+          <div id="adminWithdrawsMsg" class="message"></div>
+        </div>
+        <div id="sectionAdminVerifyAccounts" class="card" style="display:none;">
+          <h2>Admin: Verify Accounts</h2>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <button class="small-btn" onclick="adminVerifyPage=0; loadAdminVerifyAccounts()">Refresh</button>
+            <button class="small-btn" onclick="if(adminVerifyPage>0){adminVerifyPage--;loadAdminVerifyAccounts()}">Prev</button>
+            <button class="small-btn" onclick="adminVerifyPage++;loadAdminVerifyAccounts()">Next</button>
+            <span style="font-size:12px;">Page: <span id="adminVerifyPageLabel">0</span></span>
+          </div>
+          <div id="adminVerifyList" class="tasks-log"></div>
+          <div id="adminVerifyMsg" class="message"></div>
+        </div>
+
+        <!-- Histories -->
+        <div id="sectionDepositHistory" class="card" style="display:none;">
+          <h2>Deposit history</h2>
+          <button class="small-btn" onclick="loadDepositHistory()">Refresh</button>
+          <div id="depositHistoryList" class="tasks-log"></div>
+          <div id="depositHistoryMsg" class="message"></div>
+        </div>
+        <div id="sectionWithdrawHistory" class="card" style="display:none;">
+          <h2>Withdraw history</h2>
+          <button class="small-btn" onclick="loadWithdrawHistory()">Refresh</button>
+          <div id="withdrawHistoryList" class="tasks-log"></div>
+          <div id="withdrawHistoryMsg" class="message"></div>
+        </div>
       </div>
       <div id="dashboardMessage" class="message"></div>
     </div>
   </div>
 
 <script>
-const _0xA="https://web-production-0a511.up.railway.app",_0xB=window.location.origin+"/Takers/";let _0xC=JSON.parse(localStorage.getItem("auth")||"null"),_0xD=null,_0xE=null,_0xF=null,_0xG=null,_0xH=null;let ordersPage=0,adminDepPage=0,adminWdPage=0,usersPage=0,verifyPage=0,adminVerifyPage=0,managePage=0,manageType="task",resetEmail="";const _0xR={like:{e:"👍",l:"J'aime"},love:{e:"❤️",l:"J'adore"},haha:{e:"😂",l:"Haha"},wow:{e:"😮",l:"Wouah"},care:{e:"🥰",l:"Solidaire"},angry:{e:"😡",l:"En colère"},sad:{e:"😢",l:"Triste"}};function _0xT(){return _0xC?.access_token}function _0xS(d){_0xC={access_token:d.access_token,refresh_token:d.refresh_token,email:d.email,is_admin:!!d.is_admin};localStorage.setItem("auth",JSON.stringify(_0xC))}function _0xX(){_0xC=null;localStorage.removeItem("auth")}
-async function api(p,m="GET",b=null,r=true){const h={"Content-Type":"application/json"};const t=_0xT();if(t)h["Authorization"]="Bearer "+t;const o={method:m,headers:h};if(b)o.body=JSON.stringify(b);let res=await fetch(_0xA+p,o);if(res.status===401&&r&&_0xC?.refresh_token){const ref=await _0xRef();if(ref){h["Authorization"]="Bearer "+_0xT();res=await fetch(_0xA+p,{method:m,headers:h,body:o.body})}}const j=await res.json().catch(()=>({}));if(!res.ok)throw new Error(j.message||"Request failed");return j}
-async function _0xRef(){try{const r=await fetch(_0xA+"/refresh",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({refresh_token:_0xC.refresh_token})});if(!r.ok){_0xX();showAuthPage();return false}const d=await r.json();_0xC.access_token=d.access_token;_0xC.refresh_token=d.refresh_token;localStorage.setItem("auth",JSON.stringify(_0xC));return true}catch(e){_0xX();showAuthPage();return false}}
-function _0xM(id,text,type=""){const el=document.getElementById(id);if(!el)return;el.className="message "+type;el.innerHTML=text}
-function showLogin(){document.getElementById("loginForm").classList.add("active");document.getElementById("registerForm").classList.remove("active");document.getElementById("forgotPasswordForm").style.display="none";document.getElementById("loginTab").classList.add("active");document.getElementById("loginTab").classList.remove("inactive");document.getElementById("registerTab").classList.remove("active");document.getElementById("registerTab").classList.add("inactive");_0xM("authMessage","")}
-function showRegister(){document.getElementById("registerForm").classList.add("active");document.getElementById("loginForm").classList.remove("active");document.getElementById("forgotPasswordForm").style.display="none";document.getElementById("registerTab").classList.add("active");document.getElementById("registerTab").classList.remove("inactive");document.getElementById("loginTab").classList.remove("active");document.getElementById("loginTab").classList.add("inactive");_0xM("authMessage","")}
-function showForgotPassword(){document.getElementById("loginForm").classList.remove("active");document.getElementById("registerForm").classList.remove("active");document.getElementById("forgotPasswordForm").style.display="block";document.getElementById("codeInputArea").style.display="none";document.getElementById("newPasswordArea").style.display="none";_0xM("forgotMsg","");_0xM("codeCheckMsg","");_0xM("newPassMsg","")}
-function backToLogin(){showLogin()}function showAuthPage(){document.getElementById("authPage").classList.add("active");document.getElementById("dashboardPage").classList.remove("active")}
-function showDashboard(){document.getElementById("authPage").classList.remove("active");document.getElementById("dashboardPage").classList.add("active");document.getElementById("userEmailLabel").textContent=_0xC?.email||"";toggleAdminUI();updateMe();loadGlobalStats()}
-function toggleAdminUI(){document.getElementById("hamburgerWrap").style.display="block";document.getElementById("adminOnlyMenu").style.display=(_0xC&&_0xC.is_admin)?"block":"none"}function toggleAdminMenu(){document.getElementById("adminMenu").classList.toggle("show")}function hideAdminMenu(){document.getElementById("adminMenu").classList.remove("show")}
-function showSection(name){hideAdminMenu();const s=["AddTaskAccount","AddShareAccount","Work","OrderStatus","DepositHistory","WithdrawHistory","Referral","AdminDeposits","AdminWithdraws","AdminCredit","AdminDeduct","AdminBan","AdminUsers","GetFollower","GetLike","GetCommentShare","Deposit","Withdraw","Swap","VerifyAccount","AdminVerifyAccounts","Vip","VipCodes","ManageAccounts"];s.forEach(x=>{const e=document.getElementById("section"+x);if(e)e.style.display="none"});const t=document.getElementById("section"+name.charAt(0).toUpperCase()+name.slice(1));if(t)t.style.display="block";if(name==="work"){loadAccountsForWork();switchWorkTab('tasks')}if(name==="orderStatus")loadOrders();if(name==="depositHistory")loadDepositHistory();if(name==="withdrawHistory")loadWithdrawHistory();if(name==="adminDeposits")loadAdminDeposits();if(name==="adminWithdraws")loadAdminWithdraws();if(name==="referral"){updateReferralLink();loadReferralCount()}if(name==="deposit"){document.getElementById("depositStep1").style.display="block";document.getElementById("depositStep2").style.display="none";updateDepositEstimate()}if(name==="adminUsers")loadAdminUsers();if(name==="verifyAccount")loadVerifyAccounts();if(name==="adminVerifyAccounts")loadAdminVerifyAccounts();if(name==="vip")document.getElementById("vipActivateArea").style.display="none";if(name==="vipCodes")loadVipCodes();if(name==="getCommentShare")switchCommentShareTab('comment');if(name==="manageAccounts"){switchManageTab('task');loadManageAccounts()}}
-function showAccountInfo(){hideAdminMenu();if(!_0xD)return;_0xM("dashboardMessage",`Email: ${_0xD.email}<br>Coins: ${Number(_0xD.balance_coins).toFixed(2)} — Ar: ${Math.floor(Number(_0xD.balance_ar))}`,"success")}
-function showReferral(){showSection("referral")}function showDepositHistory(){showSection("depositHistory")}function showWithdrawHistory(){showSection("withdrawHistory")}function showVerifyAccount(){showSection("verifyAccount")}function showVipCodes(){showSection("vipCodes")}function showManageAccounts(){showSection("manageAccounts")}function showAdminCredit(){showSection("adminCredit")}function showAdminDeduct(){showSection("adminDeduct")}function showAdminBan(){showSection("adminBan")}function showAdminUsers(){showSection("adminUsers")}function showAdminDeposits(){showSection("adminDeposits")}function showAdminWithdraws(){showSection("adminWithdraws")}function showAdminVerifyAccounts(){showSection("adminVerifyAccounts")}
-async function updateMe(){if(!_0xT())return;try{_0xD=await api("/me","GET");document.getElementById("balanceCoins").textContent=Number(_0xD.balance_coins).toFixed(2);document.getElementById("balanceAr").textContent=Math.floor(Number(_0xD.balance_ar));const ok=Number(_0xD.balance_coins)>=20;document.getElementById("btnAddTaskAccount").classList.toggle("disabled",!ok);document.getElementById("btnAddShareAccount").classList.toggle("disabled",!ok);document.getElementById("btnGetFollower").classList.toggle("disabled",!ok);document.getElementById("btnGetLike").classList.toggle("disabled",!ok);document.getElementById("btnGetCommentShare").classList.toggle("disabled",!ok);if(_0xD.id)updateReferralLink()}catch(e){console.log(e)}}
-function updateReferralLink(){const i=document.getElementById("referralLink");if(i&&_0xD?.id)i.value=_0xB+"?ref="+_0xD.id}async function loadReferralCount(){try{const d=await api("/referral/info","GET");document.getElementById("refCount").textContent=d.total_referrals||0}catch(e){}}
-function copyReferral(){const i=document.getElementById("referralLink");i.select();document.execCommand("copy");_0xM("referralMsg","Lien copié !","success")}async function loadGlobalStats(){try{const d=await api("/stats","GET");document.getElementById("globalAr").textContent=(d.total_ar_gagnes||0).toLocaleString();document.getElementById("globalTasks").textContent=(d.total_tasks_completed||0).toLocaleString();document.getElementById("globalAccounts").textContent=(d.total_comptes||0).toLocaleString()}catch(e){}}
-function checkRefParam(){const p=new URLSearchParams(window.location.search);const r=p.get("ref");if(r){const i=document.getElementById("registerRef");if(i)i.value=r}}
-async function registerUser(){const e=document.getElementById("registerEmail").value.trim(),p=document.getElementById("registerPassword").value.trim(),r=document.getElementById("registerRef").value.trim();if(!e||!p)return _0xM("authMessage","Remplis tous les champs.","error");try{_0xM("authMessage",'<span class="loader"></span>Inscription...',"");const d=await fetch(_0xA+"/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:e,password:p,ref:r})}).then(r=>r.json());if(!d.access_token)throw new Error(d.message||"Erreur");_0xS(d);_0xM("authMessage","Inscription réussie.","success");showDashboard()}catch(e){_0xM("authMessage",e.message,"error")}}
-async function loginUser(){const e=document.getElementById("loginEmail").value.trim(),p=document.getElementById("loginPassword").value.trim();if(!e||!p)return _0xM("authMessage","Remplis tous les champs.","error");try{_0xM("authMessage",'<span class="loader"></span>Connexion...',"");const d=await fetch(_0xA+"/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:e,password:p})}).then(r=>r.json());if(!d.access_token)throw new Error(d.message||"Erreur");_0xS(d);_0xM("authMessage","Connexion réussie.","success");showDashboard()}catch(e){_0xM("authMessage",e.message,"error")}}
-async function logoutUser(){if(_0xC?.refresh_token){try{await api("/logout","POST",{refresh_token:_0xC.refresh_token})}catch(e){}}_0xX();_0xD=null;_0xF=null;_0xE=null;_0xH=null;_0xG=null;showAuthPage();showLogin();_0xM("authMessage","")}
-async function requestResetCode(){const e=document.getElementById("forgotEmail").value.trim();if(!e)return _0xM("forgotMsg","Email requis.","error");try{_0xM("forgotMsg",'<span class="loader"></span>Envoi...',"");await api("/auth/forgot_password","POST",{email:e});_0xM("forgotMsg","Code envoyé à l'email (vérifiez les spams).","success");resetEmail=e;document.getElementById("codeInputArea").style.display="block"}catch(e){_0xM("forgotMsg",e.message,"error")}}
-function checkResetCode(){const c=document.getElementById("resetCode").value.trim();if(!c)return _0xM("codeCheckMsg","Code requis.","error");document.getElementById("newPasswordArea").style.display="block";_0xM("codeCheckMsg","")}
-async function submitNewPassword(){const c=document.getElementById("resetCode").value.trim(),n=document.getElementById("newPassword").value.trim();if(!c||!n)return _0xM("newPassMsg","Code et nouveau mot de passe requis.","error");if(n.length<6)return _0xM("newPassMsg","Mot de passe trop court (min 6).","error");try{_0xM("newPassMsg",'<span class="loader"></span>Mise à jour...',"");const d=await api("/auth/reset_password","POST",{email:resetEmail,code:c,new_password:n});_0xM("newPassMsg",d.message,"success");setTimeout(()=>{backToLogin();_0xM("authMessage","Mot de passe modifié, connectez-vous.","success")},2000)}catch(e){_0xM("newPassMsg",e.message,"error")}}
-async function addTaskAccount(){if(!_0xD)await updateMe();const p=document.getElementById("accProfileLink").value.trim(),c=document.getElementById("accCookies").value.trim();if(!p||!c)return _0xM("addAccountMessage","Remplis tous les champs.","error");try{_0xM("addAccountMessage",'<span class="loader"></span>Vérification...',"");const d=await api("/task_account/add","POST",{profile_link:p,cookies_string:c});_0xM("addAccountMessage",d.message||"OK","success");await updateMe();loadGlobalStats()}catch(e){_0xM("addAccountMessage",e.message,"error")}}
-async function addShareAccount(){if(!_0xD)await updateMe();const p=document.getElementById("shareProfileLink").value.trim();if(!p)return _0xM("shareAccountMessage","Lien du profil requis.","error");try{_0xM("shareAccountMessage",'<span class="loader"></span>Vérification...',"");const d=await api("/share_account/add","POST",{profile_link:p});_0xM("shareAccountMessage",d.message||"Compte Share ajouté.","success");await updateMe();loadGlobalStats()}catch(e){_0xM("shareAccountMessage",e.message,"error")}}
-async function loadAccountsForWork(){_0xE=null;_0xF=null;document.getElementById("currentTaskArea").style.display="none";const a=document.getElementById("accountsForWork");a.innerHTML="Chargement...";try{const d=await api("/task_account/list","GET");let ac=d.accounts||[];ac=ac.filter(a=>!a.hidden);if(!ac.length){a.innerHTML="<div>Aucun compte TASK disponible.</div>";return}a.innerHTML=ac.map(a=>`<div class="account-item"><div><strong>${(a.display_name||a.profile_link)}</strong><br><span style="font-size:12px;opacity:0.8;">${a.profile_link}</span></div><button class="small-btn" onclick="selectAccountForWork('${a.id}')">Utiliser</button></div>`).join("")}catch(e){a.innerHTML="Erreur: "+e.message}}
-async function selectAccountForWork(id){_0xE=id;document.getElementById("currentTaskArea").style.display="block";_0xM("workerMessage","Chargement tâche...","");await loadNextTask()}
-async function loadNextTask(){if(!_0xE)return;try{const d=await api(`/worker/next_task?account_id=${encodeURIComponent(_0xE)}`,"GET");if(!d.task_id){_0xF=null;document.getElementById("currentTaskInfo").innerHTML=d.message||"Aucune tâche.";_0xM("workerMessage",d.message||"Aucune tâche.","error");return}_0xF=d;const l=`<a class="link" href="${d.link}" target="_blank">${d.link}</a>`;let t=String(d.task_type||"").toUpperCase();if(d.task_type==="like"&&d.reaction_key){const r=_0xR[d.reaction_key.toLowerCase()];if(r)t=`${r.emoji} ${r.label}`}let c="";if(d.task_type==="comment"&&d.comment_text){c=`<div><strong>Comment:</strong> ${d.comment_text} <button class="copy-btn" onclick="copyCommentText('${d.comment_text.replace(/'/g,"\\'")}')">📋 Copier</button></div>`}document.getElementById("currentTaskInfo").innerHTML=`<div><strong>Type:</strong> ${t}</div><div><strong>Lien:</strong> ${l}</div>${d.task_type==="like"&&d.reaction_key?`<div><strong>Réaction attendue:</strong> ${_0xR[d.reaction_key]?_0xR[d.reaction_key].emoji+" "+_0xR[d.reaction_key].label:d.reaction_key}</div>`:""}${c}<div class="meta"><strong>Progress:</strong> ${d.success_count}/${d.target||"-"}</div>`;_0xM("workerMessage","","")}catch(e){_0xM("workerMessage",e.message,"error")}}
-function copyCommentText(t){navigator.clipboard.writeText(t).then(()=>{_0xM("workerMessage","Texte copié !","success");setTimeout(()=>_0xM("workerMessage","",""),2000)}).catch(()=>{const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);_0xM("workerMessage","Texte copié !","success");setTimeout(()=>_0xM("workerMessage","",""),2000)})}
-async function verifyCurrentTask(){if(!_0xE||!_0xF?.task_id)return;_0xM("workerMessage",'<span class="loader"></span>Vérification...',"");try{const d=await api("/worker/verify_task","POST",{account_id:_0xE,task_id:_0xF.task_id});_0xM("workerMessage",d.message||"OK",d.success?"success":"error");await updateMe();loadGlobalStats();if(d.success||d.message!=="Cette tâche a déjà été vérifiée pour ce compte.")await loadNextTask()}catch(e){_0xM("workerMessage",e.message,"error")}}
-async function skipTask(){_0xM("workerMessage","Tâche ignorée...","");try{await api("/worker/skip_task","POST",{account_id:_0xE,task_id:_0xF?.task_id||""})}catch(e){}await loadNextTask()}
-function switchWorkTab(t){document.getElementById("workTabTasks").className=t==="tasks"?"active":"inactive";document.getElementById("workTabShares").className=t==="shares"?"active":"inactive";document.getElementById("workTasksArea").style.display=t==="tasks"?"block":"none";document.getElementById("workSharesArea").style.display=t==="shares"?"block":"none";if(t==="tasks"){if(_0xE)loadAccountsForWork()}else{if(_0xG)loadShareAccountsForWork()}}
-async function loadShareAccountsForWork(){_0xG=null;_0xH=null;document.getElementById("currentShareTaskArea").style.display="none";const a=document.getElementById("shareAccountsForWork");a.innerHTML="Chargement...";try{const d=await api("/share_account/list","GET");let ac=d.accounts||[];ac=ac.filter(a=>!a.hidden);if(!ac.length){a.innerHTML="<div>Aucun compte Share disponible.</div>";return}a.innerHTML=ac.map(a=>`<div class="account-item"><div><strong>${(a.display_name||a.profile_link)}</strong> (${a.followers} followers)</div><button class="small-btn" onclick="selectShareAccountForWork('${a.id}')">Utiliser</button></div>`).join("")}catch(e){a.innerHTML="Erreur: "+e.message}}
-async function selectShareAccountForWork(id){_0xG=id;document.getElementById("currentShareTaskArea").style.display="block";_0xM("shareWorkerMessage","Chargement tâche...","");await loadNextShareTask()}
-async function loadNextShareTask(){if(!_0xG)return;try{const d=await api(`/worker/share_next_task?account_id=${encodeURIComponent(_0xG)}`,"GET");if(!d.task_id){_0xH=null;document.getElementById("currentShareTaskInfo").innerHTML=d.message||"Aucune tâche.";_0xM("shareWorkerMessage",d.message||"Aucune tâche.","error");return}_0xH=d;const l=`<a class="link" href="${d.link}" target="_blank">${d.link}</a>`;document.getElementById("currentShareTaskInfo").innerHTML=`<div><strong>Type:</strong> SHARE</div><div><strong>Lien du post à partager:</strong> ${l}</div><div class="meta"><strong>Progress:</strong> ${d.success_count}/${d.target||"-"}</div>`;_0xM("shareWorkerMessage","","")}catch(e){_0xM("shareWorkerMessage",e.message,"error")}}
-async function verifyCurrentShareTask(){if(!_0xG||!_0xH?.task_id)return;const v=document.getElementById("shareVerificationLink").value.trim();if(!v)return _0xM("shareWorkerMessage","Entrez le lien du post partagé.","error");_0xM("shareWorkerMessage",'<span class="loader"></span>Vérification...',"");try{const d=await api("/worker/share_verify_task","POST",{account_id:_0xG,task_id:_0xH.task_id,verification_link:v});_0xM("shareWorkerMessage",d.message||"OK",d.success?"success":"error");await updateMe();loadGlobalStats();if(d.success){document.getElementById("shareVerificationLink").value="";await loadNextShareTask()}}catch(e){_0xM("shareWorkerMessage",e.message,"error")}}
-async function skipShareTask(){_0xM("shareWorkerMessage","Tâche ignorée...","");try{await api("/worker/skip_task","POST",{account_id:_0xG,task_id:_0xH?.task_id||""})}catch(e){}await loadNextShareTask()}
-function liveTransformFollow(v){const p=document.getElementById("gfTransformPreview");if(!v){p.innerHTML="";return}let s=v.trim();if(!s.startsWith("http"))s="https://"+s;try{const u=new URL(s);const pt=u.pathname.split("/").filter(x=>x);if(pt.length&&!pt[0].startsWith("@")){p.innerHTML=`Sera enregistré comme : <strong>https://www.facebook.com/@${pt[0]}</strong>`}else{p.innerHTML=""}}catch{p.innerHTML=""}}
-async function createFollowOrder(){const l=document.getElementById("gfProfileLink").value.trim(),t=parseInt(document.getElementById("gfTarget").value||"0",10);if(!l||!t)return _0xM("gfMessage","Remplis tous les champs.","error");try{_0xM("gfMessage",'<span class="loader"></span>Création...',"");const d=await api("/tasks/create_follow","POST",{profile_link:l,target:t});_0xM("gfMessage",d.message||"OK","success");await updateMe()}catch(e){_0xM("gfMessage",e.message,"error")}}
-async function createLikeOrder(){const l=document.getElementById("glLink").value.trim(),r=document.getElementById("glReaction").value,t=parseInt(document.getElementById("glTarget").value||"0",10);if(!l||!r||!t)return _0xM("glMessage","Remplis tous les champs.","error");try{_0xM("glMessage",'<span class="loader"></span>Création...',"");const d=await api("/tasks/create_like","POST",{link:l,reaction_key:r,target:t});_0xM("glMessage",d.message||"OK","success");await updateMe()}catch(e){_0xM("glMessage",e.message,"error")}}
-async function createCommentOrder(){const l=document.getElementById("gcLink").value.trim(),c=document.getElementById("gcText").value.trim();if(!l||!c)return _0xM("gcMessage","Remplis tous les champs.","error");try{_0xM("gcMessage",'<span class="loader"></span>Création...',"");const d=await api("/tasks/create_comment","POST",{link:l,comment_text:c,target:1});_0xM("gcMessage",d.message||"OK","success");await updateMe()}catch(e){_0xM("gcMessage",e.message,"error")}}
-async function createShareOrder(){const l=document.getElementById("gsLink").value.trim(),t=parseInt(document.getElementById("gsTarget").value||"0",10);if(!l||!t)return _0xM("gsMessage","Remplis tous les champs.","error");try{_0xM("gsMessage",'<span class="loader"></span>Création...',"");const d=await api("/tasks/create_share","POST",{link:l,target:t});_0xM("gsMessage",d.message||"OK","success");await updateMe()}catch(e){_0xM("gsMessage",e.message,"error")}}
-function switchCommentShareTab(t){document.getElementById("commentShareTabComment").className=t==="comment"?"active":"inactive";document.getElementById("commentShareTabShare").className=t==="share"?"active":"inactive";document.getElementById("commentArea").style.display=t==="comment"?"block":"none";document.getElementById("shareArea").style.display=t==="share"?"block":"none"}
-async function loadOrders(){document.getElementById("ordersPageLabel").textContent=ordersPage;const l=document.getElementById("ordersList");l.innerHTML="Loading...";try{const d=await api(`/orders/status?page=${ordersPage}&page_size=30`,"GET");const i=d.items||[];if(!i.length){l.innerHTML="<div>Aucun order</div>";return}l.innerHTML=i.map(o=>{let t=o.task_type.toUpperCase();if(o.task_type==="like"&&o.reaction_key){const r=_0xR[o.reaction_key.toLowerCase()];if(r)t=`${r.emoji} ${r.label}`}return`<div class="task-item"><div><b>${t}</b> — <span class="meta">${o.status}</span><br><span class="meta">${o.success_count}/${o.target} — ${o.created_at}</span><br><a class="link" target="_blank" href="${o.link}">${o.link}</a></div></div>`}).join("");_0xM("ordersMsg","")}catch(e){l.innerHTML="";_0xM("ordersMsg",e.message,"error")}}
-function updateDepositEstimate(){const c=parseFloat(document.getElementById("depCoins").value)||0;const a=c*1.5;document.getElementById("depEstimate").innerHTML=`Estimation : ${a} Ar (1 coin = 1.5 Ar)`}
-function depositNext(){const c=parseFloat(document.getElementById("depCoins").value);if(!c||c<2000){_0xM("depMessage","Minimum 2000 coins.","error");return}const a=c*1.5;document.getElementById("depAmountArLabel").textContent=a;document.getElementById("depositStep1").style.display="none";document.getElementById("depositStep2").style.display="block"}
-async function createDeposit(){const c=parseFloat(document.getElementById("depCoins").value),r=document.getElementById("depRef").value.trim();if(!c||c<2000)return _0xM("depMessage","Montant invalide","error");try{_0xM("depMessage",'<span class="loader"></span>Envoi...',"");const d=await api("/wallet/deposit","POST",{coins:c,reference:r});_0xM("depMessage",d.message+" ID: "+d.request_id,"success")}catch(e){_0xM("depMessage",e.message,"error")}}
-async function createWithdraw(){const a=parseFloat(document.getElementById("wdAmount").value),m=document.getElementById("wdMethod").value,ac=document.getElementById("wdAccount").value.trim(),n=document.getElementById("wdName").value.trim();if(!a||a<5000||!ac||!n)return _0xM("wdMessage","Champs invalides","error");try{_0xM("wdMessage",'<span class="loader"></span>Envoi...',"");const d=await api("/wallet/withdraw","POST",{amount_ar:a,method:m,account:ac,recipient_name:n});_0xM("wdMessage",d.message+" ID: "+d.request_id,"success");await updateMe()}catch(e){_0xM("wdMessage",e.message,"error")}}
-async function doSwap(){const a=parseFloat(document.getElementById("swapAmount").value);if(!a||a<=0)return _0xM("swapMessage","Montant invalide","error");try{_0xM("swapMessage",'<span class="loader"></span>Swap...',"");const d=await api("/wallet/swap","POST",{amount_ar:a});_0xM("swapMessage",d.message+` (+${d.received_coins} coins)`,"success");await updateMe()}catch(e){_0xM("swapMessage",e.message,"error")}}
-async function loadDepositHistory(){const l=document.getElementById("depositHistoryList");l.innerHTML="Loading...";try{const d=await api("/wallet/deposit/history","GET");const i=d.items||[];l.innerHTML=i.length?i.map(x=>`<div class="task-item"><div><b>${x.status}</b> — ${x.created_at}<br>Coins: ${x.coins} | Ar: ${x.amount_ar} | Ref: ${x.reference||""}</div></div>`).join(""):"<div>No history</div>"}catch(e){l.innerHTML="";_0xM("depositHistoryMsg",e.message,"error")}}
-async function loadWithdrawHistory(){const l=document.getElementById("withdrawHistoryList");l.innerHTML="Loading...";try{const d=await api("/wallet/withdraw/history","GET");const i=d.items||[];l.innerHTML=i.length?i.map(x=>`<div class="task-item"><div><b>${x.status}</b> — ${x.created_at}<br>Ar: ${x.amount_ar} | ${x.method} | ${x.account} | Destinataire: ${x.recipient_name||""}</div></div>`).join(""):"<div>No history</div>"}catch(e){l.innerHTML="";_0xM("withdrawHistoryMsg",e.message,"error")}}
-async function loadVerifyAccounts(){document.getElementById("verifyPageLabel").textContent=verifyPage;const l=document.getElementById("verifyAccountsList");l.innerHTML="Loading...";try{const d=await api(`/task_account/verify/list?page=${verifyPage}&page_size=50`,"GET");const a=d.accounts||[];if(!a.length){l.innerHTML="<div>Aucun compte.</div>";return}l.innerHTML=a.map(a=>{const s=a.verification_status;let h="",b="";if(s==="verified")h=`<span class="status-badge verified">vérifié 🟢</span>`;else if(s==="pending")h=`<span class="status-badge pending">en attente</span>`;else if(s==="rejected"){h=`<span class="status-badge rejected">rejeté</span>`;b=`<button class="small-btn" onclick="requestVerification('${a.id}')">Retry get verified</button>`}else{h=`<span class="status-badge">non vérifié</span>`;b=`<button class="small-btn" onclick="requestVerification('${a.id}')">Get Verified</button>`}return`<div class="account-item"><div style="flex:1;"><a class="link" href="${a.profile_link}" target="_blank">${a.display_name||a.profile_link}</a><br>${h}</div>${b}</div>`}).join("");_0xM("verifyMsg","")}catch(e){l.innerHTML="";_0xM("verifyMsg",e.message,"error")}}
-async function requestVerification(id){try{_0xM("verifyMsg",'<span class="loader"></span>Envoi...',"");const d=await api("/task_account/request_verification","POST",{account_id:id});_0xM("verifyMsg",d.message||"Demande envoyée","success");await loadVerifyAccounts()}catch(e){_0xM("verifyMsg",e.message,"error")}}
-function showVipActivate(){document.getElementById("vipActivateArea").style.display="block"}
-async function buyVip(){if(!_0xD)await updateMe();if(!_0xD)return;const c=confirm("Acheter un code VIP pour 500 Ar ?");if(!c)return;try{_0xM("vipMessage",'<span class="loader"></span>Achat...',"");const d=await api("/vip/buy","POST");_0xM("vipMessage",d.message+" Code : "+d.code,"success");await updateMe()}catch(e){_0xM("vipMessage",e.message,"error")}}
-async function activateVip(){const c=document.getElementById("vipCode").value.trim();if(!c)return _0xM("vipMessage","Entrez un code.","error");try{_0xM("vipMessage",'<span class="loader"></span>Activation...',"");const d=await api("/vip/activate","POST",{code:c});_0xM("vipMessage",d.message,"success");document.getElementById("vipCode").value=""}catch(e){_0xM("vipMessage",e.message,"error")}}
-async function loadVipCodes(){try{const d=await api("/vip/my_codes","GET");document.getElementById("vipActiveStatus").innerHTML=`Statut VIP : ${d.active_vip?"<span style='color:#2ecc71'>actif</span>":"non actif"}`;const l=document.getElementById("vipUnusedCodes");if(!d.unused_codes||!d.unused_codes.length)l.innerHTML="<div>Aucun code VIP non utilisé.</div>";else l.innerHTML=d.unused_codes.map(c=>`<div class="account-item"><div><b>${c.code}</b><br><span style="font-size:12px;">Créé le ${c.created_at}</span></div></div>`).join("");_0xM("vipCodesMsg","")}catch(e){_0xM("vipCodesMsg",e.message,"error")}}
-function switchManageTab(t){manageType=t;document.getElementById("manageTabTask").className=t==="task"?"active":"inactive";document.getElementById("manageTabShare").className=t==="share"?"active":"inactive";managePage=0;loadManageAccounts()}
-async function loadManageAccounts(){const l=document.getElementById("manageAccountsList");l.innerHTML="Chargement...";document.getElementById("managePageLabel").textContent=managePage;try{const d=await api(`/account/manage/${manageType}?page=${managePage}&page_size=30`,"GET");const a=d.accounts||[];if(!a.length){l.innerHTML="<div>Aucun compte.</div>";return}l.innerHTML=a.map(a=>`<div class="account-item"><div style="flex:1;"><strong>${a.display_name||a.profile_link}</strong><br><span style="font-size:12px;">${a.profile_link}</span></div><button class="small-btn" onclick="toggleHidden('${a.id}')">${a.hidden?"Unhide":"Hide"}</button></div>`).join("");_0xM("manageAccountsMsg","")}catch(e){l.innerHTML="";_0xM("manageAccountsMsg",e.message,"error")}}
-async function toggleHidden(id){try{const d=await api("/account/toggle_hidden","POST",{account_id:id});_0xM("manageAccountsMsg",d.message,"success");loadManageAccounts();if(manageType==="task")loadAccountsForWork();else loadShareAccountsForWork()}catch(e){_0xM("manageAccountsMsg",e.message,"error")}}
-async function adminCredit(){const e=document.getElementById("admEmail").value.trim().toLowerCase(),c=parseFloat(document.getElementById("admCoins").value)||0,a=parseFloat(document.getElementById("admAr").value)||0;if(!e)return _0xM("admMessage","Email obligatoire","error");try{_0xM("admMessage",'<span class="loader"></span>...',"");const d=await api("/admin/credit","POST",{email:e,coins:c,ar:a});_0xM("admMessage",d.message,"success")}catch(e){_0xM("admMessage",e.message,"error")}}
-async function adminDeduct(){const e=document.getElementById("deductEmail").value.trim().toLowerCase(),c=parseFloat(document.getElementById("deductCoins").value)||0,a=parseFloat(document.getElementById("deductAr").value)||0;if(!e)return _0xM("deductMessage","Email obligatoire","error");try{_0xM("deductMessage",'<span class="loader"></span>...',"");const d=await api("/admin/deduct","POST",{email:e,coins:c,ar:a});_0xM("deductMessage",d.message,"success")}catch(e){_0xM("deductMessage",e.message,"error")}}
-async function adminBan(){const e=document.getElementById("banEmail").value.trim().toLowerCase(),a=document.getElementById("banAction").value;if(!e)return _0xM("banMessage","Email obligatoire","error");try{_0xM("banMessage",'<span class="loader"></span>...',"");const d=await api("/admin/ban","POST",{email:e,action:a});_0xM("banMessage",d.message,"success")}catch(e){_0xM("banMessage",e.message,"error")}}
-async function loadAdminUsers(){const s=document.getElementById("userSearch").value.trim();document.getElementById("usersPageLabel").textContent=usersPage;const l=document.getElementById("adminUsersList");l.innerHTML="Loading...";try{const d=await api(`/admin/users?page=${usersPage}&page_size=100&search=${encodeURIComponent(s)}`,"GET");const i=d.items||[];if(!i.length){l.innerHTML="<div>Aucun utilisateur</div>";return}l.innerHTML=i.map(u=>`<div class="task-item"><div><b>${u.email}</b> — Coins: ${u.balance_coins} Ar: ${u.balance_ar} ${u.banned?" [BANNI]":""} ${u.suspended_until?" [SUSPENDU]":""}<div class="meta">ID: ${u.id}</div></div></div>`).join("")}catch(e){l.innerHTML="";_0xM("adminUsersMsg",e.message,"error")}}
-async function loadAdminDeposits(){document.getElementById("adminDepPageLabel").textContent=adminDepPage;const l=document.getElementById("adminDepositsList");l.innerHTML="Loading...";try{const d=await api(`/admin/deposits?status=pending&page=${adminDepPage}&page_size=30`,"GET");const i=d.items||[];if(!i.length){l.innerHTML="<div>Empty</div>";return}l.innerHTML=i.map(x=>`<div class="task-item"><div style="width:100%;"><b>${x.user_email}</b> — ${x.coins} coins (${x.amount_ar} Ar) Ref: ${x.reference||""}<br><button class="small-btn" onclick="handleDeposit('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleDeposit('${x.id}','reject')">Reject</button></div></div>`).join("")}catch(e){l.innerHTML="";_0xM("adminDepositsMsg",e.message,"error")}}
-async function handleDeposit(id,a){try{await api("/admin/deposits/handle","POST",{request_id:id,action:a});loadAdminDeposits()}catch(e){_0xM("adminDepositsMsg",e.message,"error")}}
-async function loadAdminWithdraws(){document.getElementById("adminWdPageLabel").textContent=adminWdPage;const l=document.getElementById("adminWithdrawsList");l.innerHTML="Loading...";try{const d=await api(`/admin/withdraws?status=pending&page=${adminWdPage}&page_size=30`,"GET");const i=d.items||[];if(!i.length){l.innerHTML="<div>Empty</div>";return}l.innerHTML=i.map(x=>`<div class="task-item"><div style="width:100%;"><b>${x.user_email}</b> — ${x.amount_ar} Ar (${x.method}) ${x.account}<br><b>Destinataire:</b> ${x.recipient_name||""}<br><button class="small-btn" onclick="handleWithdraw('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','reject')">Reject</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','return')">Return</button></div></div>`).join("")}catch(e){l.innerHTML="";_0xM("adminWithdrawsMsg",e.message,"error")}}
-async function handleWithdraw(id,a){try{await api("/admin/withdraws/handle","POST",{request_id:id,action:a});loadAdminWithdraws()}catch(e){_0xM("adminWithdrawsMsg",e.message,"error")}}
-async function loadAdminVerifyAccounts(){document.getElementById("adminVerifyPageLabel").textContent=adminVerifyPage;const l=document.getElementById("adminVerifyList");l.innerHTML="Loading...";try{const d=await api(`/admin/verify_accounts?page=${adminVerifyPage}&page_size=50`,"GET");const i=d.items||[];if(!i.length){l.innerHTML="<div>Aucune demande en attente.</div>";return}l.innerHTML=i.map(t=>`<div class="task-item"><div style="flex:1;"><b>${t.user_email}</b><br><a class="link" href="${t.profile_link}" target="_blank">${t.display_name||t.profile_link}</a><div class="meta">ID: ${t.id}</div></div><div style="display:flex;gap:4px;"><button class="small-btn" onclick="handleAdminVerify('${t.id}','approve')">Approve</button><button class="small-btn" onclick="handleAdminVerify('${t.id}','reject')">Reject</button></div></div>`).join("");_0xM("adminVerifyMsg","")}catch(e){l.innerHTML="";_0xM("adminVerifyMsg",e.message,"error")}}
-async function handleAdminVerify(id,a){try{await api("/admin/verify_accounts/handle","POST",{account_id:id,action:a});_0xM("adminVerifyMsg",a==="approve"?"Approuvé, 10 Ar crédités.":"Rejeté.","success");loadAdminVerifyAccounts()}catch(e){_0xM("adminVerifyMsg",e.message,"error")}}
-window.addEventListener("load",()=>{checkRefParam();if(_0xC?.access_token){showDashboard()}else{showAuthPage();showLogin()}});
+  const API_URL = "https://web-production-0a511.up.railway.app";
+  const BASE_URL = window.location.origin + "/Takers/";
+
+  let auth = JSON.parse(localStorage.getItem("auth") || "null");
+  let me = null;
+  let selectedAccountId = null;
+  let currentTask = null;
+  let selectedShareAccountId = null;
+  let currentShareTask = null;
+  let ordersPage = 0, adminDepPage = 0, adminWdPage = 0, usersPage = 0;
+  let verifyPage = 0, adminVerifyPage = 0;
+  let managePage = 0, manageType = "task";
+  let resetEmail = "";
+
+  const reactionMap = {
+    like: { emoji: "👍", label: "J'aime" },
+    love: { emoji: "❤️", label: "J'adore" },
+    haha: { emoji: "😂", label: "Haha" },
+    wow: { emoji: "😮", label: "Wouah" },
+    care: { emoji: "🥰", label: "Solidaire" },
+    angry: { emoji: "😡", label: "En colère" },
+    sad: { emoji: "😢", label: "Triste" }
+  };
+
+  // Échappement HTML pour prévenir XSS
+  function sanitizeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // Gestion des tokens
+  function getAccessToken() { return auth?.access_token; }
+  function setAuth(data) {
+    auth = {
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+      email: data.email,
+      is_admin: !!data.is_admin
+    };
+    localStorage.setItem("auth", JSON.stringify(auth));
+  }
+  function clearAuth() {
+    auth = null;
+    localStorage.removeItem("auth");
+  }
+
+  async function api(path, method="GET", body=null, retry=true) {
+    const headers = {"Content-Type":"application/json"};
+    const token = getAccessToken();
+    if (token) headers["Authorization"] = "Bearer " + token;
+    const opt = {method, headers};
+    if (body) opt.body = JSON.stringify(body);
+    let r = await fetch(API_URL + path, opt);
+    if (r.status === 401 && retry && auth?.refresh_token) {
+      const refreshed = await refreshAccessToken();
+      if (refreshed) {
+        headers["Authorization"] = "Bearer " + getAccessToken();
+        r = await fetch(API_URL + path, {method, headers, body: opt.body});
+      }
+    }
+    const j = await r.json().catch(()=>({}));
+    if (!r.ok) throw new Error(j.message || "Request failed");
+    return j;
+  }
+
+  async function refreshAccessToken() {
+    try {
+      const r = await fetch(API_URL + "/refresh", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ refresh_token: auth.refresh_token })
+      });
+      if (!r.ok) { clearAuth(); showAuthPage(); return false; }
+      const data = await r.json();
+      auth.access_token = data.access_token;
+      auth.refresh_token = data.refresh_token;
+      localStorage.setItem("auth", JSON.stringify(auth));
+      return true;
+    } catch(e) { clearAuth(); showAuthPage(); return false; }
+  }
+
+  // UI Helpers
+  function setMessage(id, text, type = "") {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = "message " + type;
+    // On échappe tout sauf les <br> autorisés
+    el.innerHTML = sanitizeHTML(text).replace(/&lt;br&gt;/g, '<br>');
+  }
+
+  function showLogin() {
+    document.getElementById("loginForm").classList.add("active");
+    document.getElementById("registerForm").classList.remove("active");
+    document.getElementById("forgotPasswordForm").style.display = "none";
+    document.getElementById("loginTab").classList.add("active");
+    document.getElementById("loginTab").classList.remove("inactive");
+    document.getElementById("registerTab").classList.remove("active");
+    document.getElementById("registerTab").classList.add("inactive");
+    setMessage("authMessage","");
+  }
+
+  function showRegister() {
+    document.getElementById("registerForm").classList.add("active");
+    document.getElementById("loginForm").classList.remove("active");
+    document.getElementById("forgotPasswordForm").style.display = "none";
+    document.getElementById("registerTab").classList.add("active");
+    document.getElementById("registerTab").classList.remove("inactive");
+    document.getElementById("loginTab").classList.remove("active");
+    document.getElementById("loginTab").classList.add("inactive");
+    setMessage("authMessage","");
+  }
+
+  function showForgotPassword() {
+    document.getElementById("loginForm").classList.remove("active");
+    document.getElementById("registerForm").classList.remove("active");
+    document.getElementById("forgotPasswordForm").style.display = "block";
+    document.getElementById("codeInputArea").style.display = "none";
+    document.getElementById("newPasswordArea").style.display = "none";
+    setMessage("forgotMsg","");
+    setMessage("codeCheckMsg","");
+    setMessage("newPassMsg","");
+  }
+
+  function backToLogin() { showLogin(); }
+
+  function showAuthPage() {
+    document.getElementById("authPage").classList.add("active");
+    document.getElementById("dashboardPage").classList.remove("active");
+  }
+
+  function showDashboard() {
+    document.getElementById("authPage").classList.remove("active");
+    document.getElementById("dashboardPage").classList.add("active");
+    document.getElementById("userEmailLabel").textContent = auth?.email || "";
+    toggleAdminUI();
+    updateMe();
+    loadGlobalStats();
+  }
+
+  function toggleAdminUI() {
+    document.getElementById("hamburgerWrap").style.display = "block";
+    document.getElementById("adminOnlyMenu").style.display = (auth && auth.is_admin) ? "block" : "none";
+  }
+
+  function toggleAdminMenu() {
+    document.getElementById("adminMenu").classList.toggle("show");
+  }
+
+  function hideAdminMenu() {
+    document.getElementById("adminMenu").classList.remove("show");
+  }
+
+  function showSection(name) {
+    hideAdminMenu();
+    const allSections = [
+      "AddTaskAccount","AddShareAccount","Work","OrderStatus","DepositHistory","WithdrawHistory","Referral",
+      "AdminDeposits","AdminWithdraws","AdminCredit","AdminDeduct","AdminBan","AdminUsers",
+      "GetFollower","GetLike","GetCommentShare","Deposit","Withdraw","Swap",
+      "VerifyAccount","AdminVerifyAccounts","Vip","VipCodes","ManageAccounts"
+    ];
+    allSections.forEach(s => {
+      const el = document.getElementById("section" + s);
+      if (el) el.style.display = "none";
+    });
+    const target = document.getElementById("section" + name.charAt(0).toUpperCase() + name.slice(1));
+    if (target) target.style.display = "block";
+
+    if (name === "work") { loadAccountsForWork(); switchWorkTab('tasks'); }
+    if (name === "orderStatus") loadOrders();
+    if (name === "depositHistory") loadDepositHistory();
+    if (name === "withdrawHistory") loadWithdrawHistory();
+    if (name === "adminDeposits") loadAdminDeposits();
+    if (name === "adminWithdraws") loadAdminWithdraws();
+    if (name === "referral") { updateReferralLink(); loadReferralCount(); }
+    if (name === "deposit") {
+      document.getElementById("depositStep1").style.display = "block";
+      document.getElementById("depositStep2").style.display = "none";
+      updateDepositEstimate();
+    }
+    if (name === "adminUsers") loadAdminUsers();
+    if (name === "verifyAccount") loadVerifyAccounts();
+    if (name === "adminVerifyAccounts") loadAdminVerifyAccounts();
+    if (name === "vip") { document.getElementById("vipActivateArea").style.display = "none"; }
+    if (name === "vipCodes") loadVipCodes();
+    if (name === "getCommentShare") switchCommentShareTab('comment');
+    if (name === "manageAccounts") { switchManageTab('task'); loadManageAccounts(); }
+  }
+
+  function showAccountInfo() {
+    hideAdminMenu();
+    if (!me) return;
+    setMessage("dashboardMessage", `Email: ${sanitizeHTML(me.email)}<br>Coins: ${Number(me.balance_coins).toFixed(2)} — Ar: ${Math.floor(Number(me.balance_ar))}`, "success");
+  }
+
+  function showReferral(){ showSection("referral"); }
+  function showDepositHistory(){ showSection("depositHistory"); }
+  function showWithdrawHistory(){ showSection("withdrawHistory"); }
+  function showVerifyAccount(){ showSection("verifyAccount"); }
+  function showVipCodes(){ showSection("vipCodes"); }
+  function showManageAccounts(){ showSection("manageAccounts"); }
+  function showAdminCredit(){ showSection("adminCredit"); }
+  function showAdminDeduct(){ showSection("adminDeduct"); }
+  function showAdminBan(){ showSection("adminBan"); }
+  function showAdminUsers(){ showSection("adminUsers"); }
+  function showAdminDeposits(){ showSection("adminDeposits"); }
+  function showAdminWithdraws(){ showSection("adminWithdraws"); }
+  function showAdminVerifyAccounts(){ showSection("adminVerifyAccounts"); }
+
+  async function updateMe() {
+    if (!getAccessToken()) return;
+    try {
+      me = await api("/me", "GET");
+      document.getElementById("balanceCoins").textContent = Number(me.balance_coins).toFixed(2);
+      document.getElementById("balanceAr").textContent = Math.floor(Number(me.balance_ar));
+      const ok = Number(me.balance_coins) >= 20;
+      document.getElementById("btnAddTaskAccount").classList.toggle("disabled", !ok);
+      document.getElementById("btnAddShareAccount").classList.toggle("disabled", !ok);
+      document.getElementById("btnGetFollower").classList.toggle("disabled", !ok);
+      document.getElementById("btnGetLike").classList.toggle("disabled", !ok);
+      document.getElementById("btnGetCommentShare").classList.toggle("disabled", !ok);
+      if (me.id) updateReferralLink();
+    } catch(e) { console.log(e); }
+  }
+
+  function updateReferralLink() {
+    const linkInput = document.getElementById("referralLink");
+    if (linkInput && me?.id) linkInput.value = BASE_URL + "?ref=" + me.id;
+  }
+
+  async function loadReferralCount() {
+    try {
+      const data = await api("/referral/info", "GET");
+      document.getElementById("refCount").textContent = data.total_referrals || 0;
+    } catch(e) {}
+  }
+
+  function copyReferral() {
+    const linkInput = document.getElementById("referralLink");
+    linkInput.select();
+    document.execCommand("copy");
+    setMessage("referralMsg", "Lien copié !", "success");
+  }
+
+  async function loadGlobalStats() {
+    try {
+      const data = await api("/stats", "GET");
+      document.getElementById("globalAr").textContent = (data.total_ar_gagnes || 0).toLocaleString();
+      document.getElementById("globalTasks").textContent = (data.total_tasks_completed || 0).toLocaleString();
+      document.getElementById("globalAccounts").textContent = (data.total_comptes || 0).toLocaleString();
+    } catch(e) {}
+  }
+
+  function checkRefParam() {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get("ref");
+    if (ref) {
+      const refInput = document.getElementById("registerRef");
+      if (refInput) refInput.value = ref;
+    }
+  }
+
+  // Auth
+  async function registerUser() {
+    const email = document.getElementById("registerEmail").value.trim();
+    const password = document.getElementById("registerPassword").value.trim();
+    const ref = document.getElementById("registerRef").value.trim();
+    if (!email || !password) return setMessage("authMessage","Remplis tous les champs.","error");
+    if (!email.endsWith("@gmail.com")) return setMessage("authMessage","Seules les adresses Gmail (@gmail.com) sont acceptées.","error");
+    try {
+      setMessage("authMessage",'<span class="loader"></span>Inscription...', "");
+      const data = await fetch(API_URL + "/register", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({email,password,ref})
+      }).then(r => r.json());
+      if (!data.access_token) throw new Error(data.message || "Erreur");
+      setAuth(data);
+      setMessage("authMessage","Inscription réussie.","success");
+      showDashboard();
+    } catch(e) { setMessage("authMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function loginUser() {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+    if (!email || !password) return setMessage("authMessage","Remplis tous les champs.","error");
+    try {
+      setMessage("authMessage",'<span class="loader"></span>Connexion...', "");
+      const data = await fetch(API_URL + "/login", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({email,password})
+      }).then(r => r.json());
+      if (!data.access_token) throw new Error(data.message || "Erreur");
+      setAuth(data);
+      setMessage("authMessage","Connexion réussie.","success");
+      showDashboard();
+    } catch(e) { setMessage("authMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function logoutUser() {
+    if (auth?.refresh_token) {
+      try { await api("/logout","POST",{refresh_token: auth.refresh_token}); } catch(e){}
+    }
+    clearAuth();
+    me=null; currentTask=null; selectedAccountId=null; currentShareTask=null; selectedShareAccountId=null;
+    showAuthPage(); showLogin();
+    setMessage("authMessage","");
+  }
+
+  // Password reset
+  async function requestResetCode() {
+    const email = document.getElementById("forgotEmail").value.trim();
+    if (!email) return setMessage("forgotMsg","Email requis.","error");
+    try {
+      setMessage("forgotMsg",'<span class="loader"></span>Envoi...', "");
+      await api("/auth/forgot_password","POST",{email});
+      setMessage("forgotMsg","Code envoyé à l'email (vérifiez les spams).","success");
+      resetEmail = email;
+      document.getElementById("codeInputArea").style.display = "block";
+    } catch(e) { setMessage("forgotMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function checkResetCode() {
+    const code = document.getElementById("resetCode").value.trim();
+    if (!code) return setMessage("codeCheckMsg","Code requis.","error");
+    document.getElementById("newPasswordArea").style.display = "block";
+    setMessage("codeCheckMsg","");
+  }
+
+  async function submitNewPassword() {
+    const code = document.getElementById("resetCode").value.trim();
+    const newPassword = document.getElementById("newPassword").value.trim();
+    if (!code || !newPassword) return setMessage("newPassMsg","Code et nouveau mot de passe requis.","error");
+    if (newPassword.length < 6) return setMessage("newPassMsg","Mot de passe trop court (min 6).","error");
+    try {
+      setMessage("newPassMsg",'<span class="loader"></span>Mise à jour...', "");
+      const data = await api("/auth/reset_password","POST",{email: resetEmail, code, new_password: newPassword});
+      setMessage("newPassMsg", sanitizeHTML(data.message), "success");
+      setTimeout(() => { backToLogin(); setMessage("authMessage","Mot de passe modifié, connectez-vous.","success"); }, 2000);
+    } catch(e) { setMessage("newPassMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  // ADD ACCOUNTS
+  async function addTaskAccount() {
+    if (!me) await updateMe();
+    const profile_link = document.getElementById("accProfileLink").value.trim();
+    const cookies_string = document.getElementById("accCookies").value.trim();
+    if (!profile_link || !cookies_string) return setMessage("addAccountMessage","Remplis tous les champs.","error");
+    try {
+      setMessage("addAccountMessage",'<span class="loader"></span>Vérification...', "");
+      const data = await api("/task_account/add","POST",{profile_link,cookies_string});
+      setMessage("addAccountMessage", sanitizeHTML(data.message || "OK"), "success");
+      await updateMe();
+      loadGlobalStats();
+    } catch(e) { setMessage("addAccountMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function addShareAccount() {
+    if (!me) await updateMe();
+    const profile_link = document.getElementById("shareProfileLink").value.trim();
+    if (!profile_link) return setMessage("shareAccountMessage","Lien du profil requis.","error");
+    try {
+      setMessage("shareAccountMessage",'<span class="loader"></span>Vérification...', "");
+      const data = await api("/share_account/add","POST",{profile_link});
+      setMessage("shareAccountMessage", sanitizeHTML(data.message || "Compte Share ajouté."), "success");
+      await updateMe();
+      loadGlobalStats();
+    } catch(e) { setMessage("shareAccountMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  // WORK TASKS (STANDARD)
+  async function loadAccountsForWork() {
+    selectedAccountId = null;
+    currentTask = null;
+    document.getElementById("currentTaskArea").style.display = "none";
+    const area = document.getElementById("accountsForWork");
+    area.innerHTML = "Chargement...";
+    try {
+      const data = await api("/task_account/list","GET");
+      let accounts = data.accounts || [];
+      accounts = accounts.filter(a => !a.hidden);
+      if (!accounts.length){ area.innerHTML = "<div>Aucun compte TASK disponible.</div>"; return; }
+      area.innerHTML = accounts.map(a => `
+        <div class="account-item">
+          <div><strong>${sanitizeHTML(a.display_name || a.profile_link)}</strong><br><span style="font-size:12px;opacity:0.8;">${sanitizeHTML(a.profile_link)}</span></div>
+          <button class="small-btn" onclick="selectAccountForWork('${a.id}')">Utiliser</button>
+        </div>`).join("");
+    } catch(e){ area.innerHTML = "Erreur: " + sanitizeHTML(e.message); }
+  }
+
+  async function selectAccountForWork(accId){
+    selectedAccountId = accId;
+    document.getElementById("currentTaskArea").style.display = "block";
+    setMessage("workerMessage", "Chargement tâche...", "");
+    await loadNextTask();
+  }
+
+  async function loadNextTask(){
+    if (!selectedAccountId) return;
+    try {
+      const data = await api(`/worker/next_task?account_id=${encodeURIComponent(selectedAccountId)}`,"GET");
+      if (!data.task_id){
+        currentTask = null;
+        document.getElementById("currentTaskInfo").innerHTML = sanitizeHTML(data.message || "Aucune tâche.");
+        setMessage("workerMessage", data.message || "Aucune tâche.", "error");
+        return;
+      }
+      currentTask = data;
+      const linkHtml = `<a class="link" href="${data.link}" target="_blank">${sanitizeHTML(data.link)}</a>`;
+      let taskTypeDisplay = String(data.task_type||"").toUpperCase();
+      if (data.task_type === "like" && data.reaction_key) {
+        const r = reactionMap[data.reaction_key.toLowerCase()];
+        if (r) taskTypeDisplay = `${r.emoji} ${sanitizeHTML(r.label)}`;
+      }
+      let commentBlock = "";
+      if (data.task_type === "comment" && data.comment_text) {
+        commentBlock = `<div><strong>Comment:</strong> ${sanitizeHTML(data.comment_text)} <button class="copy-btn" onclick="copyCommentText('${data.comment_text.replace(/'/g,"\\'")}')">📋 Copier</button></div>`;
+      }
+      document.getElementById("currentTaskInfo").innerHTML = `
+        <div><strong>Type:</strong> ${taskTypeDisplay}</div>
+        <div><strong>Lien:</strong> ${linkHtml}</div>
+        ${data.task_type==="like" && data.reaction_key ? `<div><strong>Réaction attendue:</strong> ${reactionMap[data.reaction_key] ? reactionMap[data.reaction_key].emoji + " " + sanitizeHTML(reactionMap[data.reaction_key].label) : sanitizeHTML(data.reaction_key)}</div>` : ""}
+        ${commentBlock}
+        <div class="meta"><strong>Progress:</strong> ${data.success_count}/${data.target || "-"}</div>`;
+      setMessage("workerMessage", "", "");
+    } catch(e){ setMessage("workerMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  function copyCommentText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      setMessage("workerMessage", "Texte copié !", "success");
+      setTimeout(() => setMessage("workerMessage", "", ""), 2000);
+    }).catch(() => {
+      const ta = document.createElement("textarea");
+      ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand("copy");
+      document.body.removeChild(ta);
+      setMessage("workerMessage", "Texte copié !", "success");
+      setTimeout(() => setMessage("workerMessage", "", ""), 2000);
+    });
+  }
+
+  async function verifyCurrentTask(){
+    if (!selectedAccountId || !currentTask?.task_id) return;
+    setMessage("workerMessage", '<span class="loader"></span>Vérification...', "");
+    try {
+      const data = await api("/worker/verify_task","POST",{account_id: selectedAccountId, task_id: currentTask.task_id});
+      setMessage("workerMessage", sanitizeHTML(data.message || "OK"), data.success ? "success" : "error");
+      await updateMe();
+      loadGlobalStats();
+      if (data.success || data.message !== "Cette tâche a déjà été vérifiée pour ce compte.") {
+        await loadNextTask();
+      }
+    } catch(e){ setMessage("workerMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function skipTask(){
+    setMessage("workerMessage", "Tâche ignorée...", "");
+    try { await api("/worker/skip_task","POST",{account_id: selectedAccountId, task_id: currentTask?.task_id || ""}); } catch(e){}
+    await loadNextTask();
+  }
+
+  // WORK SHARE TASKS
+  function switchWorkTab(tab) {
+    document.getElementById("workTabTasks").className = tab === "tasks" ? "active" : "inactive";
+    document.getElementById("workTabShares").className = tab === "shares" ? "active" : "inactive";
+    document.getElementById("workTasksArea").style.display = tab === "tasks" ? "block" : "none";
+    document.getElementById("workSharesArea").style.display = tab === "shares" ? "block" : "none";
+    if (tab === "tasks") {
+      if (selectedAccountId) loadAccountsForWork();
+    } else {
+      if (selectedShareAccountId) loadShareAccountsForWork();
+    }
+  }
+
+  async function loadShareAccountsForWork() {
+    selectedShareAccountId = null;
+    currentShareTask = null;
+    document.getElementById("currentShareTaskArea").style.display = "none";
+    const area = document.getElementById("shareAccountsForWork");
+    area.innerHTML = "Chargement...";
+    try {
+      const data = await api("/share_account/list","GET");
+      let accounts = data.accounts || [];
+      accounts = accounts.filter(a => !a.hidden);
+      if (!accounts.length){ area.innerHTML = "<div>Aucun compte Share disponible.</div>"; return; }
+      area.innerHTML = accounts.map(a => `
+        <div class="account-item">
+          <div><strong>${sanitizeHTML(a.display_name || a.profile_link)}</strong> (${a.followers} followers)</div>
+          <button class="small-btn" onclick="selectShareAccountForWork('${a.id}')">Utiliser</button>
+        </div>`).join("");
+    } catch(e){ area.innerHTML = "Erreur: " + sanitizeHTML(e.message); }
+  }
+
+  async function selectShareAccountForWork(accId) {
+    selectedShareAccountId = accId;
+    document.getElementById("currentShareTaskArea").style.display = "block";
+    setMessage("shareWorkerMessage", "Chargement tâche...", "");
+    await loadNextShareTask();
+  }
+
+  async function loadNextShareTask() {
+    if (!selectedShareAccountId) return;
+    try {
+      const data = await api(`/worker/share_next_task?account_id=${encodeURIComponent(selectedShareAccountId)}`,"GET");
+      if (!data.task_id) {
+        currentShareTask = null;
+        document.getElementById("currentShareTaskInfo").innerHTML = sanitizeHTML(data.message || "Aucune tâche.");
+        setMessage("shareWorkerMessage", data.message || "Aucune tâche.", "error");
+        return;
+      }
+      currentShareTask = data;
+      const linkHtml = `<a class="link" href="${data.link}" target="_blank">${sanitizeHTML(data.link)}</a>`;
+      document.getElementById("currentShareTaskInfo").innerHTML = `
+        <div><strong>Type:</strong> SHARE</div>
+        <div><strong>Lien du post à partager:</strong> ${linkHtml}</div>
+        <div class="meta"><strong>Progress:</strong> ${data.success_count}/${data.target || "-"}</div>`;
+      setMessage("shareWorkerMessage", "", "");
+    } catch(e){ setMessage("shareWorkerMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function verifyCurrentShareTask() {
+    if (!selectedShareAccountId || !currentShareTask?.task_id) return;
+    const verificationLink = document.getElementById("shareVerificationLink").value.trim();
+    if (!verificationLink) return setMessage("shareWorkerMessage", "Entrez le lien du post partagé.", "error");
+    setMessage("shareWorkerMessage", '<span class="loader"></span>Vérification...', "");
+    try {
+      const data = await api("/worker/share_verify_task","POST",{
+        account_id: selectedShareAccountId,
+        task_id: currentShareTask.task_id,
+        verification_link: verificationLink
+      });
+      setMessage("shareWorkerMessage", sanitizeHTML(data.message || "OK"), data.success ? "success" : "error");
+      await updateMe();
+      loadGlobalStats();
+      if (data.success) {
+        document.getElementById("shareVerificationLink").value = "";
+        await loadNextShareTask();
+      }
+    } catch(e){ setMessage("shareWorkerMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function skipShareTask() {
+    setMessage("shareWorkerMessage", "Tâche ignorée...", "");
+    try { await api("/worker/skip_task","POST",{account_id: selectedShareAccountId, task_id: currentShareTask?.task_id || ""}); } catch(e){}
+    await loadNextShareTask();
+  }
+
+  // ORDERS
+  function liveTransformFollow(val) {
+    const preview = document.getElementById("gfTransformPreview");
+    if (!val) { preview.innerHTML = ""; return; }
+    let s = val.trim();
+    if (!s.startsWith("http")) s = "https://" + s;
+    try {
+      const p = new URL(s);
+      const parts = p.pathname.split("/").filter(x => x);
+      if (parts.length && !parts[0].startsWith("@")) {
+        preview.innerHTML = `Sera enregistré comme : <strong>https://www.facebook.com/@${sanitizeHTML(parts[0])}</strong>`;
+      } else {
+        preview.innerHTML = "";
+      }
+    } catch { preview.innerHTML = ""; }
+  }
+
+  async function createFollowOrder(){
+    const link = document.getElementById("gfProfileLink").value.trim();
+    const target = parseInt(document.getElementById("gfTarget").value || "0", 10);
+    if (!link || !target) return setMessage("gfMessage","Remplis tous les champs.","error");
+    try {
+      setMessage("gfMessage", '<span class="loader"></span>Création...', "");
+      const data = await api("/tasks/create_follow","POST",{profile_link: link, target});
+      setMessage("gfMessage", sanitizeHTML(data.message || "OK"), "success");
+      await updateMe();
+    } catch(e){ setMessage("gfMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function createLikeOrder(){
+    const link = document.getElementById("glLink").value.trim();
+    const reaction_key = document.getElementById("glReaction").value;
+    const target = parseInt(document.getElementById("glTarget").value || "0", 10);
+    if (!link || !reaction_key || !target) return setMessage("glMessage","Remplis tous les champs.","error");
+    try {
+      setMessage("glMessage", '<span class="loader"></span>Création...', "");
+      const data = await api("/tasks/create_like","POST",{link, reaction_key, target});
+      setMessage("glMessage", sanitizeHTML(data.message || "OK"), "success");
+      await updateMe();
+    } catch(e){ setMessage("glMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function createCommentOrder(){
+    const link = document.getElementById("gcLink").value.trim();
+    const comment_text = document.getElementById("gcText").value.trim();
+    if (!link || !comment_text) return setMessage("gcMessage","Remplis tous les champs.","error");
+    try {
+      setMessage("gcMessage", '<span class="loader"></span>Création...', "");
+      const data = await api("/tasks/create_comment","POST",{link, comment_text, target: 1});
+      setMessage("gcMessage", sanitizeHTML(data.message || "OK"), "success");
+      await updateMe();
+    } catch(e){ setMessage("gcMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function createShareOrder(){
+    const link = document.getElementById("gsLink").value.trim();
+    const target = parseInt(document.getElementById("gsTarget").value || "0", 10);
+    if (!link || !target) return setMessage("gsMessage","Remplis tous les champs.","error");
+    try {
+      setMessage("gsMessage", '<span class="loader"></span>Création...', "");
+      const data = await api("/tasks/create_share","POST",{link, target});
+      setMessage("gsMessage", sanitizeHTML(data.message || "OK"), "success");
+      await updateMe();
+    } catch(e){ setMessage("gsMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  function switchCommentShareTab(tab) {
+    document.getElementById("commentShareTabComment").className = tab === "comment" ? "active" : "inactive";
+    document.getElementById("commentShareTabShare").className = tab === "share" ? "active" : "inactive";
+    document.getElementById("commentArea").style.display = tab === "comment" ? "block" : "none";
+    document.getElementById("shareArea").style.display = tab === "share" ? "block" : "none";
+  }
+
+  // ORDER STATUS
+  async function loadOrders(){
+    document.getElementById("ordersPageLabel").textContent = ordersPage;
+    const list = document.getElementById("ordersList");
+    list.innerHTML = "Loading...";
+    try {
+      const data = await api(`/orders/status?page=${ordersPage}&page_size=30`,"GET");
+      const items = data.items || [];
+      if (!items.length){ list.innerHTML = "<div>Aucun order</div>"; return; }
+      list.innerHTML = items.map(o => {
+        let typeDisplay = sanitizeHTML(o.task_type.toUpperCase());
+        if (o.task_type === "like" && o.reaction_key) {
+          const r = reactionMap[o.reaction_key.toLowerCase()];
+          if (r) typeDisplay = `${r.emoji} ${sanitizeHTML(r.label)}`;
+        }
+        return `<div class="task-item"><div><b>${typeDisplay}</b> — <span class="meta">${sanitizeHTML(o.status)}</span><br>
+        <span class="meta">${o.success_count}/${o.target} — ${o.created_at}</span><br>
+        <a class="link" target="_blank" href="${o.link}">${sanitizeHTML(o.link)}</a></div></div>`;
+      }).join("");
+      setMessage("ordersMsg","");
+    } catch(e){ list.innerHTML = ""; setMessage("ordersMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  // DEPOSIT / WITHDRAW / SWAP / HISTORY
+  function updateDepositEstimate() {
+    const coins = parseFloat(document.getElementById("depCoins").value) || 0;
+    const ar = coins * 1.5;
+    document.getElementById("depEstimate").textContent = `Estimation : ${ar} Ar (1 coin = 1.5 Ar)`;
+  }
+
+  function depositNext() {
+    const coins = parseFloat(document.getElementById("depCoins").value);
+    if (!coins || coins < 2000) { setMessage("depMessage", "Minimum 2000 coins.", "error"); return; }
+    const ar = coins * 1.5;
+    document.getElementById("depAmountArLabel").textContent = ar;
+    document.getElementById("depositStep1").style.display = "none";
+    document.getElementById("depositStep2").style.display = "block";
+  }
+
+  async function createDeposit(){
+    const coins = parseFloat(document.getElementById("depCoins").value);
+    const reference = document.getElementById("depRef").value.trim();
+    if (!coins || coins < 2000) return setMessage("depMessage","Montant invalide","error");
+    try {
+      setMessage("depMessage", '<span class="loader"></span>Envoi...', "");
+      const data = await api("/wallet/deposit","POST",{coins, reference});
+      setMessage("depMessage", sanitizeHTML(data.message + " ID: " + data.request_id), "success");
+    } catch(e){ setMessage("depMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function createWithdraw(){
+    const amount_ar = parseFloat(document.getElementById("wdAmount").value);
+    const method = document.getElementById("wdMethod").value;
+    const account = document.getElementById("wdAccount").value.trim();
+    const recipient_name = document.getElementById("wdName").value.trim();
+    if (!amount_ar || amount_ar<5000 || !account || !recipient_name) return setMessage("wdMessage","Champs invalides","error");
+    try {
+      setMessage("wdMessage", '<span class="loader"></span>Envoi...', "");
+      const data = await api("/wallet/withdraw","POST",{amount_ar, method, account, recipient_name});
+      setMessage("wdMessage", sanitizeHTML(data.message + " ID: " + data.request_id), "success");
+      await updateMe();
+    } catch(e){ setMessage("wdMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function doSwap(){
+    const amount_ar = parseFloat(document.getElementById("swapAmount").value);
+    if (!amount_ar || amount_ar<=0) return setMessage("swapMessage","Montant invalide","error");
+    try {
+      setMessage("swapMessage", '<span class="loader"></span>Swap...', "");
+      const data = await api("/wallet/swap","POST",{amount_ar});
+      setMessage("swapMessage", sanitizeHTML(data.message + ` (+${data.received_coins} coins)`), "success");
+      await updateMe();
+    } catch(e){ setMessage("swapMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function loadDepositHistory() {
+    const list = document.getElementById("depositHistoryList");
+    list.innerHTML = "Loading...";
+    try {
+      const data = await api("/wallet/deposit/history","GET");
+      const items = data.items || [];
+      list.innerHTML = items.length ? items.map(x=>`
+        <div class="task-item"><div><b>${sanitizeHTML(x.status)}</b> — ${x.created_at}<br>Coins: ${x.coins} | Ar: ${x.amount_ar} | Ref: ${sanitizeHTML(x.reference||"")}</div></div>`).join("") : "<div>No history</div>";
+    } catch(e){ list.innerHTML=""; setMessage("depositHistoryMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function loadWithdrawHistory() {
+    const list = document.getElementById("withdrawHistoryList");
+    list.innerHTML = "Loading...";
+    try {
+      const data = await api("/wallet/withdraw/history","GET");
+      const items = data.items || [];
+      list.innerHTML = items.length ? items.map(x=>`
+        <div class="task-item"><div><b>${sanitizeHTML(x.status)}</b> — ${x.created_at}<br>Ar: ${x.amount_ar} | ${x.method} | ${sanitizeHTML(x.account)} | Destinataire: ${sanitizeHTML(x.recipient_name||"")}</div></div>`).join("") : "<div>No history</div>";
+    } catch(e){ list.innerHTML=""; setMessage("withdrawHistoryMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  // VERIFY ACCOUNT (user)
+  async function loadVerifyAccounts() {
+    document.getElementById("verifyPageLabel").textContent = verifyPage;
+    const list = document.getElementById("verifyAccountsList");
+    list.innerHTML = "Loading...";
+    try {
+      const data = await api(`/task_account/verify/list?page=${verifyPage}&page_size=50`, "GET");
+      const accounts = data.accounts || [];
+      if (!accounts.length) { list.innerHTML = "<div>Aucun compte.</div>"; return; }
+      list.innerHTML = accounts.map(a => {
+        const status = a.verification_status;
+        let statusHtml = "";
+        let buttonHtml = "";
+        if (status === "verified") {
+          statusHtml = `<span class="status-badge verified">vérifié 🟢</span>`;
+        } else if (status === "pending") {
+          statusHtml = `<span class="status-badge pending">en attente</span>`;
+        } else if (status === "rejected") {
+          statusHtml = `<span class="status-badge rejected">rejeté</span>`;
+          buttonHtml = `<button class="small-btn" onclick="requestVerification('${a.id}')">Retry get verified</button>`;
+        } else {
+          statusHtml = `<span class="status-badge">non vérifié</span>`;
+          buttonHtml = `<button class="small-btn" onclick="requestVerification('${a.id}')">Get Verified</button>`;
+        }
+        return `<div class="account-item"><div style="flex:1;"><a class="link" href="${a.profile_link}" target="_blank">${sanitizeHTML(a.display_name || a.profile_link)}</a><br>${statusHtml}</div>${buttonHtml}</div>`;
+      }).join("");
+      setMessage("verifyMsg", "", "");
+    } catch(e) { list.innerHTML = ""; setMessage("verifyMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function requestVerification(accountId) {
+    try {
+      setMessage("verifyMsg", '<span class="loader"></span>Envoi...', "");
+      const data = await api("/task_account/request_verification", "POST", { account_id: accountId });
+      setMessage("verifyMsg", sanitizeHTML(data.message || "Demande envoyée"), "success");
+      await loadVerifyAccounts();
+    } catch(e) { setMessage("verifyMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  // VIP
+  async function buyVip() {
+    if (!me) await updateMe();
+    if (!me) return;
+    const confirmBuy = confirm("Acheter un code VIP pour 500 Ar ?");
+    if (!confirmBuy) return;
+    try {
+      setMessage("vipMessage", '<span class="loader"></span>Achat...', "");
+      const data = await api("/vip/buy", "POST");
+      setMessage("vipMessage", sanitizeHTML(data.message + " Code : " + data.code), "success");
+      await updateMe();
+    } catch(e) { setMessage("vipMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function activateVip() {
+    const code = document.getElementById("vipCode").value.trim();
+    if (!code) return setMessage("vipMessage", "Entrez un code.", "error");
+    try {
+      setMessage("vipMessage", '<span class="loader"></span>Activation...', "");
+      const data = await api("/vip/activate", "POST", { code });
+      setMessage("vipMessage", sanitizeHTML(data.message), "success");
+      document.getElementById("vipCode").value = "";
+    } catch(e) { setMessage("vipMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function loadVipCodes() {
+    try {
+      const data = await api("/vip/my_codes","GET");
+      document.getElementById("vipActiveStatus").innerHTML = `Statut VIP : ${data.active_vip ? "<span style='color:#2ecc71'>actif</span>" : "non actif"}`;
+      const list = document.getElementById("vipUnusedCodes");
+      if (!data.unused_codes || data.unused_codes.length === 0) {
+        list.innerHTML = "<div>Aucun code VIP non utilisé.</div>";
+      } else {
+        list.innerHTML = data.unused_codes.map(c => `<div class="account-item"><div><b>${sanitizeHTML(c.code)}</b><br><span style="font-size:12px;">Créé le ${c.created_at}</span></div></div>`).join("");
+      }
+      setMessage("vipCodesMsg","");
+    } catch(e) { setMessage("vipCodesMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  // MANAGE ACCOUNTS (HIDE/UNHIDE)
+  function switchManageTab(type) {
+    manageType = type;
+    document.getElementById("manageTabTask").className = type === "task" ? "active" : "inactive";
+    document.getElementById("manageTabShare").className = type === "share" ? "active" : "inactive";
+    managePage = 0;
+    loadManageAccounts();
+  }
+
+  async function loadManageAccounts() {
+    const list = document.getElementById("manageAccountsList");
+    list.innerHTML = "Chargement...";
+    document.getElementById("managePageLabel").textContent = managePage;
+    try {
+      const data = await api(`/account/manage/${manageType}?page=${managePage}&page_size=30`, "GET");
+      const accounts = data.accounts || [];
+      if (!accounts.length) { list.innerHTML = "<div>Aucun compte.</div>"; return; }
+      list.innerHTML = accounts.map(a => `
+        <div class="account-item">
+          <div style="flex:1;"><strong>${sanitizeHTML(a.display_name || a.profile_link)}</strong><br><span style="font-size:12px;">${sanitizeHTML(a.profile_link)}</span></div>
+          <button class="small-btn" onclick="toggleHidden('${a.id}')">${a.hidden ? "Unhide" : "Hide"}</button>
+        </div>`).join("");
+      setMessage("manageAccountsMsg", "");
+    } catch(e) { list.innerHTML = ""; setMessage("manageAccountsMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function toggleHidden(accountId) {
+    try {
+      const data = await api("/account/toggle_hidden", "POST", { account_id: accountId });
+      setMessage("manageAccountsMsg", sanitizeHTML(data.message), "success");
+      loadManageAccounts();
+      if (manageType === "task") loadAccountsForWork();
+      else loadShareAccountsForWork();
+    } catch(e) { setMessage("manageAccountsMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  // ADMIN functions
+  async function adminCredit(){
+    const email = document.getElementById("admEmail").value.trim().toLowerCase();
+    const coins = parseFloat(document.getElementById("admCoins").value)||0;
+    const ar = parseFloat(document.getElementById("admAr").value)||0;
+    if (!email) return setMessage("admMessage","Email obligatoire","error");
+    try {
+      setMessage("admMessage", '<span class="loader"></span>...', "");
+      const data = await api("/admin/credit","POST",{email, coins, ar});
+      setMessage("admMessage", sanitizeHTML(data.message), "success");
+    } catch(e){ setMessage("admMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function adminDeduct(){
+    const email = document.getElementById("deductEmail").value.trim().toLowerCase();
+    const coins = parseFloat(document.getElementById("deductCoins").value)||0;
+    const ar = parseFloat(document.getElementById("deductAr").value)||0;
+    if (!email) return setMessage("deductMessage","Email obligatoire","error");
+    try {
+      setMessage("deductMessage", '<span class="loader"></span>...', "");
+      const data = await api("/admin/deduct","POST",{email, coins, ar});
+      setMessage("deductMessage", sanitizeHTML(data.message), "success");
+    } catch(e){ setMessage("deductMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function adminBan(){
+    const email = document.getElementById("banEmail").value.trim().toLowerCase();
+    const action = document.getElementById("banAction").value;
+    if (!email) return setMessage("banMessage","Email obligatoire","error");
+    try {
+      setMessage("banMessage", '<span class="loader"></span>...', "");
+      const data = await api("/admin/ban","POST",{email, action});
+      setMessage("banMessage", sanitizeHTML(data.message), "success");
+    } catch(e){ setMessage("banMessage", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function loadAdminUsers(){
+    const search = document.getElementById("userSearch").value.trim();
+    document.getElementById("usersPageLabel").textContent = usersPage;
+    const list = document.getElementById("adminUsersList");
+    list.innerHTML = "Loading...";
+    try {
+      const data = await api(`/admin/users?page=${usersPage}&page_size=100&search=${encodeURIComponent(search)}`,"GET");
+      const items = data.items || [];
+      if (!items.length){ list.innerHTML = "<div>Aucun utilisateur</div>"; return; }
+      list.innerHTML = items.map(u=>`
+        <div class="task-item"><div><b>${sanitizeHTML(u.email)}</b> — Coins: ${u.balance_coins} Ar: ${u.balance_ar} ${u.banned ? " [BANNI]" : ""} ${u.suspended_until ? " [SUSPENDU]" : ""}<div class="meta">ID: ${u.id}</div></div></div>`).join("");
+    } catch(e){ list.innerHTML=""; setMessage("adminUsersMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function loadAdminDeposits(){
+    document.getElementById("adminDepPageLabel").textContent = adminDepPage;
+    const list = document.getElementById("adminDepositsList");
+    list.innerHTML = "Loading...";
+    try {
+      const data = await api(`/admin/deposits?status=pending&page=${adminDepPage}&page_size=30`,"GET");
+      const items = data.items || [];
+      if (!items.length){ list.innerHTML = "<div>Empty</div>"; return; }
+      list.innerHTML = items.map(x=>`
+        <div class="task-item"><div style="width:100%;"><b>${sanitizeHTML(x.user_email)}</b> — ${x.coins} coins (${x.amount_ar} Ar) Ref: ${sanitizeHTML(x.reference||"")}<br>
+        <button class="small-btn" onclick="handleDeposit('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleDeposit('${x.id}','reject')">Reject</button></div></div>`).join("");
+    } catch(e){ list.innerHTML=""; setMessage("adminDepositsMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function handleDeposit(id, action){
+    try { await api("/admin/deposits/handle","POST",{request_id:id, action}); loadAdminDeposits(); }
+    catch(e){ setMessage("adminDepositsMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function loadAdminWithdraws(){
+    document.getElementById("adminWdPageLabel").textContent = adminWdPage;
+    const list = document.getElementById("adminWithdrawsList");
+    list.innerHTML = "Loading...";
+    try {
+      const data = await api(`/admin/withdraws?status=pending&page=${adminWdPage}&page_size=30`,"GET");
+      const items = data.items || [];
+      if (!items.length){ list.innerHTML = "<div>Empty</div>"; return; }
+      list.innerHTML = items.map(x=>`
+        <div class="task-item"><div style="width:100%;"><b>${sanitizeHTML(x.user_email)}</b> — ${x.amount_ar} Ar (${x.method}) ${sanitizeHTML(x.account)}<br><b>Destinataire:</b> ${sanitizeHTML(x.recipient_name||"")}<br>
+        <button class="small-btn" onclick="handleWithdraw('${x.id}','approve')">Approve</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','reject')">Reject</button> <button class="small-btn" onclick="handleWithdraw('${x.id}','return')">Return</button></div></div>`).join("");
+    } catch(e){ list.innerHTML=""; setMessage("adminWithdrawsMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function handleWithdraw(id, action){
+    try { await api("/admin/withdraws/handle","POST",{request_id:id, action}); loadAdminWithdraws(); }
+    catch(e){ setMessage("adminWithdrawsMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function loadAdminVerifyAccounts() {
+    document.getElementById("adminVerifyPageLabel").textContent = adminVerifyPage;
+    const list = document.getElementById("adminVerifyList");
+    list.innerHTML = "Loading...";
+    try {
+      const data = await api(`/admin/verify_accounts?page=${adminVerifyPage}&page_size=50`, "GET");
+      const items = data.items || [];
+      if (!items.length) { list.innerHTML = "<div>Aucune demande en attente.</div>"; return; }
+      list.innerHTML = items.map(item => `
+        <div class="task-item"><div style="flex:1;"><b>${sanitizeHTML(item.user_email)}</b><br><a class="link" href="${item.profile_link}" target="_blank">${sanitizeHTML(item.display_name || item.profile_link)}</a><div class="meta">ID: ${item.id}</div></div>
+        <div style="display:flex;gap:4px;"><button class="small-btn" onclick="handleAdminVerify('${item.id}','approve')">Approve</button><button class="small-btn" onclick="handleAdminVerify('${item.id}','reject')">Reject</button></div></div>`).join("");
+      setMessage("adminVerifyMsg", "");
+    } catch(e) { list.innerHTML = ""; setMessage("adminVerifyMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  async function handleAdminVerify(accountId, action) {
+    try {
+      await api("/admin/verify_accounts/handle", "POST", { account_id: accountId, action });
+      setMessage("adminVerifyMsg", action === "approve" ? "Approuvé, 10 Ar crédités." : "Rejeté.", "success");
+      loadAdminVerifyAccounts();
+    } catch(e) { setMessage("adminVerifyMsg", sanitizeHTML(e.message), "error"); }
+  }
+
+  // INIT
+  window.addEventListener("load", () => {
+    checkRefParam();
+    if (auth?.access_token) {
+      showDashboard();
+    } else {
+      showAuthPage();
+      showLogin();
+    }
+  });
 </script>
 </body>
 </html>
