@@ -117,7 +117,6 @@
 </head>
 <body>
   <div class="container">
-    <!-- Menu hamburger -->
     <div id="adminMenu" class="admin-menu">
       <button class="small-btn" onclick="showAccountInfo()">Infos compte</button>
       <button class="small-btn" onclick="showReferral()">Parrainage</button>
@@ -126,7 +125,6 @@
       <button class="small-btn" onclick="showVerifyAccount()">Vérifier compte</button>
       <button class="small-btn" onclick="showVipCodes()">Code VIP</button>
       <button class="small-btn" onclick="showManageAccounts()">Hide/Unhide comptes</button>
-
       <div id="adminOnlyMenu" style="display:none; border-top:1px solid rgba(255,255,255,.18); padding-top:6px;">
         <button class="small-btn" onclick="showAdminCredit()">Créditer Coins/Ar</button>
         <button class="small-btn" onclick="showAdminDeduct()">Déduire Coins/Ar</button>
@@ -139,7 +137,6 @@
       <button class="small-btn" onclick="logoutUser()">Déconnexion</button>
     </div>
 
-    <!-- Auth Page -->
     <div id="authPage" class="page active">
       <div class="title"><h1>MG TASKER 🇲🇬</h1><p>Connecte-toi ou crée un compte</p></div>
       <div class="tabs">
@@ -178,7 +175,6 @@
       <div id="authMessage" class="message"></div>
     </div>
 
-    <!-- Dashboard Page -->
     <div id="dashboardPage" class="page">
       <div class="global-stats" id="globalStatsBar">
         <div>🏆 Gagnés: <strong id="globalAr">0</strong> Ar</div>
@@ -218,7 +214,6 @@
         </div>
       </div>
 
-      <!-- Sections dynamiques -->
       <div id="sectionsArea" class="section-area">
         <!-- Add Task Account -->
         <div id="sectionAddTaskAccount" class="card" style="display:none;">
@@ -239,7 +234,7 @@
           <div id="shareAccountMessage" class="message"></div>
         </div>
 
-        <!-- Work Tasks (avec onglets) -->
+        <!-- Work Tasks -->
         <div id="sectionWork" class="card" style="display:none;">
           <h2>Work Tasks</h2>
           <div class="tabs" style="margin-bottom:10px;">
@@ -424,7 +419,7 @@
           <div id="vipCodesMsg" class="message"></div>
         </div>
 
-        <!-- Manage accounts (Hide/Unhide) -->
+        <!-- Manage accounts -->
         <div id="sectionManageAccounts" class="card" style="display:none;">
           <h2>Hide / Unhide comptes</h2>
           <div class="tabs" style="margin-bottom:8px;">
@@ -579,7 +574,6 @@
     localStorage.removeItem("auth");
   }
 
-  // Fonction API avec refresh
   async function api(path, method="GET", body=null, retry=true) {
     const headers = {"Content-Type":"application/json"};
     const token = getAccessToken();
@@ -615,7 +609,7 @@
     } catch(e) { clearAuth(); showAuthPage(); return false; }
   }
 
-  // Affichage des messages avec possibilité de HTML interne (pour les loaders)
+  // Affichage des messages (raw permet d'inclure du HTML comme le loader)
   function setMessage(id, text, type = "", raw = false) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -623,12 +617,10 @@
     if (raw) {
       el.innerHTML = text;
     } else {
-      // Échapper sauf les <br> autorisés
       el.innerHTML = sanitizeHTML(text).replace(/&lt;br&gt;/g, '<br>');
     }
   }
 
-  // Affiche un loader avec du texte optionnel
   function showLoader(id, text = "") {
     setMessage(id, '<span class="loader"></span> ' + sanitizeHTML(text), "", true);
   }
@@ -662,8 +654,6 @@
     document.getElementById("codeInputArea").style.display = "none";
     document.getElementById("newPasswordArea").style.display = "none";
     setMessage("forgotMsg","");
-    setMessage("codeCheckMsg","");
-    setMessage("newPassMsg","");
   }
 
   function backToLogin() { showLogin(); }
@@ -849,8 +839,9 @@
     if (!email) return setMessage("forgotMsg","Email requis.","error");
     showLoader("forgotMsg", "Envoi...");
     try {
-      await api("/auth/forgot_password","POST",{email});
-      setMessage("forgotMsg","Code envoyé à l'email (vérifiez les spams).","success");
+      const data = await api("/auth/forgot_password","POST",{email});
+      // Afficher le message exact du backend (ex: "Si cet email existe, un code a été envoyé.")
+      setMessage("forgotMsg", data.message, "success");
       resetEmail = email;
       document.getElementById("codeInputArea").style.display = "block";
     } catch(e) { setMessage("forgotMsg", sanitizeHTML(e.message), "error"); }
@@ -904,7 +895,7 @@
     } catch(e) { setMessage("shareAccountMessage", sanitizeHTML(e.message), "error"); }
   }
 
-  // WORK TASKS (STANDARD)
+  // WORK TASKS
   async function loadAccountsForWork() {
     selectedAccountId = null;
     currentTask = null;
@@ -1001,11 +992,8 @@
     document.getElementById("workTabShares").className = tab === "shares" ? "active" : "inactive";
     document.getElementById("workTasksArea").style.display = tab === "tasks" ? "block" : "none";
     document.getElementById("workSharesArea").style.display = tab === "shares" ? "block" : "none";
-    if (tab === "tasks") {
-      if (selectedAccountId) loadAccountsForWork();
-    } else {
-      if (selectedShareAccountId) loadShareAccountsForWork();
-    }
+    if (tab === "tasks") { if (selectedAccountId) loadAccountsForWork(); }
+    else { if (selectedShareAccountId) loadShareAccountsForWork(); }
   }
 
   async function loadShareAccountsForWork() {
@@ -1245,7 +1233,7 @@
     } catch(e){ list.innerHTML=""; setMessage("withdrawHistoryMsg", sanitizeHTML(e.message), "error"); }
   }
 
-  // VERIFY ACCOUNT (user)
+  // VERIFY ACCOUNT
   async function loadVerifyAccounts() {
     document.getElementById("verifyPageLabel").textContent = verifyPage;
     const list = document.getElementById("verifyAccountsList");
@@ -1321,7 +1309,7 @@
     } catch(e) { setMessage("vipCodesMsg", sanitizeHTML(e.message), "error"); }
   }
 
-  // MANAGE ACCOUNTS (HIDE/UNHIDE)
+  // MANAGE ACCOUNTS
   function switchManageTab(type) {
     manageType = type;
     document.getElementById("manageTabTask").className = type === "task" ? "active" : "inactive";
@@ -1355,7 +1343,7 @@
     } catch(e) { setMessage("manageAccountsMsg", sanitizeHTML(e.message), "error"); }
   }
 
-  // ADMIN functions
+  // ADMIN
   async function adminCredit(){
     const email = document.getElementById("admEmail").value.trim().toLowerCase();
     const coins = parseFloat(document.getElementById("admCoins").value)||0;
@@ -1469,4 +1457,4 @@
   });
 </script>
 </body>
-  </html>
+          </html>
